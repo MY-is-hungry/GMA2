@@ -34,8 +34,8 @@ class LinebotController < ApplicationController
             
             if user.start_lat.nil? && user.start_lng.nil?
               #スタート地点登録、更新
-              user.update_attributes(:start_lat, event.message['latitude'])
-              user.update_attributes(:start_lng, event.message['longitude'])
+              user.update_attributes(start_lat: event.message['latitude'])
+              user.update_attributes(start_lng: event.message['longitude'])
               
               client.reply_message(event['replyToken'], {
                 "type": "text",
