@@ -54,8 +54,8 @@ class LinebotController < ApplicationController
                 }
               })
             elsif arrival_lat.nil? && arrival_lng.nil?
-              user.update_attributes(:arrival_lat, event.message['latitude'])
-              user.update_attributes(:arrival_lng, event.message['longitude'])
+              user.update_attributes(arrival_lat: event.message['latitude'])
+              user.update_attributes(arrival_lng: event.message['longitude'])
               
               client.reply_message(event['replyToken'], {
                 type: 'text',
