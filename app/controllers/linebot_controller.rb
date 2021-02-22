@@ -53,7 +53,7 @@ class LinebotController < ApplicationController
                   ]
                 }
               })
-            elsif arrival_lat.nil? && arrival_lng.nil?
+            elsif user.arrival_lat.nil? && user.arrival_lng.nil?
               user.update_attributes(arrival_lat: event.message['latitude'])
               user.update_attributes(arrival_lng: event.message['longitude'])
               
