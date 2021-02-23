@@ -6,7 +6,6 @@ class LinebotController < ApplicationController
     include LinebotHelper
     API_KEY = "df4d9ec586320a23a5369f48661e99fb"
     BASE_URL = "http://api.openweathermap.org/data/2.5/forecast"
-    G_API = "AIzaSyCLxZqgME4-O92II9NIjxsXou6YrhyIeJA"
     G_URL = "https://maps.googleapis.com/maps/api/directions/json?" #json固定
     
 
