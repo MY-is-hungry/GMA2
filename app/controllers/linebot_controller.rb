@@ -68,24 +68,34 @@ class LinebotController < ApplicationController
             user = User.find_by(line_id: response)
             
             if user.start_lat.nil? && user.start_lng.nil?
-              #スタート地点登録、更新
-              user.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
-              client.reply_message(event['replyToken'], {
-                "type": "text",
-                "text": "到着地点の位置情報を教えてください！",
-                "quickReply": {
-                  "items": [
-                    
-                    {
-                      "type": "action",
-                      "action": {
-                        "type": "location",
-                        "label": "位置情報"
+              if user.arrival_lat.nil? && user.arrival_lng.nil?
+                #スタート地点登録、更新
+                user.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
+                client.reply_message(event['replyToken'], {
+                  "type": "text",
+                  "text": "到着地点の位置情報を教えてください！",
+                  "quickReply": {
+                    "items": [
+                      
+                      {
+                        "type": "action",
+                        "action": {
+                          "type": "location",
+                          "label": "位置情報"
+                        }
                       }
-                    }
-                  ]
-                }
-              })
+                    ]
+                  }
+                })
+              else
+                user.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
+                client.reply_message(event['replyToken'], {
+                  type: 'text',
+                  text: "出発地点を緯度#{user.start_lat}、経度#{user.start_lng}に変更しました。"
+                });
+              end
+                
+                
             elsif user.arrival_lat.nil? && user.arrival_lng.nil?
               user.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
               client.reply_message(event['replyToken'], {
