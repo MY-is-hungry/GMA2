@@ -27,7 +27,21 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Message
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
-            message_text(event)
+            message = event.message['text']
+            case message
+            when 'おはよう'
+              message = change_msg(message)
+              result_msg = message.join
+              client.reply_message(event['replyToken'],
+                [{type: "text", text: result_msg}, {type: "text", text: 'テスト'}]);
+                
+            when '通勤設定'
+              message = change_msg(message)
+              client.reply_message(event['replyToken'], message);
+              
+            else
+              client.reply_message(event['replyToken'], message);
+            end
           when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
             response = event['source']['userId']
             user = User.find_by(line_id: response)
@@ -101,21 +115,21 @@ class LinebotController < ApplicationController
         return result
       when "通勤設定"
         result = {
-                "type": "text",
-                "text": "出発地点の位置情報を教えてください！",
-                "quickReply": {
-                  "items": [
-                    
-                    {
-                      "type": "action",
-                      "action": {
-                        "type": "location",
-                        "label": "位置情報"
-                      }
-                    }
-                  ]
+          "type": "text",
+          "text": "出発地点の位置情報を教えてください！",
+          "quickReply": {
+            "items": [
+              
+              {
+                "type": "action",
+                "action": {
+                  "type": "location",
+                  "label": "位置情報"
                 }
               }
+            ]
+          }
+        }
         return result
       end
     end
