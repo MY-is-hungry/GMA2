@@ -6,6 +6,9 @@ class LinebotController < ApplicationController
     include LinebotHelper
     API_KEY = "df4d9ec586320a23a5369f48661e99fb"
     BASE_URL = "http://api.openweathermap.org/data/2.5/forecast"
+    G_API = "AIzaSyCLxZqgME4-O92II9NIjxsXou6YrhyIeJA"
+    G_URL = "https://maps.googleapis.com/maps/api/directions/json?" #json固定
+    
 
     # callbackアクションのCSRFトークン認証を無効
     protect_from_forgery :except => [:callback]
@@ -98,10 +101,13 @@ class LinebotController < ApplicationController
                 
             elsif user.arrival_lat.nil? && user.arrival_lng.nil?
               user.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
+              response = open(G_URL + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{G_API}")
+              data = JSON.parse(response.read, {symbolize_names: true})
+              time = data[:routes][:legs][:duration][:text]
+              
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: "出発地点の緯度は#{user.start_lat}で経度は#{user.start_lng}です。
-                到着地点の緯度は#{user.arrival_lat}で経度は#{user.arrival_lng}です。"
+                text: "出発地点から到着地点までの所要時間は、#{time}です。"
               });
               
             end
