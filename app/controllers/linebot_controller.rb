@@ -36,6 +36,9 @@ class LinebotController < ApplicationController
                 [{type: "text", text: result_msg}, {type: "text", text: 'テスト'}]);
                 
             when '通勤設定'
+              response = event['source']['userId']
+            　user = User.find_by(line_id: response)
+            　user.update_attributes(start_lat: nil,start_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message);
               
