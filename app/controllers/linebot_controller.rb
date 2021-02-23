@@ -40,7 +40,11 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], message);
               
             else
-              client.reply_message(event['replyToken'], message);
+              message = {
+              type: 'text',
+              text: event.message['text']
+              }
+              client.reply_message(event['replyToken'], message)
             end
           when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
             response = event['source']['userId']
