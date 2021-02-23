@@ -60,7 +60,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "出発地点の緯度は#{user.start_lat}で経度は#{user.start_lng}です。
-                到着地点の緯度は#{arrival_lat}で経度は#{arrival_lng}です。"});
+                到着地点の緯度は#{user.arrival_lat}で経度は#{user.arrival_lng}です。"});
               
             end
           end
