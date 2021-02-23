@@ -42,6 +42,20 @@ class LinebotController < ApplicationController
               message = change_msg(message)
               client.reply_message(event['replyToken'], message);
               
+            when '出発地点変更'
+              response = event['source']['userId']
+            　user = User.find_by(line_id: response)
+            　user.update_attributes(start_lat: nil,start_lng: nil)
+              message = change_msg(message)
+              client.reply_message(event['replyToken'], message);
+              
+            when '到着地点変更'
+              response = event['source']['userId']
+            　user = User.find_by(line_id: response)
+            　user.update_attributes(arrival_lat: nil,arrival_lng: nil)
+              message = change_msg(message)
+              client.reply_message(event['replyToken'], message);
+              
             else
               message = {
               type: 'text',
@@ -55,9 +69,7 @@ class LinebotController < ApplicationController
             
             if user.start_lat.nil? && user.start_lng.nil?
               #スタート地点登録、更新
-              user.update_attributes(start_lat: event.message['latitude'])
-              user.update_attributes(start_lng: event.message['longitude'])
-              
+              user.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
               client.reply_message(event['replyToken'], {
                 "type": "text",
                 "text": "到着地点の位置情報を教えてください！",
@@ -75,13 +87,12 @@ class LinebotController < ApplicationController
                 }
               })
             elsif user.arrival_lat.nil? && user.arrival_lng.nil?
-              user.update_attributes(arrival_lat: event.message['latitude'])
-              user.update_attributes(arrival_lng: event.message['longitude'])
-              
+              user.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "出発地点の緯度は#{user.start_lat}で経度は#{user.start_lng}です。
-                到着地点の緯度は#{user.arrival_lat}で経度は#{user.arrival_lng}です。"});
+                到着地点の緯度は#{user.arrival_lat}で経度は#{user.arrival_lng}です。"
+              });
               
             end
           end
@@ -124,6 +135,42 @@ class LinebotController < ApplicationController
         result = {
           "type": "text",
           "text": "出発地点の位置情報を教えてください！",
+          "quickReply": {
+            "items": [
+              
+              {
+                "type": "action",
+                "action": {
+                  "type": "location",
+                  "label": "位置情報"
+                }
+              }
+            ]
+          }
+        }
+        return result
+      when "出発地点変更"
+        result = {
+          "type": "text",
+          "text": "出発地点の位置情報を教えてください！",
+          "quickReply": {
+            "items": [
+              
+              {
+                "type": "action",
+                "action": {
+                  "type": "location",
+                  "label": "位置情報"
+                }
+              }
+            ]
+          }
+        }
+        return result
+      when "到着地点変更"
+        result = {
+          "type": "text",
+          "text": "到着地点の位置情報を教えてください！",
           "quickReply": {
             "items": [
               
