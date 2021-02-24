@@ -26,6 +26,8 @@ class LinebotController < ApplicationController
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
             message = event.message['text']
+            response = event['source']['userId']
+            user = User.find_by(line_id: response)
             case message
             when 'おはよう'
               message = change_msg(message)
@@ -34,29 +36,21 @@ class LinebotController < ApplicationController
                 [{type: "text", text: result_msg}, {type: "text", text: 'テスト'}]);
                 
             when '通勤設定'
-              response = event['source']['userId']
-            　user = User.find_by(line_id: response)
             　user.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message);
               
             when '出発地点変更'
-              response = event['source']['userId']
-            　user = User.find_by(line_id: response)
             　user.update_attributes(start_lat: nil,start_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message);
               
             when '到着地点変更'
-              response = event['source']['userId']
-            　user = User.find_by(line_id: response)
               user.update_attributes(arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message);
               
             when 'テスト'
-              response = event['source']['userId']
-            　user = User.find_by(line_id: response)
               message = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{ENV['G_API']}")
               time = message['routes'][:legs][:duration]['text']
               
