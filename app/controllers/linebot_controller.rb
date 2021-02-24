@@ -1,6 +1,6 @@
 class LinebotController < ApplicationController
     require 'line/bot'  # gem 'line-bot-api'
-    require "json"
+    require "json" #jsonモジュールを利用
     require "open-uri" #Webサイトにアクセスできるようにする。
     require "date"
     include LinebotHelper
@@ -53,11 +53,11 @@ class LinebotController < ApplicationController
             when 'テスト'
               response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{ENV['G_API']}")
               data = JSON.parse(response.read, {symbolize_names: true})
-              time = data['routes'][:legs][:duration]['text']
+              # time = data['routes'][:legs][:duration]['text']
               
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: "出発地点から到着地点までの所要時間は、#{time}です。"
+                text: "出発地点から到着地点までの所要時間は、#{date}です。"
               });
               
               
@@ -145,7 +145,7 @@ class LinebotController < ApplicationController
       case msg
       when "おはよう"
         response = open(ENV['BASE_URL'] + "?q=Aichi&APPID=#{ENV['API_KEY']}")
-        #JSONデータ(response)をハッシュ化からのシンボル変換
+        #JSONデータ(response)をハッシュ化
         data = JSON.parse(response.read, {symbolize_names: true})
         result = weather_text(data)
         return result
