@@ -57,7 +57,7 @@ class LinebotController < ApplicationController
               
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: "出発地点から到着地点までの所要時間は、#{date}です。"
+                text: "出発地点から到着地点までの所要時間は、#{data}です。"
               });
               
               
