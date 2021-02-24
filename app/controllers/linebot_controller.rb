@@ -4,8 +4,6 @@ class LinebotController < ApplicationController
     require "open-uri" #Webサイトにアクセスできるようにする。
     require "date"
     include LinebotHelper
-    API_KEY = "df4d9ec586320a23a5369f48661e99fb"
-    BASE_URL = "http://api.openweathermap.org/data/2.5/forecast"
     G_URL = "https://maps.googleapis.com/maps/api/directions/json?" #json固定
     
 
@@ -141,7 +139,7 @@ class LinebotController < ApplicationController
     def change_msg(msg)
       case msg
       when "おはよう"
-        response = open(BASE_URL + "?q=Aichi&APPID=#{API_KEY}")
+        response = open(ENV['BASE_URL'] + "?q=Aichi&APPID=#{ENV['API_KEY']}")
         #JSONデータ(response)をハッシュ化からのシンボル変換
         data = JSON.parse(response.read, {symbolize_names: true})
         result = weather_text(data)
