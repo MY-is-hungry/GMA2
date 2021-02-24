@@ -57,8 +57,8 @@ class LinebotController < ApplicationController
             when 'テスト'
               response = event['source']['userId']
             　user = User.find_by(line_id: response)
-              res = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{ENV['G_API']}")
-              time = res['routes'][:legs][:duration]['text']
+              message = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{ENV['G_API']}")
+              time = message['routes'][:legs][:duration]['text']
               
               client.reply_message(event['replyToken'], {
                 type: 'text',
