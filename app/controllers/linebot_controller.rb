@@ -50,7 +50,7 @@ class LinebotController < ApplicationController
             when '到着地点変更'
               response = event['source']['userId']
             　user = User.find_by(line_id: response)
-            　user.update_attributes(arrival_lat: nil,arrival_lng: nil)
+              user.update_attributes(arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message);
               
