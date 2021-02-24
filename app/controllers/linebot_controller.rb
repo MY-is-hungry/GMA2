@@ -96,7 +96,7 @@ class LinebotController < ApplicationController
                 
             elsif user.arrival_lat.nil? && user.arrival_lng.nil?
               user.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
-              response = open(G_URL + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{G_API}")
+              response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{G_API}")
               # data = JSON.parse(response.read, {symbolize_names: true})
               time = response['routes'][:legs][:duration]['text']
               
