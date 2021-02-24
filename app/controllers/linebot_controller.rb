@@ -4,8 +4,6 @@ class LinebotController < ApplicationController
     require "open-uri" #Webサイトにアクセスできるようにする。
     require "date"
     include LinebotHelper
-    G_URL = "https://maps.googleapis.com/maps/api/directions/json?" #json固定
-    
 
     # callbackアクションのCSRFトークン認証を無効
     protect_from_forgery :except => [:callback]
@@ -99,8 +97,8 @@ class LinebotController < ApplicationController
             elsif user.arrival_lat.nil? && user.arrival_lng.nil?
               user.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
               response = open(G_URL + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{G_API}")
-              data = JSON.parse(response.read, {symbolize_names: true})
-              time = data['routes'][:legs][:duration][:text]
+              # data = JSON.parse(response.read, {symbolize_names: true})
+              time = response['routes'][:legs][:duration]['text']
               
               client.reply_message(event['replyToken'], {
                 type: 'text',
