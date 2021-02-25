@@ -51,7 +51,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], message);
               
             when 'テスト'
-              response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{ENV['G_API']}")
+              response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{ENV['G_API']}&language=ja")
               data = JSON.parse(response.read, {symbolize_names: true})
               time = data[:routes][0][:legs][0][:duration][:text]
               
