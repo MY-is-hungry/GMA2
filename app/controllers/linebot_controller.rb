@@ -53,7 +53,7 @@ class LinebotController < ApplicationController
             when 'テスト'
               response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{ENV['G_API']}")
               data = JSON.parse(response.read, {symbolize_names: true})
-              # time = data['routes'][:legs][:duration]['text']
+              time = data[:geocoded_waypoints][:routes][0][:legs][0][:duration][:text]
               
               client.reply_message(event['replyToken'], {
                 type: 'text',
@@ -144,7 +144,7 @@ class LinebotController < ApplicationController
     def change_msg(msg)
       case msg
       when "おはよう"
-        response = open(ENV['BASE_URL'] + "?q=Aichi&APPID=#{ENV['API_KEY']}")
+        response = open(ENV['W_URL'] + "?q=Aichi&APPID=#{ENV['W_API']}")
         #JSONデータ(response)をハッシュ化
         data = JSON.parse(response.read, {symbolize_names: true})
         result = weather_text(data)
