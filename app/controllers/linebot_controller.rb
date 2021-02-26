@@ -26,7 +26,7 @@ class LinebotController < ApplicationController
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
             message = event.message['text']
             user_id = event['source']['userId']
-            user = User.find_by(line_id: response)
+            user = User.find_by(line_id: user_id)
             case message
             when 'おはよう'
               message = change_msg(message)
