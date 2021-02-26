@@ -3,8 +3,7 @@ class LinebotController < ApplicationController
     require "json" #jsonモジュールを利用
     require "open-uri" #Webサイトにアクセスできるようにする。
     require "date"
-    include LinebotHelper
-
+    
     # callbackアクションのCSRFトークン認証を無効
     protect_from_forgery :except => [:callback]
 
@@ -26,8 +25,8 @@ class LinebotController < ApplicationController
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
             message = event.message['text']
-            response = event['source']['userId']
-            user = User.find_by(line_id: response)
+            user_id = event['source']['userId']
+            user = User.find_by(line_id: user_id)
             case message
             when 'おはよう'
               message = change_msg(message)
@@ -60,6 +59,271 @@ class LinebotController < ApplicationController
                 text: "出発地点から到着地点までの所要時間は、#{time}です。"
               });
               
+            when 'フレックスメッセージ'
+              client.reply_message(event['replyToken'], {
+              "type": "carousel",
+              "contents": [
+                {
+                  "type": "bubble",
+                  "size": "micro",
+                  "hero": {
+                    "type": "image",
+                    "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip10.jpg",
+                    "size": "full",
+                    "aspectMode": "cover",
+                    "aspectRatio": "320:213"
+                  },
+                  "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "Brown Cafe",
+                        "weight": "bold",
+                        "size": "sm",
+                        "wrap": true
+                      },
+                      {
+                        "type": "box",
+                        "layout": "baseline",
+                        "contents": [
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gray_star_28.png"
+                          },
+                          {
+                            "type": "text",
+                            "text": "4.0",
+                            "size": "xs",
+                            "color": "#8c8c8c",
+                            "margin": "md",
+                            "flex": 0
+                          }
+                        ]
+                      },
+                      {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                          {
+                            "type": "box",
+                            "layout": "baseline",
+                            "spacing": "sm",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "東京旅行",
+                                "wrap": true,
+                                "color": "#8c8c8c",
+                                "size": "xs",
+                                "flex": 5
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "spacing": "sm",
+                    "paddingAll": "13px"
+                  }
+                },
+                {
+                  "type": "bubble",
+                  "size": "micro",
+                  "hero": {
+                    "type": "image",
+                    "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip11.jpg",
+                    "size": "full",
+                    "aspectMode": "cover",
+                    "aspectRatio": "320:213"
+                  },
+                  "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "Brow&Cony's Restaurant",
+                        "weight": "bold",
+                        "size": "sm",
+                        "wrap": true
+                      },
+                      {
+                        "type": "box",
+                        "layout": "baseline",
+                        "contents": [
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gray_star_28.png"
+                          },
+                          {
+                            "type": "text",
+                            "text": "4.0",
+                            "size": "sm",
+                            "color": "#8c8c8c",
+                            "margin": "md",
+                            "flex": 0
+                          }
+                        ]
+                      },
+                      {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                          {
+                            "type": "box",
+                            "layout": "baseline",
+                            "spacing": "sm",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "東京旅行",
+                                "wrap": true,
+                                "color": "#8c8c8c",
+                                "size": "xs",
+                                "flex": 5
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "spacing": "sm",
+                    "paddingAll": "13px"
+                  }
+                },
+                {
+                  "type": "bubble",
+                  "size": "micro",
+                  "hero": {
+                    "type": "image",
+                    "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip12.jpg",
+                    "size": "full",
+                    "aspectMode": "cover",
+                    "aspectRatio": "320:213"
+                  },
+                  "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "Tata",
+                        "weight": "bold",
+                        "size": "sm"
+                      },
+                      {
+                        "type": "box",
+                        "layout": "baseline",
+                        "contents": [
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+                          },
+                          {
+                            "type": "icon",
+                            "size": "xs",
+                            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gray_star_28.png"
+                          },
+                          {
+                            "type": "text",
+                            "text": "4.0",
+                            "size": "sm",
+                            "color": "#8c8c8c",
+                            "margin": "md",
+                            "flex": 0
+                          }
+                        ]
+                      },
+                      {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                          {
+                            "type": "box",
+                            "layout": "baseline",
+                            "spacing": "sm",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "東京旅行",
+                                "wrap": true,
+                                "color": "#8c8c8c",
+                                "size": "xs",
+                                "flex": 5
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "spacing": "sm",
+                    "paddingAll": "13px"
+                  }
+                }
+  ]
+}
+              
+              
               
             else
               message = {
@@ -69,8 +333,8 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], message)
             end
           when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
-            response = event['source']['userId']
-            user = User.find_by(line_id: response)
+            user_id = event['source']['userId']
+            user = User.find_by(line_id: user_id)
             
             if user.start_lat.nil? && user.start_lng.nil?
               if user.arrival_lat.nil? && user.arrival_lng.nil?
