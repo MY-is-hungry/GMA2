@@ -26,7 +26,7 @@ class LinebotController < ApplicationController
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
             message = event.message['text']
             user_id = event['source']['userId']
-            user = User.find_by(line_id: user_id)
+            user = User.find_by(line_id: response)
             case message
             when 'おはよう'
               message = change_msg(message)
@@ -60,7 +60,7 @@ class LinebotController < ApplicationController
               });
               
             when 'フレックスメッセージ'
-              client.reply_message(event['replyToken'], {
+              data = {
               "type": "carousel",
               "contents": [
                 {
@@ -320,10 +320,9 @@ class LinebotController < ApplicationController
                     "paddingAll": "13px"
                   }
                 }
-  ]
-}
-              
-              
+              ]
+            })
+            client.reply_message(event['replyToken'], data)
               
             else
               message = {
