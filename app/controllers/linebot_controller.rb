@@ -322,7 +322,7 @@ class LinebotController < ApplicationController
                 }
               ]
             }
-            client.reply_message(event['replyToken'], data)
+            client.reply_message(event['replyToken'], data);
               
             else
               message = {
