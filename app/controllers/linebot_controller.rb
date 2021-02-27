@@ -60,7 +60,7 @@ class LinebotController < ApplicationController
               });
               
             when 'ラーメン'
-              msg = message.encode('iso-2022-jp')
+              msg = message.encode('UTF-8')
               response = open(ENV['G_PLACE_URL'] + "location=#{user.start_lat},#{user.start_lng}&radius=1500&keyword=#{msg}&key=#{ENV['G_API']}")
               data = JSON.parse(response.read, {symbolize_names: true})
               client.reply_message(event['replyToken'], {
