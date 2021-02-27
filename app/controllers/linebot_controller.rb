@@ -65,7 +65,7 @@ class LinebotController < ApplicationController
               data = JSON.parse(response.read, {symbolize_names: true})
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: "test"
+                text: data
               });
               
             else
