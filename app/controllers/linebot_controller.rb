@@ -61,7 +61,7 @@ class LinebotController < ApplicationController
               
             when 'ラーメン'
               msg = message.ord
-              response = open(ENV['G_PLACE_URL'] + "location=#{user.start_lat},#{user.start_lng}&radius=1500&keyword=#{msg}&key=#{ENV['G_API']}")
+              response = open(ENV['G_PLACE_URL'] + "query=#{msg}&location=#{user.start_lat},#{user.start_lng}&radius=10000&radius=1500&key=#{ENV['G_API']}")
               data = JSON.parse(response.read, {symbolize_names: true})
               client.reply_message(event['replyToken'], {
                 type: 'text',
