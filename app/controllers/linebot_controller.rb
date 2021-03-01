@@ -223,7 +223,6 @@ class LinebotController < ApplicationController
               "type": "bubble",
               "body": {
                 "type": "box",
-                "layout": "horizontal",
                 "contents": [
                   {
                     "type": "text",
@@ -237,7 +236,6 @@ class LinebotController < ApplicationController
               "type": "bubble",
               "body": {
                 "type": "box",
-                "layout": "horizontal",
                 "contents": [
                   {
                     "type": "text",
