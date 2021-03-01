@@ -69,9 +69,9 @@ class LinebotController < ApplicationController
                 text: data
               });
             when 'テスト'
-              message = change_msg(message)
+              data = change_msg(message)
               logger.debug(data)
-              client.reply_message(event['replyToken'], message)
+              client.reply_message(event['replyToken'], data)
               
             else
               message = {
