@@ -62,7 +62,8 @@ class LinebotController < ApplicationController
             when 'ラーメン'
               url = URI.encode "#{ENV['G_PLACE_URL']}query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=10000&radius=1500&key=#{ENV['G_API']}"
               response = open(url)
-              data = "https://goo.gl/maps/#{JSON.parse(response.read, {symbolize_names: true})[:results][0][:place_id]}"
+              hash = JSON.parse(response.read, {symbolize_names: true})
+              data = "https://www.google.com/maps/search/?api=1&query=#{hash[:results][0][:name]}&query_place_id=#{hash[:results][0][:place_id]}"
               logger.debug(data)
               client.reply_message(event['replyToken'], {
                 type: 'text',
