@@ -218,6 +218,7 @@ class LinebotController < ApplicationController
       when "テスト"
         result = {
           "type": "flex",
+          "layout": "horizontal",
           "contents": [
             {
               "type": "bubble",
