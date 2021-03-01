@@ -64,6 +64,13 @@ class LinebotController < ApplicationController
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
               data = URI.encode "https://www.google.com/maps/search/?api=1&query=#{hash[:results][0][:name]}&query_place_id=#{hash[:results][0][:place_id]}"
+              client.reply_message(event['replyToken'], {
+                type: 'text',
+                text: data
+              });
+            when 'テスト'
+              message = change_msg(message)
+              data = message.symbolize_keys
               logger.debug(data)
               client.reply_message(event['replyToken'], {
                 type: 'text',
