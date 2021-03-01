@@ -231,20 +231,6 @@ class LinebotController < ApplicationController
                     "wrap": true
                   }
                 ]
-              },
-              "footer": {
-                "type": "box",
-                "layout": "horizontal",
-                "contents": [
-                  {
-                    "type": "button",
-                    "style": "primary",
-                    "action": {
-                      "type": "uri",
-                      "label": "Go",
-                      }
-                  }
-                ]
               }
             },
             {
