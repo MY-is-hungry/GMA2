@@ -62,10 +62,11 @@ class LinebotController < ApplicationController
             when 'ラーメン'
               url = URI.encode "#{ENV['G_PLACE_URL']}query=ラーメン&location=#{user.start_lat},#{user.start_lng}&radius=10000&radius=1500&key=#{ENV['G_API']}"
               response = open(url)
+              logger.debug(response)
               data = JSON.parse(response.read, {symbolize_names: true})
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: data
+                text: response
               });
               
             else
