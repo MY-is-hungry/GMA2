@@ -232,6 +232,10 @@ class LinebotController < ApplicationController
                 {
                   "type": "text",
                   "text": "world"
+                },
+                {
+                  "type": "text",
+                  "text": "テスト"
                 }
               ]
             }
