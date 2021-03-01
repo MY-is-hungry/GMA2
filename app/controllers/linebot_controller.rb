@@ -242,8 +242,7 @@ class LinebotController < ApplicationController
                     "action": {
                       "type": "uri",
                       "label": "Go",
-                      "uri": "https://example.com"
-                    }
+                      }
                   }
                 ]
               }
@@ -271,7 +270,6 @@ class LinebotController < ApplicationController
                     "action": {
                       "type": "uri",
                       "label": "Go",
-                      "uri": "https://example.com"
                     }
                   }
                 ]
