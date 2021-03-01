@@ -217,8 +217,7 @@ class LinebotController < ApplicationController
         return result
       when "テスト"
         result = {
-          "type": "carousel",
-          "altText": "this is a flex message",
+          "type": "flex",
           "contents": [
             {
               "type": "bubble",
