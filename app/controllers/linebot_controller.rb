@@ -50,7 +50,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], message);
               
             when '通勤距離'
-              response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&language=ja&key=" + ENV['G_API'])
+              response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               time = data[:routes][0][:legs][0][:duration][:text]
               
@@ -60,7 +60,7 @@ class LinebotController < ApplicationController
               });
               
             when 'ラーメン'
-              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&key=" + ENV['G_API']
+              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
               data = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][0][:name]}&query_place_id=#{hash[:results][0][:place_id]}"
@@ -115,7 +115,7 @@ class LinebotController < ApplicationController
                 
             elsif user.arrival_lat.nil? && user.arrival_lng.nil?
               user.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
-              response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&key=#{ENV['G_API']}&language=ja")
+              response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               time = data[:routes][0][:legs][0][:duration][:text]
               
@@ -156,7 +156,7 @@ class LinebotController < ApplicationController
     def change_msg(msg)
       case msg
       when "おはよう"
-        response = open(ENV['W_URL'] + "?q=Aichi&APPID=#{ENV['W_API']}")
+        response = open(ENV['W_URL'] + "?q=Aichi&APPID=" + ENV['W_KEY'])
         #JSONデータ(response)をハッシュ化
         data = JSON.parse(response.read, {symbolize_names: true})
         result = weather_text(data)
@@ -529,10 +529,6 @@ class LinebotController < ApplicationController
     end
     
     private
-    
-    def user_params
-      params.require(:user).permit(:line_id)
-    end
 
     def client
       @client ||= Line::Bot::Client.new { |config|
