@@ -71,14 +71,7 @@ class LinebotController < ApplicationController
             when 'テスト'
               data = change_msg(message)
               logger.debug(data)
-              client.reply_message(event['replyToken'], {
-                "type": "template",
-                "altText": "this is a carousel template",
-                "template": {
-                  "type": "carousel",
-                  "columns": columns
-                }
-              })
+              client.reply_message(event['replyToken'], message)
               
             else
               message = {
@@ -224,67 +217,44 @@ class LinebotController < ApplicationController
         return result
       when "テスト"
         result = {
-          "type": "carousel",
-          "contents": [
-            {
-              "type": "bubble",
-              "body": {
-                "type": "box",
-                "layout": "horizontal",
-                "contents": [
-                  {
-                    "type": "text",
-                    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    "wrap": true
-                  }
-                ]
-              },
-              "footer": {
-                "type": "box",
-                "layout": "horizontal",
-                "contents": [
-                  {
-                    "type": "button",
-                    "style": "primary",
-                    "action": {
-                      "type": "uri",
-                      "label": "Go",
-                      "uri": "https://example.com"
-                    }
-                  }
-                ]
+          "type": "bubble",
+          "header": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "Header text"
               }
-            },
-            {
-              "type": "bubble",
-              "body": {
-                "type": "box",
-                "layout": "horizontal",
-                "contents": [
-                  {
-                    "type": "text",
-                    "text": "Hello, World!",
-                    "wrap": true
-                  }
-                ]
-              },
-              "footer": {
-                "type": "box",
-                "layout": "horizontal",
-                "contents": [
-                  {
-                    "type": "button",
-                    "style": "primary",
-                    "action": {
-                      "type": "uri",
-                      "label": "Go",
-                      "uri": "https://example.com"
-                    }
-                  }
-                ]
+            ]
+          },
+          "hero": {
+            "type": "image",
+            "url": "https://example.com/flex/images/image.jpg"
+          },
+          "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "Body text"
               }
-            }
-          ]
+            ]
+          },
+          "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "Footer text"
+              }
+            ]
+          },
+          "styles": {
+            "comment": "See the example of a bubble style object"
+          }
         }
         return result
       end
