@@ -71,7 +71,14 @@ class LinebotController < ApplicationController
             when 'テスト'
               data = change_msg(message)
               logger.debug(data)
-              client.reply_message(event['replyToken'], data)
+              client.reply_message(event['replyToken'], {
+                "type": "template",
+                "altText": "this is a carousel template",
+                "template": {
+                  "type": "carousel",
+                  "columns": columns
+                }
+              })
               
             else
               message = {
