@@ -224,7 +224,7 @@ class LinebotController < ApplicationController
             "contents": [
               {
                 "type": "bubble",
-                "size": "micro",
+                "size": "kilo",
                 "hero": {
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip10.jpg",
@@ -310,7 +310,7 @@ class LinebotController < ApplicationController
               },
               {
                 "type": "bubble",
-                "size": "micro",
+                "size": "kilo",
                 "hero": {
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip11.jpg",
@@ -396,7 +396,7 @@ class LinebotController < ApplicationController
               },
               {
                 "type": "bubble",
-                "size": "micro",
+                "size": "kilo",
                 "hero": {
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip12.jpg",
