@@ -223,11 +223,27 @@ class LinebotController < ApplicationController
               "type": "bubble",
               "body": {
                 "type": "box",
+                "layout": "horizontal",
                 "contents": [
                   {
                     "type": "text",
                     "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                     "wrap": true
+                  }
+                ]
+              },
+              "footer": {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "button",
+                    "style": "primary",
+                    "action": {
+                      "type": "uri",
+                      "label": "Go",
+                      "uri": "https://example.com"
+                    }
                   }
                 ]
               }
@@ -236,11 +252,27 @@ class LinebotController < ApplicationController
               "type": "bubble",
               "body": {
                 "type": "box",
+                "layout": "horizontal",
                 "contents": [
                   {
                     "type": "text",
                     "text": "Hello, World!",
                     "wrap": true
+                  }
+                ]
+              },
+              "footer": {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "button",
+                    "style": "primary",
+                    "action": {
+                      "type": "uri",
+                      "label": "Go",
+                      "uri": "https://example.com"
+                    }
                   }
                 ]
               }
