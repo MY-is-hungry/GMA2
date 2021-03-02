@@ -32,22 +32,22 @@ class LinebotController < ApplicationController
               message = change_msg(message)
               result_msg = message.join
               client.reply_message(event['replyToken'],
-                [{type: "text", text: result_msg}, {type: "text", text: 'テスト'}]);
+                [{type: "text", text: result_msg}, {type: "text", text: 'テスト'}])
                 
             when '通勤設定'
             　user.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
-              client.reply_message(event['replyToken'], message);
+              client.reply_message(event['replyToken'], message)
               
             when '出発地点変更'
             　user.update_attributes(start_lat: nil,start_lng: nil)
               message = change_msg(message)
-              client.reply_message(event['replyToken'], message);
+              client.reply_message(event['replyToken'], message)
               
             when '到着地点変更'
               user.update_attributes(arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
-              client.reply_message(event['replyToken'], message);
+              client.reply_message(event['replyToken'], message)
               
             when '通勤距離'
               response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
@@ -57,17 +57,21 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "出発地点から到着地点までの所要時間は、#{time}です。"
-              });
+              })
               
             when 'ラーメン'
               url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
-              data = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][0][:name]}&query_place_id=#{hash[:results][0][:place_id]}"
-              client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: data
-              });
+              #工事中
+              hash.each do |h|
+                data = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][0][:name]}&query_place_id=#{hash[:results][0][:place_id]}"
+                client.reply_message(event['replyToken'], {
+                  type: 'text',
+                  text: data
+                })
+              end
+              #工事中
             when 'テスト'
               data = change_msg(message)
               logger.debug(data)
