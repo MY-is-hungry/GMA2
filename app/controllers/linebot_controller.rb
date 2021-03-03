@@ -64,6 +64,7 @@ class LinebotController < ApplicationController
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
               #工事中
+              data = Array.new
               (0..5).each do |n|
                 data[n] = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
                 
