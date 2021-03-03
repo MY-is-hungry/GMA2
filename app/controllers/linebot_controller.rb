@@ -64,14 +64,12 @@ class LinebotController < ApplicationController
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
               #工事中
-              hash[:results].each do |h|
-                (0..5).each do |n|
-                  data = URI.encode ENV['G_STORE_URL'] + "&query=#{h[n][:name]}&query_place_id=#{h[n][:place_id]}"
-                  client.reply_message(event['replyToken'], {
-                    type: 'text',
-                    text: data
-                  })
-                end
+              (0..5).each do |n|
+                data = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
+                client.reply_message(event['replyToken'], {
+                  type: 'text',
+                  text: data
+                })
               end
               #工事中
             when 'テスト'
