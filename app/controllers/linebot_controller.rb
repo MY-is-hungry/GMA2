@@ -65,7 +65,7 @@ class LinebotController < ApplicationController
               hash = JSON.parse(response.read, {symbolize_names: true})
               #工事中
               hash.each do |h|
-                data = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][0][:name]}&query_place_id=#{hash[:results][0][:place_id]}"
+                data = URI.encode ENV['G_STORE_URL'] + "&query=#{h[:results][0][:name]}&query_place_id=#{h[:results][0][:place_id]}"
                 client.reply_message(event['replyToken'], {
                   type: 'text',
                   text: data
@@ -141,21 +141,6 @@ class LinebotController < ApplicationController
       head :ok
     end
     
-    # def send_destination(msg)
-    #   if msg == '通勤設定'
-    #     return true
-    #   else
-    #     false
-    #   end
-    # end
-    
-    # def send_msg(msg)
-    #   if msg == 'おはよう'
-    #     return true
-    #   else
-    #     false
-    #   end
-    # end
 
     def change_msg(msg)
       case msg
