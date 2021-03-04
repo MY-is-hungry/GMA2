@@ -231,7 +231,7 @@ class LinebotController < ApplicationController
                   "contents": [
                     {
                       "type": "text",
-                      "text": "Brown Cafe",
+                      "text": "#{data[0][:name]}",
                       "weight": "bold",
                       "size": "sm",
                       "wrap": true
@@ -255,7 +255,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "クチコミ x件",
+                          "text": "クチコミ #{data[0][:review]}件",
                           "flex": 0,
                           "margin": "md",
                           "size": "xs",
@@ -274,7 +274,7 @@ class LinebotController < ApplicationController
                           "contents": [
                             {
                               "type": "text",
-                              "text": "場所",
+                              "text": "#{data[0][:address]}",
                               "wrap": true,
                               "color": "#8c8c8c",
                               "size": "xs",
@@ -297,7 +297,7 @@ class LinebotController < ApplicationController
                       "action": {
                         "type": "uri",
                         "label": "ここにする！",
-                        "uri": "http://linecorp.com/"
+                        "uri": "#{data[0][:url]}"
                       }
                     }
                   ]
@@ -319,7 +319,7 @@ class LinebotController < ApplicationController
                   "contents": [
                     {
                       "type": "text",
-                      "text": "Brow&Cony's Restaurant",
+                      "text": "#{data[1][:name]}",
                       "weight": "bold",
                       "size": "sm",
                       "wrap": true
@@ -335,7 +335,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "4.0",
+                          "text": "#{data[1][:rating]}",
                           "size": "xs",
                           "color": "#8c8c8c",
                           "margin": "md",
@@ -343,7 +343,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "クチコミ 111件",
+                          "text": "クチコミ #{data[1][:review]}件",
                           "color": "#8c8c8c",
                           "margin": "md",
                           "size": "xs",
@@ -362,7 +362,7 @@ class LinebotController < ApplicationController
                           "contents": [
                             {
                               "type": "text",
-                              "text": "場所",
+                              "text": "#{data[1][:address]}",
                               "wrap": true,
                               "color": "#8c8c8c",
                               "size": "xs",
@@ -385,7 +385,7 @@ class LinebotController < ApplicationController
                       "action": {
                         "type": "uri",
                         "label": "君に決めた！",
-                        "uri": "http://linecorp.com/"
+                        "uri": "#{data[1][:url]}"
                       }
                     }
                   ]
@@ -407,9 +407,10 @@ class LinebotController < ApplicationController
                   "contents": [
                     {
                       "type": "text",
-                      "text": "Tata",
+                      "text": "#{data[2][:name]}",
                       "weight": "bold",
-                      "size": "sm"
+                      "size": "sm",
+                      "wrap": true
                     },
                     {
                       "type": "box",
@@ -422,7 +423,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "4.0",
+                          "text": "#{data[2][:rating]}",
                           "size": "xs",
                           "color": "#8c8c8c",
                           "margin": "md",
@@ -430,7 +431,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "クチコミ 111件",
+                          "text": "クチコミ #{data[2][:review]}件",
                           "margin": "md",
                           "size": "xs",
                           "color": "#8c8c8c",
@@ -449,7 +450,7 @@ class LinebotController < ApplicationController
                           "contents": [
                             {
                               "type": "text",
-                              "text": "場所",
+                              "text": "#{data[2][:address]}",
                               "wrap": true,
                               "color": "#8c8c8c",
                               "size": "xs",
@@ -472,7 +473,7 @@ class LinebotController < ApplicationController
                       "action": {
                         "type": "uri",
                         "label": "すき！",
-                        "uri": "http://linecorp.com/"
+                        "uri": "#{data[2][:url]}"
                       }
                     }
                   ]
@@ -494,7 +495,10 @@ class LinebotController < ApplicationController
                   "contents": [
                     {
                       "type": "text",
-                      "text": "4"
+                      "text": "#{data[3][:name]}",
+                      "weight": "bold",
+                      "size": "sm",
+                      "wrap": true
                     },
                     {
                       "type": "box",
@@ -507,7 +511,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "4.0",
+                          "text": "#{data[3][:rating]}",
                           "margin": "md",
                           "size": "xs",
                           "color": "#8c8c8c",
@@ -515,7 +519,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "クチコミ 111件",
+                          "text": "クチコミ #{data[3][:review]}件",
                           "margin": "md",
                           "size": "xs",
                           "flex": 0,
@@ -533,7 +537,7 @@ class LinebotController < ApplicationController
                           "contents": [
                             {
                               "type": "text",
-                              "text": "場所",
+                              "text": "#{data[3][:address]}",
                               "color": "#8c8c8c",
                               "size": "xs",
                               "flex": 5,
@@ -556,7 +560,7 @@ class LinebotController < ApplicationController
                       "action": {
                         "type": "uri",
                         "label": "寄っちゃう！",
-                        "uri": "http://linecorp.com/"
+                        "uri": "#{data[3][:url]}"
                       }
                     }
                   ]
