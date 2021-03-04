@@ -208,7 +208,7 @@ class LinebotController < ApplicationController
     
     def change_msg(msg,data)
       case msg
-      when "テスト"
+      when "ラーメン"
         result = {
           "type": "flex",
           "altText": "this is a flex message",
