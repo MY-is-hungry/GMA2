@@ -69,7 +69,7 @@ class LinebotController < ApplicationController
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
                 data[n] = {url: url, name: hash[:results][n][:name], rating: hash[:results][n][:rating], review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address]}
               end
-              message = change_msg(message,data)
+              message = change_message(message,data)
               logger.debug(message)
               client.reply_message(event['replyToken'], message)
             when 'テスト'
@@ -206,7 +206,7 @@ class LinebotController < ApplicationController
       end
     end
     
-    def change_msg(msg,data)
+    def change_message(msg,data)
       case msg
       when "ラーメン"
         result = {
