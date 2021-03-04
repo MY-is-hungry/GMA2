@@ -217,7 +217,7 @@ class LinebotController < ApplicationController
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip10.jpg",
                   "size": "full",
                   "aspectMode": "cover",
-                  "aspectRatio": "320:250"
+                  "aspectRatio": "400:213"
                 },
                 "body": {
                   "type": "box",
@@ -305,7 +305,7 @@ class LinebotController < ApplicationController
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip11.jpg",
                   "size": "full",
                   "aspectMode": "cover",
-                  "aspectRatio": "320:260"
+                  "aspectRatio": "380:213"
                 },
                 "body": {
                   "type": "box",
@@ -393,7 +393,7 @@ class LinebotController < ApplicationController
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip12.jpg",
                   "size": "full",
                   "aspectMode": "cover",
-                  "aspectRatio": "320:270"
+                  "aspectRatio": "370:213"
                 },
                 "body": {
                   "type": "box",
@@ -479,7 +479,7 @@ class LinebotController < ApplicationController
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
                   "size": "full",
-                  "aspectRatio": "320:280",
+                  "aspectRatio": "350:213",
                   "aspectMode": "cover"
                 },
                 "body": {
