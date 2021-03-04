@@ -69,8 +69,8 @@ class LinebotController < ApplicationController
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
                 data[n] = {url: url, name: hash[:results][n][:name], rating: hash[:results][n][:rating], review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address]}
               end
-              message = change_message(message,data)
-              logger.debug(message)
+              logger.debug(data)
+              message = change_msg(message,data)
               client.reply_message(event['replyToken'], message)
             when 'テスト'
               data = change_msg(message)
@@ -206,7 +206,7 @@ class LinebotController < ApplicationController
       end
     end
     
-    def change_message(msg,data)
+    def change_msg(msg,data)
       case msg
       when "ラーメン"
         result = {
@@ -582,7 +582,10 @@ class LinebotController < ApplicationController
                   "contents": [
                     {
                       "type": "text",
-                      "text": "5"
+                      "text": "#{data[4][:name]}",
+                      "weight": "bold",
+                      "size": "sm",
+                      "wrap": true
                     },
                     {
                       "type": "box",
@@ -595,7 +598,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "4.0",
+                          "text": "#{data[4][:rating]}",
                           "color": "#8c8c8c",
                           "margin": "md",
                           "size": "xs",
@@ -603,7 +606,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "クチコミ 111件",
+                          "text": "クチコミ #{data[4][:review]}件",
                           "color": "#8c8c8c",
                           "margin": "md",
                           "size": "xs",
@@ -621,7 +624,7 @@ class LinebotController < ApplicationController
                           "contents": [
                             {
                               "type": "text",
-                              "text": "場所",
+                              "text": "#{data[4][:address]}",
                               "color": "#8c8c8c",
                               "size": "xs",
                               "flex": 5,
@@ -644,7 +647,7 @@ class LinebotController < ApplicationController
                       "action": {
                         "type": "uri",
                         "label": "いくぅ！",
-                        "uri": "http://linecorp.com/"
+                        "uri": "#{data[4][:url]}"
                       }
                     }
                   ]
