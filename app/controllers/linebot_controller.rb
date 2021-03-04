@@ -59,7 +59,7 @@ class LinebotController < ApplicationController
                 text: "出発地点から到着地点までの所要時間は、#{time}です。"
               })
               
-            when 'ラーメン'
+            when 'ラーメン','カフェ'
               url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
@@ -73,6 +73,8 @@ class LinebotController < ApplicationController
               end
               message = change_msg(message,data)
               client.reply_message(event['replyToken'], message)
+              
+              
             when 'テスト'
               data = change_msg(message)
               client.reply_message(event['replyToken'], data)
