@@ -205,19 +205,19 @@ class LinebotController < ApplicationController
       when "テスト"
         result = {
           "type": "flex",
-          "altText": "フレックスメッセージ",
+          "altText": "this is a flex message",
           "contents": {
             "type": "carousel",
             "contents": [
               {
                 "type": "bubble",
-                "size": "micro",
+                "size": "kilo",
                 "hero": {
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip10.jpg",
                   "size": "full",
                   "aspectMode": "cover",
-                  "aspectRatio": "400:213"
+                  "aspectRatio": "320:213"
                 },
                 "body": {
                   "type": "box",
@@ -299,13 +299,13 @@ class LinebotController < ApplicationController
               },
               {
                 "type": "bubble",
-                "size": "micro",
+                "size": "kilo",
                 "hero": {
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip11.jpg",
                   "size": "full",
                   "aspectMode": "cover",
-                  "aspectRatio": "380:213"
+                  "aspectRatio": "320:213"
                 },
                 "body": {
                   "type": "box",
@@ -387,13 +387,13 @@ class LinebotController < ApplicationController
               },
               {
                 "type": "bubble",
-                "size": "micro",
+                "size": "kilo",
                 "hero": {
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip12.jpg",
                   "size": "full",
                   "aspectMode": "cover",
-                  "aspectRatio": "370:213"
+                  "aspectRatio": "320:213"
                 },
                 "body": {
                   "type": "box",
@@ -474,12 +474,12 @@ class LinebotController < ApplicationController
               },
               {
                 "type": "bubble",
-                "size": "micro",
+                "size": "kilo",
                 "hero": {
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
                   "size": "full",
-                  "aspectRatio": "350:213",
+                  "aspectRatio": "320:213",
                   "aspectMode": "cover"
                 },
                 "body": {
@@ -558,7 +558,7 @@ class LinebotController < ApplicationController
               },
               {
                 "type": "bubble",
-                "size": "micro",
+                "size": "kilo",
                 "hero": {
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
