@@ -63,6 +63,7 @@ class LinebotController < ApplicationController
               url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
+              logger.debug(hash)
               data = Array.new
               (0..4).each do |n|
                 data[n] = Hash.new
