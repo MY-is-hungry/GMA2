@@ -65,11 +65,9 @@ class LinebotController < ApplicationController
               hash = JSON.parse(response.read, {symbolize_names: true})
               data = Array.new
               (0..4).each do |n|
-                data[n][:url] = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
-                data[n][:name] = hash[:results][n][:name]
-                data[n][:rating] = hash[:results][n][:rating]
-                data[n][:review] = hash[:results][n][:user_ratings_total]
-                data[n][:address] = hash[:results][n][:formatted_address]
+                data[n] = Hash.new
+                url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
+                data[n] = {url: url, name: hash[:results][n][:name], rating: hash[:results][n][:rating], review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address]}
               end
               logger.debug(data)
               # client.reply_message(event['replyToken'], 
