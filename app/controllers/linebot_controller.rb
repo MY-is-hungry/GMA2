@@ -63,14 +63,18 @@ class LinebotController < ApplicationController
               url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
-              logger.debug(hash)
               data = Array.new
               (0..4).each do |n|
-                data[n] = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
+                data[n][:url] = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
+                data[n][:name] = hash[:results][n][:name]
+                data[n][:rating] = hash[:results][n][:rating]
+                data[n][:review] = hash[:results][n][:user_ratings_total]
+                data[n][:address] = hash[:results][n][:formatted_address]
               end
-              client.reply_message(event['replyToken'], 
-                [{type: 'text',text: data[0]},{type: 'text',text: data[1]},
-                {type: 'text',text: data[2]},{type: 'text',text: data[3]},{type: 'text',text: data[4]}])
+              logger.debug(data)
+              # client.reply_message(event['replyToken'], 
+              #   [{type: 'text',text: data[0]},{type: 'text',text: data[1]},
+              #   {type: 'text',text: data[2]},{type: 'text',text: data[3]},{type: 'text',text: data[4]}])
             when 'テスト'
               data = change_msg(message)
               client.reply_message(event['replyToken'], data)
