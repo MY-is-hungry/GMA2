@@ -62,14 +62,13 @@ class LinebotController < ApplicationController
             when 'ラーメン'
               url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
               response = open(url)
-              logger.debug(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
-              logger.debug(hash)
               data = Array.new
               (0..4).each do |n|
                 data[n] = Hash.new
+                photo = ENV['G_PHOTO_URL'] + "photoreference=#{hash[:results][n][:photos][:photo_reference]}&key=" + ENV['G_KEY']
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
-                data[n] = {url: url, name: hash[:results][n][:name], rating: hash[:results][n][:rating], review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address]}
+                data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating], review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url}
               end
               message = change_msg(message,data)
               client.reply_message(event['replyToken'], message)
@@ -221,7 +220,7 @@ class LinebotController < ApplicationController
                 "size": "kilo",
                 "hero": {
                   "type": "image",
-                  "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip10.jpg",
+                  "url": "#{data[0][:photo]}",
                   "size": "full",
                   "aspectMode": "cover",
                   "aspectRatio": "320:213"
@@ -309,7 +308,7 @@ class LinebotController < ApplicationController
                 "size": "kilo",
                 "hero": {
                   "type": "image",
-                  "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip11.jpg",
+                  "url": "#{data[1][:photo]}",
                   "size": "full",
                   "aspectMode": "cover",
                   "aspectRatio": "320:213"
@@ -397,7 +396,7 @@ class LinebotController < ApplicationController
                 "size": "kilo",
                 "hero": {
                   "type": "image",
-                  "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip12.jpg",
+                  "url": "#{data[2][:photo]}",
                   "size": "full",
                   "aspectMode": "cover",
                   "aspectRatio": "320:213"
@@ -485,7 +484,7 @@ class LinebotController < ApplicationController
                 "size": "kilo",
                 "hero": {
                   "type": "image",
-                  "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
+                  "url": "#{data[3][:photo]}",
                   "size": "full",
                   "aspectRatio": "320:213",
                   "aspectMode": "cover"
@@ -572,7 +571,7 @@ class LinebotController < ApplicationController
                 "size": "kilo",
                 "hero": {
                   "type": "image",
-                  "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
+                  "url": "#{data[4][:photo]}",
                   "aspectMode": "cover",
                   "size": "full",
                   "aspectRatio": "320:213"
