@@ -211,7 +211,7 @@ class LinebotController < ApplicationController
     
     def change_msg(msg,data)
       case msg
-      when "ラーメン"
+      when "ラーメン","カフェ"
         result = {
           "type": "flex",
           "altText": "#{msg}に寄り道",
