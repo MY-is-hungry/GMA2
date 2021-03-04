@@ -247,7 +247,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": data[0][:rating],
+                          "text": "#{data[0][:rating]}",
                           "size": "xs",
                           "color": "#8c8c8c",
                           "margin": "md",
