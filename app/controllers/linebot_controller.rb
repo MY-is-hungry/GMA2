@@ -205,7 +205,7 @@ class LinebotController < ApplicationController
       when "テスト"
         result = {
           "type": "flex",
-          "altText": "this is a flex message",
+          "altText": "フレックスメッセージ",
           "contents": {
             "type": "carousel",
             "contents": [
@@ -305,7 +305,7 @@ class LinebotController < ApplicationController
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip11.jpg",
                   "size": "full",
                   "aspectMode": "cover",
-                  "aspectRatio": "320:213"
+                  "aspectRatio": "320:260"
                 },
                 "body": {
                   "type": "box",
@@ -393,7 +393,7 @@ class LinebotController < ApplicationController
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip12.jpg",
                   "size": "full",
                   "aspectMode": "cover",
-                  "aspectRatio": "320:213"
+                  "aspectRatio": "320:270"
                 },
                 "body": {
                   "type": "box",
@@ -479,7 +479,7 @@ class LinebotController < ApplicationController
                   "type": "image",
                   "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
                   "size": "full",
-                  "aspectRatio": "320:213",
+                  "aspectRatio": "320:280",
                   "aspectMode": "cover"
                 },
                 "body": {
