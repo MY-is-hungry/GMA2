@@ -70,9 +70,8 @@ class LinebotController < ApplicationController
                 data[n] = {url: url, name: hash[:results][n][:name], rating: hash[:results][n][:rating], review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address]}
               end
               logger.debug(data)
-              # client.reply_message(event['replyToken'], 
-              #   [{type: 'text',text: data[0]},{type: 'text',text: data[1]},
-              #   {type: 'text',text: data[2]},{type: 'text',text: data[3]},{type: 'text',text: data[4]}])
+              message = change_msg(message,data)
+              client.reply_message(event['replyToken'], message)
             when 'テスト'
               data = change_msg(message)
               client.reply_message(event['replyToken'], data)
@@ -204,6 +203,11 @@ class LinebotController < ApplicationController
           }
         }
         return result
+      end
+    end
+    
+    def change_msg(msg,data)
+      case msg
       when "テスト"
         result = {
           "type": "flex",
@@ -243,7 +247,7 @@ class LinebotController < ApplicationController
                         },
                         {
                           "type": "text",
-                          "text": "4.0",
+                          "text": data[0][:rating],
                           "size": "xs",
                           "color": "#8c8c8c",
                           "margin": "md",
