@@ -67,10 +67,10 @@ class LinebotController < ApplicationController
               data = Array.new
               (0..4).each do |n|
                 data[n] = Hash.new
-                if hash[:results][n][:photos][0][:photo_reference].exists?
-                  photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
-                else
+                if hash[:results][n][:photos][0][:photo_reference].nil?
                   photo = "/assets/images/no_image.png"
+                else
+                  photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
                 end
                 logger.debug(photo)
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
