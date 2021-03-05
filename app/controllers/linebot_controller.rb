@@ -71,7 +71,7 @@ class LinebotController < ApplicationController
                 data[n] = Hash.new
                 #店の写真をPlaces Photoから取り出す
                 if hash[:results][n][:photos][0][:photo_reference].nil?
-                  photo = "/assets/images/no_image.png"
+                  photo = "assets/images/no_image.png"
                 else
                   photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
                 end
