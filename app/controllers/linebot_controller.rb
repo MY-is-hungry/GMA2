@@ -59,22 +59,31 @@ class LinebotController < ApplicationController
                 text: "出発地点から到着地点までの所要時間は、#{time}です。"
               })
               
-            when 'ラーメン'
-              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&key=" + ENV['G_KEY']
+            when 'ラーメン','カフェ'
+              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
-              #工事中
-              hash.each do |h|
-                data = URI.encode ENV['G_STORE_URL'] + "&query=#{h[:results][0][:name]}&query_place_id=#{h[:results][0][:place_id]}"
-                client.reply_message(event['replyToken'], {
-                  type: 'text',
-                  text: data
-                })
+              logger.debug(hash)
+              data = Array.new
+              (0..4).each do |n|
+                data[n] = Hash.new
+                if hash[:results][n][:photos][0][:photo_reference]
+                  photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
+                else
+                  photo = "/assets/images/no_image.png"
+                end
+                logger.debug(photo)
+                url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
+                data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating], 
+                　review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url
+                }
               end
-              #工事中
+              message = change_msg(message,data)
+              client.reply_message(event['replyToken'], message)
+              
+              
             when 'テスト'
               data = change_msg(message)
-              logger.debug(data)
               client.reply_message(event['replyToken'], data)
               
             else
@@ -204,10 +213,15 @@ class LinebotController < ApplicationController
           }
         }
         return result
-      when "テスト"
+      end
+    end
+    
+    def change_msg(msg,data)
+      case msg
+      when "ラーメン","カフェ"
         result = {
           "type": "flex",
-          "altText": "this is a flex message",
+          "altText": "#{msg}に寄り道",
           "contents": {
             "type": "carousel",
             "contents": [
@@ -216,7 +230,7 @@ class LinebotController < ApplicationController
                 "size": "kilo",
                 "hero": {
                   "type": "image",
-                  "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip10.jpg",
+                  "url": "#{data[0][:photo]}",
                   "size": "full",
                   "aspectMode": "cover",
                   "aspectRatio": "320:213"
@@ -227,7 +241,7 @@ class LinebotController < ApplicationController
                   "contents": [
                     {
                       "type": "text",
-                      "text": "Brown Cafe",
+                      "text": "#{data[0][:name]}",
                       "weight": "bold",
                       "size": "sm",
                       "wrap": true
@@ -242,32 +256,20 @@ class LinebotController < ApplicationController
                           "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
                         },
                         {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                        },
-                        {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                        },
-                        {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                        },
-                        {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gray_star_28.png"
-                        },
-                        {
                           "type": "text",
-                          "text": "4.0",
+                          "text": "#{data[0][:rating]}",
                           "size": "xs",
                           "color": "#8c8c8c",
                           "margin": "md",
                           "flex": 0
+                        },
+                        {
+                          "type": "text",
+                          "text": "クチコミ #{data[0][:review]}件",
+                          "flex": 0,
+                          "margin": "md",
+                          "size": "xs",
+                          "color": "#8c8c8c"
                         }
                       ]
                     },
@@ -282,7 +284,7 @@ class LinebotController < ApplicationController
                           "contents": [
                             {
                               "type": "text",
-                              "text": "東京旅行",
+                              "text": "#{data[0][:address]}",
                               "wrap": true,
                               "color": "#8c8c8c",
                               "size": "xs",
@@ -295,6 +297,20 @@ class LinebotController < ApplicationController
                   ],
                   "spacing": "sm",
                   "paddingAll": "13px"
+                },
+                "footer": {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "uri",
+                        "label": "ここにする！",
+                        "uri": "#{data[0][:url]}"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -302,7 +318,7 @@ class LinebotController < ApplicationController
                 "size": "kilo",
                 "hero": {
                   "type": "image",
-                  "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip11.jpg",
+                  "url": "#{data[1][:photo]}",
                   "size": "full",
                   "aspectMode": "cover",
                   "aspectRatio": "320:213"
@@ -313,7 +329,7 @@ class LinebotController < ApplicationController
                   "contents": [
                     {
                       "type": "text",
-                      "text": "Brow&Cony's Restaurant",
+                      "text": "#{data[1][:name]}",
                       "weight": "bold",
                       "size": "sm",
                       "wrap": true
@@ -328,31 +344,19 @@ class LinebotController < ApplicationController
                           "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
                         },
                         {
-                          "type": "icon",
+                          "type": "text",
+                          "text": "#{data[1][:rating]}",
                           "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                        },
-                        {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                        },
-                        {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                        },
-                        {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gray_star_28.png"
+                          "color": "#8c8c8c",
+                          "margin": "md",
+                          "flex": 0
                         },
                         {
                           "type": "text",
-                          "text": "4.0",
-                          "size": "sm",
+                          "text": "クチコミ #{data[1][:review]}件",
                           "color": "#8c8c8c",
                           "margin": "md",
+                          "size": "xs",
                           "flex": 0
                         }
                       ]
@@ -368,11 +372,11 @@ class LinebotController < ApplicationController
                           "contents": [
                             {
                               "type": "text",
-                              "text": "東京旅行",
+                              "text": "#{data[1][:address]}",
                               "wrap": true,
                               "color": "#8c8c8c",
                               "size": "xs",
-                              "flex": 5
+                              "flex": 0
                             }
                           ]
                         }
@@ -381,6 +385,20 @@ class LinebotController < ApplicationController
                   ],
                   "spacing": "sm",
                   "paddingAll": "13px"
+                },
+                "footer": {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "uri",
+                        "label": "君に決めた！",
+                        "uri": "#{data[1][:url]}"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -388,7 +406,7 @@ class LinebotController < ApplicationController
                 "size": "kilo",
                 "hero": {
                   "type": "image",
-                  "url": "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip12.jpg",
+                  "url": "#{data[2][:photo]}",
                   "size": "full",
                   "aspectMode": "cover",
                   "aspectRatio": "320:213"
@@ -399,9 +417,10 @@ class LinebotController < ApplicationController
                   "contents": [
                     {
                       "type": "text",
-                      "text": "Tata",
+                      "text": "#{data[2][:name]}",
                       "weight": "bold",
-                      "size": "sm"
+                      "size": "sm",
+                      "wrap": true
                     },
                     {
                       "type": "box",
@@ -413,31 +432,19 @@ class LinebotController < ApplicationController
                           "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
                         },
                         {
-                          "type": "icon",
+                          "type": "text",
+                          "text": "#{data[2][:rating]}",
                           "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                        },
-                        {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                        },
-                        {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                        },
-                        {
-                          "type": "icon",
-                          "size": "xs",
-                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gray_star_28.png"
+                          "color": "#8c8c8c",
+                          "margin": "md",
+                          "flex": 0
                         },
                         {
                           "type": "text",
-                          "text": "4.0",
-                          "size": "sm",
-                          "color": "#8c8c8c",
+                          "text": "クチコミ #{data[2][:review]}件",
                           "margin": "md",
+                          "size": "xs",
+                          "color": "#8c8c8c",
                           "flex": 0
                         }
                       ]
@@ -453,7 +460,7 @@ class LinebotController < ApplicationController
                           "contents": [
                             {
                               "type": "text",
-                              "text": "東京旅行",
+                              "text": "#{data[2][:address]}",
                               "wrap": true,
                               "color": "#8c8c8c",
                               "size": "xs",
@@ -466,6 +473,194 @@ class LinebotController < ApplicationController
                   ],
                   "spacing": "sm",
                   "paddingAll": "13px"
+                },
+                "footer": {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "uri",
+                        "label": "すき！",
+                        "uri": "#{data[2][:url]}"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "bubble",
+                "size": "kilo",
+                "hero": {
+                  "type": "image",
+                  "url": "#{data[3][:photo]}",
+                  "size": "full",
+                  "aspectRatio": "320:213",
+                  "aspectMode": "cover"
+                },
+                "body": {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "#{data[3][:name]}",
+                      "weight": "bold",
+                      "size": "sm",
+                      "wrap": true
+                    },
+                    {
+                      "type": "box",
+                      "layout": "baseline",
+                      "contents": [
+                        {
+                          "type": "icon",
+                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png",
+                          "size": "xs"
+                        },
+                        {
+                          "type": "text",
+                          "text": "#{data[3][:rating]}",
+                          "margin": "md",
+                          "size": "xs",
+                          "color": "#8c8c8c",
+                          "flex": 0
+                        },
+                        {
+                          "type": "text",
+                          "text": "クチコミ #{data[3][:review]}件",
+                          "margin": "md",
+                          "size": "xs",
+                          "flex": 0,
+                          "color": "#8c8c8c"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "box",
+                          "layout": "baseline",
+                          "contents": [
+                            {
+                              "type": "text",
+                              "text": "#{data[3][:address]}",
+                              "color": "#8c8c8c",
+                              "size": "xs",
+                              "flex": 5,
+                              "wrap": true
+                            }
+                          ],
+                          "spacing": "sm"
+                        }
+                      ]
+                    }
+                  ],
+                  "spacing": "sm"
+                },
+                "footer": {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "uri",
+                        "label": "寄っちゃう！",
+                        "uri": "#{data[3][:url]}"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "bubble",
+                "size": "kilo",
+                "hero": {
+                  "type": "image",
+                  "url": "#{data[4][:photo]}",
+                  "aspectMode": "cover",
+                  "size": "full",
+                  "aspectRatio": "320:213"
+                },
+                "body": {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "#{data[4][:name]}",
+                      "weight": "bold",
+                      "size": "sm",
+                      "wrap": true
+                    },
+                    {
+                      "type": "box",
+                      "layout": "baseline",
+                      "contents": [
+                        {
+                          "type": "icon",
+                          "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png",
+                          "size": "xs"
+                        },
+                        {
+                          "type": "text",
+                          "text": "#{data[4][:rating]}",
+                          "color": "#8c8c8c",
+                          "margin": "md",
+                          "size": "xs",
+                          "flex": 0
+                        },
+                        {
+                          "type": "text",
+                          "text": "クチコミ #{data[4][:review]}件",
+                          "color": "#8c8c8c",
+                          "margin": "md",
+                          "size": "xs",
+                          "flex": 0
+                        }
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "box",
+                          "layout": "baseline",
+                          "contents": [
+                            {
+                              "type": "text",
+                              "text": "#{data[4][:address]}",
+                              "color": "#8c8c8c",
+                              "size": "xs",
+                              "flex": 5,
+                              "wrap": true
+                            }
+                          ],
+                          "spacing": "sm"
+                        }
+                      ]
+                    }
+                  ],
+                  "spacing": "sm"
+                },
+                "footer": {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "uri",
+                        "label": "いくぅ！",
+                        "uri": "#{data[4][:url]}"
+                      }
+                    }
+                  ]
                 }
               }
             ]
