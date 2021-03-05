@@ -60,19 +60,23 @@ class LinebotController < ApplicationController
               })
               
             when 'ラーメン','カフェ'
+              #検索ワードの周辺店舗を検索
               url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
               logger.debug(hash)
+              #配列にハッシュ化した店舗データを入れる（最大５件）
               data = Array.new
               (0..4).each do |n|
                 data[n] = Hash.new
-                if hash[:results][n][:photos][0][:photo_reference]
-                  photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
-                else
+                #店の写真をPlaces Photoから取り出す
+                if hash[:results][n][:photos][0][:photo_reference].nil?
                   photo = "/assets/images/no_image.png"
+                else
+                  photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
                 end
                 logger.debug(photo)
+                #経路用のGoogleMapURLをエンコード
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
                 data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating], 
                 　review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url
@@ -81,22 +85,16 @@ class LinebotController < ApplicationController
               message = change_msg(message,data)
               client.reply_message(event['replyToken'], message)
               
-              
             when 'テスト'
               data = change_msg(message)
               client.reply_message(event['replyToken'], data)
               
             else
-              message = {
-              type: 'text',
-              text: event.message['text']
-              }
-              client.reply_message(event['replyToken'], message)
+              client.reply_message(event['replyToken'], {type: 'text', text: event.message['そのコマンドは存在しないよ！']})
             end
           when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
             user_id = event['source']['userId']
             user = User.find_by(line_id: user_id)
-            
             if user.start_lat.nil? && user.start_lng.nil?
               if user.arrival_lat.nil? && user.arrival_lng.nil?
                 #スタート地点登録、更新
@@ -106,7 +104,6 @@ class LinebotController < ApplicationController
                   "text": "到着地点の位置情報を教えてください！",
                   "quickReply": {
                     "items": [
-                      
                       {
                         "type": "action",
                         "action": {
@@ -165,7 +162,6 @@ class LinebotController < ApplicationController
           "text": "出発地点の位置情報を教えてください！",
           "quickReply": {
             "items": [
-              
               {
                 "type": "action",
                 "action": {
@@ -183,7 +179,6 @@ class LinebotController < ApplicationController
           "text": "出発地点の位置情報を教えてください！",
           "quickReply": {
             "items": [
-              
               {
                 "type": "action",
                 "action": {
@@ -201,7 +196,6 @@ class LinebotController < ApplicationController
           "text": "到着地点の位置情報を教えてください！",
           "quickReply": {
             "items": [
-              
               {
                 "type": "action",
                 "action": {
