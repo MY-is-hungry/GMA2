@@ -67,10 +67,16 @@ class LinebotController < ApplicationController
               data = Array.new
               (0..4).each do |n|
                 data[n] = Hash.new
-                photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
+                if hash[:results][n][:photos][0][:photo_reference]
+                  photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
+                else
+                  photo = "/assets/images/no_image.png"
+                end
                 logger.debug(photo)
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
-                data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating], review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url}
+                data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating], 
+                　review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url
+                }
               end
               message = change_msg(message,data)
               client.reply_message(event['replyToken'], message)
