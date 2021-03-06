@@ -64,7 +64,6 @@ class LinebotController < ApplicationController
               url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
-              logger.debug(hash)
               #配列にハッシュ化した店舗データを入れる（最大５件）
               data = Array.new
               (0..4).each do |n|
@@ -73,7 +72,7 @@ class LinebotController < ApplicationController
                 if hash[:results][n].has_key?(:photos)
                   photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
                 else
-                  photo = File.open('./app/assets/images/no_image.png', 'w')
+                  photo = File.open('./app/assets/images/no_image.png', 'r')
                 end
                 logger.debug(photo)
                 #経路用のGoogleMapURLをエンコード
