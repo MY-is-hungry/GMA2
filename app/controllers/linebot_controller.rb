@@ -70,7 +70,7 @@ class LinebotController < ApplicationController
                 data[n] = Hash.new
                 #店の写真をPlaces Photoから取り出す
                 if hash[:results][n].has_key?(:photos)
-                  photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
+                  photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
                 else
                   photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
                 end
