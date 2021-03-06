@@ -72,7 +72,7 @@ class LinebotController < ApplicationController
                 if hash[:results][n].has_key?(:photos)
                   photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
                 else
-                  photo = File.open('./app/assets/images/no_image.jpg', 'r').read
+                  photo = open("https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png").read
                 end
                 logger.debug(photo)
                 #経路用のGoogleMapURLをエンコード
