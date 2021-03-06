@@ -76,8 +76,8 @@ class LinebotController < ApplicationController
                 end
                 #経路用のGoogleMapURLをエンコード
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
-                data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating], 
-                　review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url
+                data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating],
+                  review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url
                 }
               end
               logger.debug(data)
