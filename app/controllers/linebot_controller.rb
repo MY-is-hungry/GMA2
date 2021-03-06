@@ -74,13 +74,13 @@ class LinebotController < ApplicationController
                 else
                   photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
                 end
-                logger.debug(photo)
                 #経路用のGoogleMapURLをエンコード
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
                 data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating], 
                 　review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url
                 }
               end
+              logger.debug(data)
               message = change_msg(message,data)
               client.reply_message(event['replyToken'], message)
               
