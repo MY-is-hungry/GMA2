@@ -71,9 +71,9 @@ class LinebotController < ApplicationController
                 data[n] = Hash.new
                 #店の写真をPlaces Photoから取り出す
                 if hash[:results][n].has_key?(:photos)
-                  photo = "/assets/images/no_image.png"
-                else
                   photo = ENV['G_PHOTO_URL'] + "maxwidth=3000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
+                else
+                  photo = "/assets/images/no_image.png"
                 end
                 logger.debug(photo)
                 #経路用のGoogleMapURLをエンコード
