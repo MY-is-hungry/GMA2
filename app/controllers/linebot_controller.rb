@@ -140,9 +140,11 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Follow
           response = event['source']['userId']
           User.create(id: response)
+          Commute.create(user_id: response)
         when Line::Bot::Event::Unfollow
           response = event['source']['userId']
           User.find_by(id: response).destroy
+          Commute.find_by(user_id: response).destroy
         end
       }
       head :ok
