@@ -10,23 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_22_031732) do
+ActiveRecord::Schema.define(version: 2021_03_08_064905) do
 
   create_table "commutes", force: :cascade do |t|
-    t.integer "user_id"
+    t.string "user_id", null: false
+    t.float "start_lat"
+    t.float "start_lng"
+    t.float "arrival_lat"
+    t.float "arrival_lng"
+    t.integer "mode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_commutes_on_user_id"
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string "line_id"
-    t.float "start_lat"
-    t.float "start_lng"
-    t.float "arrival_lat"
-    t.float "arrival_lng"
+  create_table "users", id: false, force: :cascade do |t|
+    t.string "id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["id"], name: "index_users_on_id", unique: true
   end
 
 end

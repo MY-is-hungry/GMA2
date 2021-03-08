@@ -25,8 +25,7 @@ class LinebotController < ApplicationController
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
             message = event.message['text']
-            user_id = event['source']['userId']
-            user = User.find_by(line_id: user_id)
+            user = User.find_by(id: event['source']['userId'])
             case message
             when 'おはよう'
               message = change_msg(message)
@@ -35,22 +34,22 @@ class LinebotController < ApplicationController
                 [{type: "text", text: result_msg}, {type: "text", text: 'テスト'}])
                 
             when '通勤設定'
-            　user.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
+            　user.commute.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message)
               
             when '出発地点変更'
-            　user.update_attributes(start_lat: nil,start_lng: nil)
+            　user.commute.update_attributes(start_lat: nil,start_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message)
               
             when '到着地点変更'
-              user.update_attributes(arrival_lat: nil,arrival_lng: nil)
+              user.commute.update_attributes(arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message)
               
             when '通勤距離'
-              response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
+              response = open(ENV['G_URL'] + "origin=#{user.commute.start_lat},#{user.commute.start_lng}&destination=#{user.commute.arrival_lat},#{user.commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               time = data[:routes][0][:legs][0][:duration][:text]
               
@@ -61,7 +60,7 @@ class LinebotController < ApplicationController
               
             when 'ラーメン','カフェ'
               #検索ワードの周辺店舗を検索
-              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.start_lat},#{user.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
+              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{user.commute.start_lat},#{user.commute.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
               #配列にハッシュ化した店舗データを入れる（最大５件）
@@ -79,11 +78,14 @@ class LinebotController < ApplicationController
                 data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating],
                   review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url
                 }
+           
+                
               end
               logger.debug(data)
               message = change_msg(message,data)
               client.reply_message(event['replyToken'], message)
-              
+            when 'お気に入り'
+               
             when 'テスト'
               data = change_msg(message)
               client.reply_message(event['replyToken'], data)
@@ -93,11 +95,11 @@ class LinebotController < ApplicationController
             end
           when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
             user_id = event['source']['userId']
-            user = User.find_by(line_id: user_id)
-            if user.start_lat.nil? && user.start_lng.nil?
-              if user.arrival_lat.nil? && user.arrival_lng.nil?
+            user = User.find_by(id: user_id)
+            if user.commute.start_lat.nil? && user.commute.start_lng.nil?
+              if user.commute.arrival_lat.nil? && user.commute.arrival_lng.nil?
                 #スタート地点登録、更新
-                user.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
+                user.commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
                 client.reply_message(event['replyToken'], {
                   "type": "text",
                   "text": "到着地点の位置情報を教えてください！",
@@ -114,17 +116,17 @@ class LinebotController < ApplicationController
                   }
                 })
               else
-                user.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
+                user.commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
                 client.reply_message(event['replyToken'], {
                   type: 'text',
-                  text: "出発地点を緯度#{user.start_lat}、経度#{user.start_lng}に変更しました。"
+                  text: "出発地点を緯度#{user.commute.start_lat}、経度#{user.commute.start_lng}に変更しました。"
                 });
               end
                 
                 
-            elsif user.arrival_lat.nil? && user.arrival_lng.nil?
-              user.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
-              response = open(ENV['G_URL'] + "origin=#{user.start_lat},#{user.start_lng}&destination=#{user.arrival_lat},#{user.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
+            elsif user.commute.arrival_lat.nil? && user.commute.arrival_lng.nil?
+              user.commute.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
+              response = open(ENV['G_URL'] + "origin=#{user.commute.start_lat},#{user.commute.start_lng}&destination=#{user.commute.arrival_lat},#{user.commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               time = data[:routes][0][:legs][0][:duration][:text]
               
@@ -137,10 +139,10 @@ class LinebotController < ApplicationController
           end
         when Line::Bot::Event::Follow
           response = event['source']['userId']
-          User.create(line_id: response)
+          User.create(id: response)
         when Line::Bot::Event::Unfollow
           response = event['source']['userId']
-          User.find_by(line_id: response).destroy
+          User.find_by(id: response).destroy
         end
       }
       head :ok

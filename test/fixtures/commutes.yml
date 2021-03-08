@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: MyString
+  start_lat: 1.5
+  start_lng: 1.5
+  arrival_lat: 1.5
+  arrival_lng: 1.5
+
+two:
+  user_id: MyString
+  start_lat: 1.5
+  start_lng: 1.5
+  arrival_lat: 1.5
+  arrival_lng: 1.5
