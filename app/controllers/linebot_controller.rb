@@ -139,7 +139,8 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Follow
           response = event['source']['userId']
           User.create(id: response)
-          # Commute.create(user_id: response)
+          commute = Commute.create(user_id: response)
+          logger.debug(commute)
         when Line::Bot::Event::Unfollow
           response = event['source']['userId']
           User.find_by(id: response).destroy
