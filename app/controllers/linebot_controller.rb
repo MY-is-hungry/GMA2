@@ -25,7 +25,7 @@ class LinebotController < ApplicationController
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
             message = event.message['text']
-            commute = Commute.find_by(id: event['source']['userId'])
+            commute = Commute.find_by(user_id: event['source']['userId'])
             
             case message
             when 'おはよう'
@@ -139,8 +139,7 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Follow
           response = event['source']['userId']
           User.create(id: response)
-          commute = Commute.create(user_id: response)
-          logger.debug(commute)
+          Commute.create(user_id: response)
         when Line::Bot::Event::Unfollow
           response = event['source']['userId']
           User.find_by(id: response).destroy
