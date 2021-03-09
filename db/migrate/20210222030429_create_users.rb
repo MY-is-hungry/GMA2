@@ -2,7 +2,6 @@ class CreateUsers < ActiveRecord::Migration[5.2]
   def change
     create_table :users, id: false, primary_key: :id do |t|
       t.string :id, null: false
-      t.integer :commute_id
       t.float :start_lat
       t.float :start_lng
       t.float :arrival_lat
