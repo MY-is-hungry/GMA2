@@ -38,6 +38,10 @@ class LinebotController < ApplicationController
               commute.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message)
+            
+            when '通勤モード'
+              message = change_message(message,commute)
+              client.reply_message(event['replyToken'], message)
               
             when '出発地点変更'
             　commute.update_attributes(start_lat: nil,start_lng: nil)
@@ -84,8 +88,11 @@ class LinebotController < ApplicationController
               end
               message = change_message(message,data)
               client.reply_message(event['replyToken'], message)
+              
             when 'お気に入り'
-               
+              message = change_message(message,data)
+              client.reply_message(event['replyToken'], message)
+              
             when 'テスト'
               data = change_msg(message)
               client.reply_message(event['replyToken'], data)
@@ -119,7 +126,7 @@ class LinebotController < ApplicationController
                 client.reply_message(event['replyToken'], {
                   type: 'text',
                   text: "出発地点を緯度#{commute.start_lat}、経度#{commute.start_lng}に変更しました。"
-                });
+                })
               end
                 
                 
@@ -132,9 +139,20 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "出発地点から到着地点までの所要時間は、#{time}です。"
-              });
+              })
               
             end
+          when Line::Bot::Event::MessageType::Postback
+            logger.debug(event)
+            mode = event.postback.data.slice!(-1)
+            id = event.postback.data
+            commute = Commute.find_by(user_id: id)
+            commute.update_attributes(mode: mode)
+            client.reply_message(event['replyToken'], {
+                type: 'text',
+                text: "通勤モードを設定しました。"
+            })
+            
           end
         when Line::Bot::Event::Follow
           response = event['source']['userId']
@@ -659,6 +677,56 @@ class LinebotController < ApplicationController
                 }
               }
             ]
+          }
+        }
+        return result
+      when '通勤モード'
+        result = {
+          "type": "bubble",
+          "header": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "通勤モードを選択してください。",
+                "size": "lg",
+                "wrap": true,
+                "margin": "sm"
+              },
+              {
+                "type": "text",
+                "text": "※交通状況の変化もありますので、\n「ゆとり持つ」がオススメです。",
+                "size": "xs",
+                "wrap": true
+              }
+            ],
+            "spacing": "sm"
+          },
+          "body": {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "data": "#{data.user_id}1",
+                  "label": "ゆとり持つ"
+                },
+                "style": "secondary"
+              },
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "label": "正確に",
+                  "data": "#{data.user_id}2"
+                },
+                "style": "secondary"
+              }
+            ],
+            "spacing": "md"
           }
         }
         return result
