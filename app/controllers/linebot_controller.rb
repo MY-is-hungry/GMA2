@@ -81,7 +81,7 @@ class LinebotController < ApplicationController
            
                 
               end
-              message = change_msg(message,data)
+              message = change_message(message,data)
               client.reply_message(event['replyToken'], message)
             when 'お気に入り'
                
@@ -210,7 +210,7 @@ class LinebotController < ApplicationController
       end
     end
     
-    def change_msg(msg,data)
+    def change_message(msg,data)
       case msg
       when "ラーメン","カフェ"
         result = {
