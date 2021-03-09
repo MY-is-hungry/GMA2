@@ -682,51 +682,55 @@ class LinebotController < ApplicationController
         return result
       when '通勤モード'
         result = {
-          "type": "bubble",
-          "header": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-              {
-                "type": "text",
-                "text": "通勤モードを選択してください。",
-                "size": "lg",
-                "wrap": true,
-                "margin": "sm"
-              },
-              {
-                "type": "text",
-                "text": "※交通状況の変化もありますので、\n「ゆとり持つ」がオススメです。",
-                "size": "xs",
-                "wrap": true
-              }
-            ],
-            "spacing": "sm"
-          },
-          "body": {
-            "type": "box",
-            "layout": "horizontal",
-            "contents": [
-              {
-                "type": "button",
-                "action": {
-                  "type": "postback",
-                  "data": "#{data.user_id}1",
-                  "label": "ゆとり持つ"
+          "type": "flex",
+          "altText": "#{msg}の設定",
+          "contents": {
+            "type": "bubble",
+            "header": {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "通勤モードを選択してください。",
+                  "size": "lg",
+                  "wrap": true,
+                  "margin": "sm"
                 },
-                "style": "secondary"
-              },
-              {
-                "type": "button",
-                "action": {
-                  "type": "postback",
-                  "label": "正確に",
-                  "data": "#{data.user_id}2"
+                {
+                  "type": "text",
+                  "text": "※交通状況の変化もありますので、\n「ゆとり持つ」がオススメです。",
+                  "size": "xs",
+                  "wrap": true
+                }
+              ],
+              "spacing": "sm"
+            },
+            "body": {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "button",
+                  "action": {
+                    "type": "postback",
+                    "data": "#{data.user_id}1",
+                    "label": "ゆとり持つ"
+                  },
+                  "style": "secondary"
                 },
-                "style": "secondary"
-              }
-            ],
-            "spacing": "md"
+                {
+                  "type": "button",
+                  "action": {
+                    "type": "postback",
+                    "label": "正確に",
+                    "data": "#{data.user_id}2"
+                  },
+                  "style": "secondary"
+                }
+              ],
+              "spacing": "md"
+            }
           }
         }
         return result
