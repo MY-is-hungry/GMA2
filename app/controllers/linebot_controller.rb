@@ -93,8 +93,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], {type: 'text', text: event.message['そのコマンドは存在しないよ！']})
             end
           when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
-            user_id = event['source']['userId']
-            user = User.find_by(id: user_id)
+            commute = Commute.find_by(user_id: event['source']['userId'])
             if commute.start_lat.nil? && commute.start_lng.nil?
               if commute.arrival_lat.nil? && commute.arrival_lng.nil?
                 #スタート地点登録、更新
