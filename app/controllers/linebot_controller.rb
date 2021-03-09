@@ -144,8 +144,8 @@ class LinebotController < ApplicationController
             end
           when Line::Bot::Event::MessageType::Postback
             logger.debug(event)
-            mode = event.postback.data.slice!(-1)
-            id = event.postback.data
+            mode = event.postback['data'].slice!(-1).to_i
+            id = event.postback['data']
             commute = Commute.find_by(user_id: id)
             commute.update_attributes(mode: mode)
             client.reply_message(event['replyToken'], {
