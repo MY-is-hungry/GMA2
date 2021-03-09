@@ -34,7 +34,7 @@ class LinebotController < ApplicationController
                 [{type: "text", text: result_msg}, {type: "text", text: 'テスト'}])
                 
             when '通勤設定'
-              commute.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
+              commute.&update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message)
               
