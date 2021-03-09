@@ -24,8 +24,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_064905) do
     t.index ["user_id"], name: "index_commutes_on_user_id"
   end
 
-  create_table "users", id: false, force: :cascade do |t|
-    t.string "id", null: false
+  create_table "users", id: :string, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["id"], name: "index_users_on_id", unique: true

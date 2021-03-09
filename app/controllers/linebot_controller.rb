@@ -25,7 +25,8 @@ class LinebotController < ApplicationController
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
             message = event.message['text']
-            user = User.find_by(id: event['source']['userId'])
+            commute = Commute.find_by(id: event['source']['userId'])
+            
             case message
             when 'おはよう'
               message = change_msg(message)
@@ -34,7 +35,7 @@ class LinebotController < ApplicationController
                 [{type: "text", text: result_msg}, {type: "text", text: 'テスト'}])
                 
             when '通勤設定'
-              user.commute.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
+              commute.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
               message = change_msg(message)
               client.reply_message(event['replyToken'], message)
               
