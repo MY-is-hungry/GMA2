@@ -145,15 +145,12 @@ class LinebotController < ApplicationController
           end
           
         when Line::Bot::Event::Postback
-            logger.debug(event)
-            commute = Commute.find_by(user_id: event['source']['userId'])
-            mode = event['postback']['data'].to_i
-            commute.update_attributes(mode: mode)
-            client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "通勤モードを設定しました。"
-            })
-            
+          commute = Commute.find_by(user_id: event['source']['userId'])
+          commute.update_attributes(mode: event['postback']['data'])
+          client.reply_message(event['replyToken'], {
+              type: 'text',
+              text: "通勤モードを設定しました。"
+          })
         when Line::Bot::Event::Follow
           response = event['source']['userId']
           User.create(id: response)
@@ -714,7 +711,7 @@ class LinebotController < ApplicationController
                   "type": "button",
                   "action": {
                     "type": "postback",
-                    "data": "1",
+                    "data": "pessimistic",
                     "label": "ゆとり持つ"
                   },
                   "style": "secondary"
@@ -724,7 +721,7 @@ class LinebotController < ApplicationController
                   "action": {
                     "type": "postback",
                     "label": "正確に",
-                    "data": "2"
+                    "data": "best_guess"
                   },
                   "style": "secondary"
                 }

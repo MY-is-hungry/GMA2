@@ -6,7 +6,7 @@ class CreateCommutes < ActiveRecord::Migration[5.2]
       t.float :start_lng
       t.float :arrival_lat
       t.float :arrival_lng
-      t.integer :mode
+      t.string :mode
 
       t.timestamps
     end
