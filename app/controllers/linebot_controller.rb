@@ -700,8 +700,8 @@ class LinebotController < ApplicationController
                 },
                 {
                   "type": "text",
-                  "text": "※交通状況の変化もありますので、\n「ゆとり持つ」がオススメです。",
-                  "size": "md",
+                  "text": "※交通状況の変化もありますので、「ゆとり持つ」がオススメです。",
+                  "size": "xs",
                   "wrap": true
                 }
               ],
