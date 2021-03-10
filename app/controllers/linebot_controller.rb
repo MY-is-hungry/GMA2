@@ -693,6 +693,7 @@ class LinebotController < ApplicationController
                 {
                   "type": "text",
                   "text": "通勤モードを選択してください。",
+                  "weight": "bold",
                   "size": "lg",
                   "wrap": true,
                   "margin": "sm"
