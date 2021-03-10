@@ -694,6 +694,7 @@ class LinebotController < ApplicationController
                   "type": "text",
                   "text": "通勤モードを選択してください。",
                   "size": "lg",
+                  "gravity": "center",
                   "wrap": true,
                   "margin": "sm"
                 },
@@ -701,6 +702,7 @@ class LinebotController < ApplicationController
                   "type": "text",
                   "text": "※交通状況の変化もありますので、\n「ゆとり持つ」がオススメです。",
                   "size": "xs",
+                  "gravity": "center",
                   "wrap": true
                 }
               ],
