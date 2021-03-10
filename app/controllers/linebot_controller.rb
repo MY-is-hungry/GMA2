@@ -20,45 +20,46 @@ class LinebotController < ApplicationController
       events = client.parse_events_from(body)
 
       events.each { |event|
+        unless Line::Bot::Event::Follow
+          commute = Commute.find_by(user_id: event['source']['userId'])
+        end
         case event
         when Line::Bot::Event::Message
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
             message = event.message['text']
-            commute = Commute.find_by(user_id: event['source']['userId'])
-            
             case message
             when 'おはよう'
               message = change_msg(message)
-              result_msg = message.join
+              reply = message.join
               client.reply_message(event['replyToken'],
-                [{type: "text", text: result_msg}, {type: "text", text: 'テスト'}])
+                [{type: "text", text: reply}, {type: "text", text: '二言返信テスト'}])
                 
             when '通勤設定'
               commute.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
-              message = change_msg(message)
-              client.reply_message(event['replyToken'], message)
+              reply = change_msg(message)
+              client.reply_message(event['replyToken'], reply)
             
             when '通勤モード'
-              message = change_message(message,commute)
-              client.reply_message(event['replyToken'], message)
+              reply = change_message(message,commute)
+              client.reply_message(event['replyToken'], reply)
               
             when '出発地点変更'
             　commute.update_attributes(start_lat: nil,start_lng: nil)
-              message = change_msg(message)
-              client.reply_message(event['replyToken'], message)
+              reply = change_msg(message)
+              client.reply_message(event['replyToken'], reply)
               
             when '到着地点変更'
               commute.update_attributes(arrival_lat: nil,arrival_lng: nil)
-              message = change_msg(message)
-              client.reply_message(event['replyToken'], message)
+              reply = change_msg(message)
+              client.reply_message(event['replyToken'], reply)
               
             when '通勤時間'
+              #現在時刻をAPIで使用するため、UNIX時間に変換
               time = Time.parse(Time.now.to_s).to_i
               response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
               &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
-              logger.debug(data)
               result = data[:routes][0][:legs][0][:duration_in_traffic][:text]
               
               client.reply_message(event['replyToken'], {
@@ -66,16 +67,16 @@ class LinebotController < ApplicationController
                 text: "現在の出発地点から到着地点までの所要時間は、#{result}です。"
               })
               
-            when 'ラーメン','カフェ'
+            when 'ラーメン','カフェ','コンビニ'
               #検索ワードの周辺店舗を検索
-              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
+              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1000&language=ja&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
               #配列にハッシュ化した店舗データを入れる（最大５件）
               data = Array.new
               (0..4).each do |n|
                 data[n] = Hash.new
-                #店の写真をPlaces Photoから取り出す
+                #店の写真をPlaces Photoから取り出す。ない場合はデフォルト写真
                 if hash[:results][n].has_key?(:photos)
                   photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
                 else
@@ -89,12 +90,12 @@ class LinebotController < ApplicationController
            
                 
               end
-              message = change_message(message,data)
-              client.reply_message(event['replyToken'], message)
+              reply = change_message(message,data)
+              client.reply_message(event['replyToken'], reply)
               
             when 'お気に入り'
-              message = change_message(message,data)
-              client.reply_message(event['replyToken'], message)
+              reply = change_message(message,data)
+              client.reply_message(event['replyToken'], reply)
               
             when 'テスト'
               data = change_msg(message)
@@ -104,26 +105,12 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], {type: 'text', text: event.message['そのコマンドは存在しないよ！']})
             end
           when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
-            commute = Commute.find_by(user_id: event['source']['userId'])
             if commute.start_lat.nil? && commute.start_lng.nil?
               if commute.arrival_lat.nil? && commute.arrival_lng.nil?
-                #スタート地点登録、更新
+                #初期設定or全部変更
                 commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
-                client.reply_message(event['replyToken'], {
-                  "type": "text",
-                  "text": "到着地点の位置情報を教えてください！",
-                  "quickReply": {
-                    "items": [
-                      {
-                        "type": "action",
-                        "action": {
-                          "type": "location",
-                          "label": "位置情報"
-                        }
-                      }
-                    ]
-                  }
-                })
+                reply = change_msg('全設定')
+                client.reply_message(event['replyToken'], reply)
               else
                 commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
                 client.reply_message(event['replyToken'], {
@@ -148,19 +135,16 @@ class LinebotController < ApplicationController
           end
           
         when Line::Bot::Event::Postback
-          commute = Commute.find_by(user_id: event['source']['userId'])
           commute.update_attributes(mode: event['postback']['data'])
           client.reply_message(event['replyToken'], {
               type: 'text',
               text: "通勤モードを設定しました。"
           })
         when Line::Bot::Event::Follow
-          response = event['source']['userId']
-          User.create(id: response)
-          Commute.create(user_id: response)
+          User.create(id: event['source']['userId'])
+          Commute.create(user_id: user.id)
         when Line::Bot::Event::Unfollow
-          response = event['source']['userId']
-          User.find_by(id: response).destroy
+          User.find_by(id: commute.user_id).destroy
         end
       }
       head :ok
@@ -175,7 +159,7 @@ class LinebotController < ApplicationController
         data = JSON.parse(response.read, {symbolize_names: true})
         result = weather_text(data)
         return result
-      when "通勤設定"
+      when '通勤設定','出発地点変更'
         result = {
           "type": "text",
           "text": "出発地点の位置情報を教えてください！",
@@ -192,24 +176,7 @@ class LinebotController < ApplicationController
           }
         }
         return result
-      when "出発地点変更"
-        result = {
-          "type": "text",
-          "text": "出発地点の位置情報を教えてください！",
-          "quickReply": {
-            "items": [
-              {
-                "type": "action",
-                "action": {
-                  "type": "location",
-                  "label": "位置情報"
-                }
-              }
-            ]
-          }
-        }
-        return result
-      when "到着地点変更"
+      when '到着地点変更','全設定'
         result = {
           "type": "text",
           "text": "到着地点の位置情報を教えてください！",
@@ -231,7 +198,7 @@ class LinebotController < ApplicationController
     
     def change_message(msg,data)
       case msg
-      when "ラーメン","カフェ"
+      when 'ラーメン','カフェ','コンビニ'
         result = {
           "type": "flex",
           "altText": "#{msg}に寄り道",
