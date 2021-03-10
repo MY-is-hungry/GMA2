@@ -53,7 +53,7 @@ class LinebotController < ApplicationController
               message = change_msg(message)
               client.reply_message(event['replyToken'], message)
               
-            when '通勤距離'
+            when '通勤時間'
               time = Time.parse(Time.now.to_s).to_i
               response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
               &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
@@ -63,7 +63,7 @@ class LinebotController < ApplicationController
               
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: "出発地点から到着地点までの所要時間は、#{result}です。"
+                text: "現在の出発地点から到着地点までの所要時間は、#{result}です。"
               })
               
             when 'ラーメン','カフェ'
