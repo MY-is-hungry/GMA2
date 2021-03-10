@@ -54,13 +54,15 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], message)
               
             when '通勤距離'
-              response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
+              time = Time.parse(Time.now.to_s).to_i
+              response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+              &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
-              time = data[:routes][0][:legs][0][:duration][:text]
+              result = data[:routes][0][:legs][0][:duration][:text]
               
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: "出発地点から到着地点までの所要時間は、#{time}です。"
+                text: "出発地点から到着地点までの所要時間は、#{result}です。"
               })
               
             when 'ラーメン','カフェ'
@@ -714,7 +716,7 @@ class LinebotController < ApplicationController
                     "data": "pessimistic",
                     "label": "ゆとり持つ"
                   },
-                  "style": "secondary"
+                  "style": "primary"
                 },
                 {
                   "type": "button",
