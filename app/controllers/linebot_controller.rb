@@ -701,7 +701,7 @@ class LinebotController < ApplicationController
                 {
                   "type": "text",
                   "text": "※交通状況の変化もありますので、\n「ゆとり持つ」がオススメです。",
-                  "size": "xs",
+                  "size": "md",
                   "wrap": true
                 }
               ],
