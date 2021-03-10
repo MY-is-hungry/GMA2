@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_064905) do
     t.float "start_lng"
     t.float "arrival_lat"
     t.float "arrival_lng"
-    t.integer "mode"
+    t.string "mode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_commutes_on_user_id"

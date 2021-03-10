@@ -65,7 +65,7 @@ class LinebotController < ApplicationController
               
             when 'ラーメン','カフェ'
               #検索ワードの周辺店舗を検索
-              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.start_lat},#{commute.start_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
+              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1500&language=ja&key=" + ENV['G_KEY']
               response = open(url)
               hash = JSON.parse(response.read, {symbolize_names: true})
               #配列にハッシュ化した店舗データを入れる（最大５件）
