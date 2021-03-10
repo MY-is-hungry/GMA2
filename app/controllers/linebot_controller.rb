@@ -2,7 +2,7 @@ class LinebotController < ApplicationController
     require 'line/bot'  # gem 'line-bot-api'
     require "json" #jsonモジュールを利用
     require "open-uri" #Webサイトにアクセスできるようにする。
-    require "date"
+    require "date" #TimeZone
     
     # callbackアクションのCSRFトークン認証を無効
     protect_from_forgery :except => [:callback]
@@ -87,8 +87,6 @@ class LinebotController < ApplicationController
                 data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating],
                   review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url
                 }
-           
-                
               end
               reply = change_message(message,data)
               client.reply_message(event['replyToken'], reply)
@@ -104,6 +102,7 @@ class LinebotController < ApplicationController
             else
               client.reply_message(event['replyToken'], {type: 'text', text: event.message['そのコマンドは存在しないよ！']})
             end
+            
           when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
             if commute.start_lat.nil? && commute.start_lng.nil?
               if commute.arrival_lat.nil? && commute.arrival_lng.nil?
@@ -111,26 +110,29 @@ class LinebotController < ApplicationController
                 commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
                 reply = change_msg('全設定')
                 client.reply_message(event['replyToken'], reply)
-              else
+              else #出発地のみ変更
                 commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
                 client.reply_message(event['replyToken'], {
                   type: 'text',
                   text: "出発地点を緯度#{commute.start_lat}、経度#{commute.start_lng}に変更しました。"
                 })
               end
-                
-                
-            elsif commute.arrival_lat.nil? && commute.arrival_lng.nil?
+            elsif commute.arrival_lat.nil? && commute.arrival_lng.nil? #目的地のみ変更
               commute.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
               response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               time = data[:routes][0][:legs][0][:duration][:text]
-              
-              client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "出発地点から到着地点までの所要時間は、#{time}です。"
-              })
-              
+              if commute.mode.nil?
+                client.reply_message(event['replyToken'], [
+                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{time}です。"},
+                  {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
+                ])
+              else
+                client.reply_message(event['replyToken'], {
+                  type: 'text',
+                  text: "出発地点から到着地点までの所要時間は、#{time}です。"
+                })
+              end
             end
           end
           
@@ -153,7 +155,7 @@ class LinebotController < ApplicationController
 
     def change_msg(msg)
       case msg
-      when "おはよう"
+      when 'おはよう'
         response = open(ENV['W_URL'] + "?q=Aichi&APPID=" + ENV['W_KEY'])
         #JSONデータ(response)をハッシュ化
         data = JSON.parse(response.read, {symbolize_names: true})
