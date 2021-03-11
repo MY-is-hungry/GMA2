@@ -24,7 +24,7 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Message
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
-          　commute = Commute.find_by(user_id: event['source']['userId'])
+            commute = Commute.find_by(user_id: event['source']['userId'])
             message = event.message['text']
             case message
             when 'おはよう'
