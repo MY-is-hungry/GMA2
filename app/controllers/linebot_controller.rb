@@ -71,7 +71,7 @@ class LinebotController < ApplicationController
                 })
               end
               
-            when 'ラーメン','カフェ','コンビニ'
+            when 'ラーメン','カフェ','コンビニ','ファミレス'
               #検索ワードの周辺店舗を検索
               url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1000&language=ja&key=" + ENV['G_KEY']
               response = open(url)
@@ -100,9 +100,11 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
               
             when 'テスト'
-              data = change_msg(message)
-              client.reply_message(event['replyToken'], data)
-              
+              commute.update_attributes(mode: nil)
+              client.reply_message(event['replyToken'], {
+                type: 'text',
+                text: "modeをリセットしました。"
+              })
             else
               client.reply_message(event['replyToken'], {type: 'text', text: event.message['そのコマンドは存在しないよ！']})
             end
@@ -206,7 +208,7 @@ class LinebotController < ApplicationController
     
     def change_message(msg,data)
       case msg
-      when 'ラーメン','カフェ','コンビニ'
+      when 'ラーメン','カフェ','コンビニ','ファミレス'
         result = {
           "type": "flex",
           "altText": "#{msg}に寄り道",
