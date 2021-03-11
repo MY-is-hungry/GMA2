@@ -20,13 +20,11 @@ class LinebotController < ApplicationController
       events = client.parse_events_from(body)
 
       events.each { |event|
-        unless Line::Bot::Event::Follow
-          commute = Commute.find_by(user_id: event['source']['userId'])
-        end
         case event
         when Line::Bot::Event::Message
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
+          　commute = Commute.find_by(user_id: event['source']['userId'])
             message = event.message['text']
             case message
             when 'おはよう'
@@ -110,6 +108,7 @@ class LinebotController < ApplicationController
             end
             
           when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
+            commute = Commute.find_by(user_id: event['source']['userId'])
             if commute.start_lat.nil? && commute.start_lng.nil?
               if commute.arrival_lat.nil? && commute.arrival_lng.nil?
                 #初期設定or全部変更
@@ -143,6 +142,7 @@ class LinebotController < ApplicationController
           end
           
         when Line::Bot::Event::Postback
+          commute = Commute.find_by(user_id: event['source']['userId'])
           commute.update_attributes(mode: event['postback']['data'])
           client.reply_message(event['replyToken'], {
               type: 'text',
