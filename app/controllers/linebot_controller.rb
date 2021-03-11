@@ -61,7 +61,7 @@ class LinebotController < ApplicationController
               result = data[:routes][0][:legs][0][:duration_in_traffic][:text]
               if commute.mode.nil?
                 client.reply_message(event['replyToken'], [
-                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{time}です。"},
+                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
                   {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
                 ])
               else
@@ -129,7 +129,7 @@ class LinebotController < ApplicationController
               result = data[:routes][0][:legs][0][:duration][:text]
               if commute.mode.nil?
                 client.reply_message(event['replyToken'], [
-                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{time}です。"},
+                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
                   {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
                 ])
               else
