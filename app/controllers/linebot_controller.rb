@@ -61,11 +61,17 @@ class LinebotController < ApplicationController
               &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               result = data[:routes][0][:legs][0][:duration_in_traffic][:text]
-              
-              client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "現在の出発地点から到着地点までの所要時間は、#{result}です。"
-              })
+              if commute.mode.nil?
+                client.reply_message(event['replyToken'], [
+                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{time}です。"},
+                  {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
+                ])
+              else
+                client.reply_message(event['replyToken'], {
+                  type: 'text',
+                  text: "出発地点から到着地点までの所要時間は、#{result}です。"
+                })
+              end
               
             when 'ラーメン','カフェ','コンビニ'
               #検索ワードの周辺店舗を検索
@@ -121,7 +127,7 @@ class LinebotController < ApplicationController
               commute.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
               response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
-              time = data[:routes][0][:legs][0][:duration][:text]
+              result = data[:routes][0][:legs][0][:duration][:text]
               if commute.mode.nil?
                 client.reply_message(event['replyToken'], [
                   {type: 'text',text: "出発地点から到着地点までの所要時間は、#{time}です。"},
@@ -130,7 +136,7 @@ class LinebotController < ApplicationController
               else
                 client.reply_message(event['replyToken'], {
                   type: 'text',
-                  text: "出発地点から到着地点までの所要時間は、#{time}です。"
+                  text: "出発地点から到着地点までの所要時間は、#{result}です。"
                 })
               end
             end
