@@ -150,7 +150,7 @@ class LinebotController < ApplicationController
           })
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
-          Commute.create(user_id: user.id)
+          Commute.create(user_id: event['source']['userId'])
         when Line::Bot::Event::Unfollow
           User.find_by(id: commute.user_id).destroy
         end
