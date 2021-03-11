@@ -80,16 +80,14 @@ class LinebotController < ApplicationController
               data = Array.new
               (0..4).each do |n|
                 data[n] = Hash.new
-                #店の写真をPlaces Photoから取り出す。ない場合はデフォルト写真
-                if hash[:results][n].has_key?(:photos)
-                  photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY']
-                else
-                  photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
-                end
+                #写真、評価、クチコミは無いとフロントが崩れるのでチェックする
+                hash[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
+                hash[:results][n].has_key?(:rating) ? rating = hash[:results][n][:rating] : rating = "未評価"
+                hash[:results][n].has_key?(:user_ratings_total) ? review = hash[:results][n][:user_ratings_total] : review = "0"
                 #経路用のGoogleMapURLをエンコード
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
-                data[n] = {photo: photo, name: hash[:results][n][:name], rating: hash[:results][n][:rating],
-                  review: hash[:results][n][:user_ratings_total], address: hash[:results][n][:formatted_address], url: url
+                data[n] = {photo: photo, name: hash[:results][n][:name], rating: rating,
+                  review: review, address: hash[:results][n][:formatted_address], url: url
                 }
               end
               reply = change_message(message,data)
@@ -105,11 +103,9 @@ class LinebotController < ApplicationController
                 type: 'text',
                 text: "modeをリセットしました。"
               })
-            else
-              client.reply_message(event['replyToken'], {type: 'text', text: event.message['そのコマンドは存在しないよ！']})
             end
             
-          when Line::Bot::Event::MessageType::Location  #位置情報が来た場合
+          when Line::Bot::Event::MessageType::Location #位置情報が来た場合
             commute = Commute.find_by(user_id: event['source']['userId'])
             if commute.start_lat.nil? && commute.start_lng.nil?
               if commute.arrival_lat.nil? && commute.arrival_lng.nil?
@@ -155,6 +151,8 @@ class LinebotController < ApplicationController
           Commute.create(user_id: event['source']['userId'])
         when Line::Bot::Event::Unfollow
           User.find_by(id: event['source']['userId']).destroy
+        else
+          client.reply_message(event['replyToken'], {type: 'text', text: event.message['そのコマンドは存在しないよ！']})
         end
       }
       head :ok
