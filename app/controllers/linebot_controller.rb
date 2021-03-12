@@ -39,7 +39,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
             
             when '通勤モード'
-              reply = change_message(message,commute)
+              reply = change_msg(message,commute)
               client.reply_message(event['replyToken'], reply)
               
             when '出発地点変更'
@@ -130,14 +130,9 @@ class LinebotController < ApplicationController
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
             commute = Commute.find_by(user_id: event['source']['userId'])
-            state = get_state
+            state = commute.get_state
             case state
-            when 1
-              client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "そのコマンドは存在しません。"
-              })
-            when 2 #到着地変更
+            when 1 #到着地変更
               commute.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
               response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
@@ -153,17 +148,21 @@ class LinebotController < ApplicationController
                   {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
                 ])
               end
-            when 3 #出発地のみ変更
+            when 2 #出発地のみ変更
               commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "出発地点を変更しました。"
               })
-            when 4
-              #初期設定or全部変更
+            when 3 #初期設定or全部変更
               commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
               reply = change_msg('全設定')
               client.reply_message(event['replyToken'], reply)
+            when 0 #エラー
+              client.reply_message(event['replyToken'], {
+                type: 'text',
+                text: "そのコマンドは存在しません。"
+              })
             end
           end
           
@@ -229,11 +228,6 @@ class LinebotController < ApplicationController
           }
         }
         return result
-      end
-    end
-    
-    def change_message(msg,data)
-      case msg
       when 'ラーメン','カフェ','コンビニ','ファミレス'
         result = {
           "type": "flex",
