@@ -78,6 +78,7 @@ class LinebotController < ApplicationController
                 url = URI.encode ENV['G_SEARCH_URL'] + "query=#{fav_name[n]}" + ENV['G_KEY']
                 response = open(url)
                 array[n] = JSON.parse(response.read, {symbolize_names: true})
+                logger.debug(array[n])
               end
               data = Array.new
               (0..4).each do |n|
