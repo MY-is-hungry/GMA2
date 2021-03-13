@@ -166,7 +166,7 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Postback
           user = User.find_by(id: event['source']['userId'])
           data = event['postback']['data']
-          code = data.slice!(-1)
+          code = data.slice!(-1).to_i
           logger.debug(data)
           logger.debug(code)
           case code
