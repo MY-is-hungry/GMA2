@@ -167,6 +167,7 @@ class LinebotController < ApplicationController
           user = User.find_by(id: event['source']['userId'])
           data = event['postback']['data']
           code = data.slice!(-1)
+          logger.debug(data,code)
           case code
           when 1 #通勤モード変更
             user.commute.update_attributes(mode: data)
