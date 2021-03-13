@@ -3,7 +3,6 @@ class LinebotController < ApplicationController
     require "json" #jsonモジュールを利用
     require "open-uri" #Webサイトにアクセスできるようにする。
     require "date" #TimeZone
-    
     include JsonRequest
     
     # callbackアクションのCSRFトークン認証を無効
@@ -96,7 +95,7 @@ class LinebotController < ApplicationController
               reply = change_msg(message,data)
               client.reply_message(event['replyToken'], reply)
               
-            when 'ラーメン','カフェ','コンビニ','ファミレス'
+            when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
               #検索ワードの周辺店舗を検索
               url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1000&language=ja&key=" + ENV['G_KEY']
               response = open(url)
@@ -115,10 +114,6 @@ class LinebotController < ApplicationController
                   review: review, address: hash[:results][n][:formatted_address], url: url
                 }
               end
-              reply = change_msg(message,data)
-              client.reply_message(event['replyToken'], reply)
-              
-            when 'お気に入り'
               reply = change_msg(message,data)
               client.reply_message(event['replyToken'], reply)
               
@@ -169,12 +164,32 @@ class LinebotController < ApplicationController
           end
           
         when Line::Bot::Event::Postback
-          commute = Commute.find_by(user_id: event['source']['userId'])
-          commute.update_attributes(mode: event['postback']['data'])
-          client.reply_message(event['replyToken'], {
-              type: 'text',
-              text: "通勤モードを設定しました。"
-          })
+          user = User.find_by(id: event['source']['userId'])
+          data = event['postback']['data']
+          code = data.slice!(-1)
+          case code
+          when 1 #通勤モード変更
+            user.commute.update_attributes(mode: data)
+            client.reply_message(event['replyToken'], {
+                type: 'text',
+                text: "通勤モードを設定しました。"
+            })
+          when 2 #寄り道機能のお気に入り登録
+            if user.favorite.where(user_id: user.id).count < 5
+              user.favorite.update_attributes(name: data)
+              client.reply_message(event['replyToken'], {
+                  type: 'text',
+                  text: "お気に入りに登録しました。"
+              })
+            else
+              client.reply_message(event['replyToken'], [{
+                type: 'text',
+                text: "登録に失敗しました。\nお気に入りは最大5件までです。"},{
+                type: 'text',
+                text: "お気に入りの店舗を減らしてからもう一度お試しください。\n「お気に入り」と入力すると、現在のお気に入り店舗一覧が表示できます。"}
+              ])
+            end
+          end
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
           Commute.create(user_id: event['source']['userId'])

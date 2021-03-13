@@ -43,7 +43,7 @@ module JsonRequest
         }
       }
       return result
-    when 'ラーメン','カフェ','コンビニ','ファミレス'
+    when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
       result = {
         "type": "flex",
         "altText": "#{msg}に寄り道",
@@ -127,6 +127,14 @@ module JsonRequest
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "お気に入りに保存",
+                      "data": "#{data[0][:name]}2"
+                    }
+                  },
                   {
                     "type": "button",
                     "action": {
@@ -218,6 +226,14 @@ module JsonRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りに保存",
+                      "data": "#{data[1][:name]}2"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "君に決めた！",
                       "uri": "#{data[1][:url]}"
@@ -303,6 +319,14 @@ module JsonRequest
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "お気に入りに保存",
+                      "data": "#{data[2][:name]}2"
+                    }
+                  },
                   {
                     "type": "button",
                     "action": {
@@ -393,6 +417,14 @@ module JsonRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りに保存",
+                      "data": "#{data[3][:name]}2"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "寄っちゃう！",
                       "uri": "#{data[3][:url]}"
@@ -480,6 +512,14 @@ module JsonRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りに保存",
+                      "data": "#{data[4][:name]}2"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "いくぅ！",
                       "uri": "#{data[4][:url]}"
@@ -492,7 +532,7 @@ module JsonRequest
         }
       }
       return result
-    when 'お気に入り'
+    when 'お気に入り','おきにいり','おきに'
       result = {
         "type": "flex",
         "altText": "#{msg}に寄り道",
@@ -976,7 +1016,7 @@ module JsonRequest
                 "type": "button",
                 "action": {
                   "type": "postback",
-                  "data": "pessimistic",
+                  "data": "pessimistic1",
                   "label": "ゆとり持つ"
                 },
                 "style": "primary"
@@ -986,7 +1026,7 @@ module JsonRequest
                 "action": {
                   "type": "postback",
                   "label": "正確に",
-                  "data": "best_guess"
+                  "data": "best_guess1"
                 },
                 "style": "secondary"
               }

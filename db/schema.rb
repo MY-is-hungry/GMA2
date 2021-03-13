@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_08_064905) do
+ActiveRecord::Schema.define(version: 2021_03_13_050350) do
 
   create_table "commutes", force: :cascade do |t|
     t.string "user_id", null: false
@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(version: 2021_03_08_064905) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_commutes_on_user_id"
+  end
+
+  create_table "favorites", force: :cascade do |t|
+    t.string "user_id", null: false
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
   create_table "users", id: :string, force: :cascade do |t|
