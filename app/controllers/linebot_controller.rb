@@ -72,7 +72,7 @@ class LinebotController < ApplicationController
                 })
               end
             when 'お気に入り'
-              fav_name = Favorite.where(user_id: user.id).pluck(:name)
+              fav_name = Favorite.where(user_id: commute.user_id).pluck(:name)
               array = Array.new
               (0..4).each do |n|
                 url = URI.encode ENV['G_SEARCH_URL'] + "query=#{fav_name[n]}" + ENV['G_KEY']
