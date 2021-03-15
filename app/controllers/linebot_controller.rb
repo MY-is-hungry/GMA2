@@ -90,9 +90,9 @@ class LinebotController < ApplicationController
                 url = URI.encode ENV['G_SEARCH_URL'] + "query=らーめん 柊&place_id=#{f}&language=ja&key=" + ENV['G_KEY']
                 response = open(url)
                
-                array[n] = JSON.parse(response.read, {symbolize_names: true})
+                array[m] = JSON.parse(response.read, {symbolize_names: true})
                 m += 1
-                logger.debug(array[n])
+                logger.debug(array[m])
               end
               data = Array.new
               (0..4).each do |n|
