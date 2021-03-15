@@ -71,12 +71,13 @@ class LinebotController < ApplicationController
                   text: "出発地点から到着地点までの所要時間は、#{result}です。"
                 })
               end
+              
             when 'お気に入り'
-              fav_name = Favorite.where(user_id: commute.user_id).pluck(:name)
+              fav_id = Favorite.where(user_id: commute.user_id).pluck(:name)
               array = Array.new
               (0..4).each do |n|
-                url = URI.encode ENV['G_SEARCH_URL'] + "query=#{fav_name[n]}&language=ja&key=" + ENV['G_KEY']
-                response = open(url)
+                response = open("https://maps.googleapis.com/maps/api/place/details/json?place_id=#{fav_id[n]}&language=ja&key=" + ENV['G_KEY'])
+               
                 array[n] = JSON.parse(response.read, {symbolize_names: true})
                 logger.debug(array[n])
               end

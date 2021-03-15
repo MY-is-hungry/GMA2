@@ -132,7 +132,7 @@ module JsonRequest
                     "action": {
                       "type": "postback",
                       "label": "お気に入りに保存",
-                      "data": "#{data[0][:name]}2"
+                      "data": "#{data[0][:place_id]}2"
                     }
                   },
                   {
@@ -228,7 +228,7 @@ module JsonRequest
                     "action": {
                       "type": "postback",
                       "label": "お気に入りに保存",
-                      "data": "#{data[1][:name]}2"
+                      "data": "#{data[1][:place_id]}2"
                     }
                   },
                   {
@@ -324,7 +324,7 @@ module JsonRequest
                     "action": {
                       "type": "postback",
                       "label": "お気に入りに保存",
-                      "data": "#{data[2][:name]}2"
+                      "data": "#{data[2][:place_id]}2"
                     }
                   },
                   {
@@ -419,7 +419,7 @@ module JsonRequest
                     "action": {
                       "type": "postback",
                       "label": "お気に入りに保存",
-                      "data": "#{data[3][:name]}2"
+                      "data": "#{data[3][:place_id]}2"
                     }
                   },
                   {
@@ -514,7 +514,7 @@ module JsonRequest
                     "action": {
                       "type": "postback",
                       "label": "お気に入りに保存",
-                      "data": "#{data[4][:name]}2"
+                      "data": "#{data[4][:place_id]}2"
                     }
                   },
                   {
