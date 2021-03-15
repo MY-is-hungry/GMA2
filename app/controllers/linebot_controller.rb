@@ -54,28 +54,37 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
               
             when '通勤時間'
-              #現在時刻をAPIで使用するため、UNIX時間に変換
-              time = Time.parse(Time.now.to_s).to_i
-              response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
-              &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
-              data = JSON.parse(response.read, {symbolize_names: true})
-              result = data[:routes][0][:legs][0][:duration_in_traffic][:text]
-              if commute.mode.nil?
-                client.reply_message(event['replyToken'], [
-                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
-                  {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
-                ])
+              if commute.start_lat && commute.arrival_lat
+                #現在時刻をAPIで使用するため、UNIX時間に変換
+                time = Time.parse(Time.now.to_s).to_i
+                response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                data = JSON.parse(response.read, {symbolize_names: true})
+                result = data[:routes][0][:legs][0][:duration_in_traffic][:text]
+                if commute.mode.nil?
+                  client.reply_message(event['replyToken'], [
+                    {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
+                    {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
+                  ])
+                else
+                  client.reply_message(event['replyToken'], {
+                    type: 'text',
+                    text: "出発地点から到着地点までの所要時間は、#{result}です。"
+                  })
+                end
               else
-                client.reply_message(event['replyToken'], {
+                client.reply_message(event['replyToken'], [{
                   type: 'text',
-                  text: "出発地点から到着地点までの所要時間は、#{result}です。"
-                })
+                  text: "出発地点か、到着地点が設定されていません。"},{
+                  type: 'text',
+                  text: "「通勤設定」と送信すると、設定できます。"
+                  }])
               end
               
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               array = Array.new
-              (0..4).each do |n|
+              fav_id.each do |n|
                 response = open("https://maps.googleapis.com/maps/api/place/details/json?place_id=#{fav_id[n]}&language=ja&key=" + ENV['G_KEY'])
                
                 array[n] = JSON.parse(response.read, {symbolize_names: true})
