@@ -89,23 +89,24 @@ class LinebotController < ApplicationController
                 # url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{fav_id[n]}&language=ja&key=" + ENV['G_KEY']
                 url = URI.encode ENV['G_SEARCH_URL'] + "query=らーめん 柊&place_id=#{f}&language=ja&key=" + ENV['G_KEY']
                 response = open(url)
-               
                 array[m] = JSON.parse(response.read, {symbolize_names: true})
-                m += 1
                 logger.debug(array[m])
+                m += 1
               end
               data = Array.new
-              (0..4).each do |n|
+              n = 0
+              array.each do |a|
                 data[n] = Hash.new
                 #写真、評価、クチコミは無いとフロントが崩れるのでチェックする
-                array[n][:results][0].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{array[n][:results][0][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
-                array[n][:results][0].has_key?(:rating) ? rating = array[n][:results][0][:rating] : rating = "未評価"
-                array[n][:results][0].has_key?(:user_ratings_total) ? review = array[n][:results][0][:user_ratings_total] : review = "0"
+                a[n][:results][0].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[n][:results][0][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
+                a[n][:results][0].has_key?(:rating) ? rating = a[n][:results][0][:rating] : rating = "未評価"
+                a[n][:results][0].has_key?(:user_ratings_total) ? review = a[n][:results][0][:user_ratings_total] : review = "0"
                 #経路用のGoogleMapURLをエンード
-                url = URI.encode ENV['G_STORE_URL'] + "&query=#{array[n][:results][0][:name]}&query_place_id=#{array[n][:results][0][:place_id]}"
-                data[n] = {photo: photo, name: array[n][:results][0][:name], rating: rating,
-                  review: review, address: array[n][:results][0][:formatted_address], url: url
+                url = URI.encode ENV['G_STORE_URL'] + "&query=#{array[n][:results][0][:name]}&query_place_id=#{a[n][:results][0][:place_id]}"
+                data[n] = {photo: photo, name: a[n][:results][0][:name], rating: rating,
+                  review: review, address: a[n][:results][0][:formatted_address], url: url
                 }
+                n += 1
               end
               reply = change_msg(message,data)
               client.reply_message(event['replyToken'], reply)
