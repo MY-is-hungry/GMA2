@@ -73,7 +73,7 @@ class LinebotController < ApplicationController
               end
               
             when 'お気に入り'
-              fav_id = Favorite.where(user_id: commute.user_id).pluck(:name)
+              fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               array = Array.new
               (0..4).each do |n|
                 response = open("https://maps.googleapis.com/maps/api/place/details/json?place_id=#{fav_id[n]}&language=ja&key=" + ENV['G_KEY'])
