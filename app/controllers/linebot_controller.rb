@@ -113,7 +113,7 @@ class LinebotController < ApplicationController
                 #経路用のGoogleMapURLをエンード
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
                 data[n] = {photo: photo, name: hash[:results][n][:name], rating: rating,
-                  review: review, address: hash[:results][n][:formatted_address], url: url
+                  review: review, address: hash[:results][n][:formatted_address], url: url, place_id: hash[:results][n][:place_id]
                 }
               end
               reply = change_msg(message,data)
