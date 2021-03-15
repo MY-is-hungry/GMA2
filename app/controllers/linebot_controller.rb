@@ -180,7 +180,7 @@ class LinebotController < ApplicationController
             })
           when 2 #寄り道機能のお気に入り登録
             if Favorite.where(user_id: user.id).count < 5
-              Favorite.create(user_id: user.id, name: data)
+              Favorite.create(user_id: user.id, place_id: data)
               client.reply_message(event['replyToken'], {
                   type: 'text',
                   text: "お気に入りに登録しました。"
