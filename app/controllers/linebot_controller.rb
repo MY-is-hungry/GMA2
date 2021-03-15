@@ -85,7 +85,8 @@ class LinebotController < ApplicationController
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               array = Array.new
               fav_id.each do |n|
-                url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{fav_id[n]}&language=ja&key=" + ENV['G_KEY']
+                # url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{fav_id[n]}&language=ja&key=" + ENV['G_KEY']
+                url = URI.encode ENV['G_SEARCH_URL'] + "query=らーめん 柊&place_id=#{fav_id}&language=ja&key=" + ENV['G_KEY']
                 response = open(url)
                
                 array[n] = JSON.parse(response.read, {symbolize_names: true})
