@@ -101,7 +101,7 @@ class LinebotController < ApplicationController
                 data[n] = Hash.new
                 logger.debug(a)
                 #写真、評価、クチコミは無いとフロントが崩れるのでチェックする
-                a[:results].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[:results][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
+                a[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
                 # a[n][:results][0].has_key?(:rating) ? rating = a[n][:results][0][:rating] : rating = "未評価"
                 # a[n][:results][0].has_key?(:user_ratings_total) ? review = a[n][:results][0][:user_ratings_total] : review = "0"
                 #経路用のGoogleMapURLをエンード
