@@ -89,7 +89,7 @@ class LinebotController < ApplicationController
                 # url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{fav_id[n]}&language=ja&key=" + ENV['G_KEY']
                 url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{f}&language=ja&key=" + ENV['G_KEY']
                 response = open(url)
-                array[m] = JSON.parse(response.read, {symbolize_names: true})
+                array[m] = JSON.parse(response.read)
                 logger.debug(array[m])
                 m += 1
               end
