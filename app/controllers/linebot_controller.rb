@@ -87,7 +87,7 @@ class LinebotController < ApplicationController
               m = 0
               fav_id.each do |f|
                 # url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{fav_id[n]}&language=ja&key=" + ENV['G_KEY']
-                url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{f}&language=ja&key=" + ENV['G_KEY']
+                url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{f}&fields=name,rating,formatted_address,photo,url&language=ja&key=" + ENV['G_KEY']
                 response = open(url)
                 array[m] = JSON.parse(response.read, {symbolize_names: true})
                 logger.debug(array[m])
@@ -102,7 +102,7 @@ class LinebotController < ApplicationController
                 # a[n][:results][0].has_key?(:rating) ? rating = a[n][:results][0][:rating] : rating = "未評価"
                 # a[n][:results][0].has_key?(:user_ratings_total) ? review = a[n][:results][0][:user_ratings_total] : review = "0"
                 #経路用のGoogleMapURLをエンード
-                url = URI.encode ENV['G_STORE_URL'] + "&query=#{array[n][:results][0][:name]}&query_place_id=#{a[n][:results][0][:place_id]}"
+                # url = URI.encode ENV['G_STORE_URL'] + "&query=#{array[n][:results][0][:name]}&query_place_id=#{a[n][:results][0][:place_id]}"
                 data[n] = {photo: photo, name: a[n][:results][0][:name], rating: rating,
                   review: review, address: a[n][:results][0][:formatted_address], url: url
                 }
