@@ -85,7 +85,7 @@ class LinebotController < ApplicationController
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               array = Array.new
               fav_id.each_with_index do |f,n|
-                response = open(URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{f}&fields=name,formatted_address,photo,url&language=ja&key=" + ENV['G_KEY'])
+                response = open(URI.encode "https://maps.googleapis.com/maps/api/place/details/json?language=ja&place_id=#{f}&fields=name,formatted_address,photo,url&key=" + ENV['G_KEY'])
                 array[n] = JSON.parse(response.read, {symbolize_names: true})
                 logger.debug(array[n])
               end
@@ -95,11 +95,9 @@ class LinebotController < ApplicationController
                 logger.debug(a)
                 #写真が無いとフロント部分が崩れるので存在を確認
                 a[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
-                #経路用のGoogleMapURLをエンード
-                # url = URI.encode ENV['G_STORE_URL'] + "&query=#{array[n][:results][0][:name]}&query_place_id=#{a[n][:results][0][:place_id]}"
-                data[n] = {photo: photo, name: a[n][:result][0][:name], rating: rating,
-                  review: review, address: a[n][:result][0][:formatted_address], url: url
-                }
+                #経路用のGoogleMapURLをエンコード
+                url = URI.encode ENV['G_STORE_URL'] + "&query=#{array[n][:results][0][:name]}&query_place_id=#{a[n][:results][0][:place_id]}"
+                data[n] = {photo: photo, name: a[:result][0][:name], address: a[:result][0][:formatted_address], url: url}
               end
               reply = change_msg(message,data)
               client.reply_message(event['replyToken'], reply)
