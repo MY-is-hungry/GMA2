@@ -83,6 +83,12 @@ class LinebotController < ApplicationController
               
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
+              if fav_id.nil?
+                return client.reply_message(event['replyToken'], {
+                  type: 'text',
+                  text: "お気に入りがありません。"
+                })
+              end
               array = Array.new
               fav_id.each_with_index do |f,n|
                 response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url,place_id&key=" + ENV['G_KEY'])
@@ -195,7 +201,11 @@ class LinebotController < ApplicationController
               ])
             end
           when 3 #お気に入りの解除
-            
+            Favorite.find_by(user_id: user.id,place_id: data).destroy
+            client.reply_message(event['replyToken'], {
+                type: 'text',
+                text: "お気に入りを解除しました。"
+            })
           end
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
