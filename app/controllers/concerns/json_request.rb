@@ -562,33 +562,6 @@ module JsonRequest
                   },
                   {
                     "type": "box",
-                    "layout": "baseline",
-                    "contents": [
-                      {
-                        "type": "icon",
-                        "size": "xs",
-                        "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                      },
-                      {
-                        "type": "text",
-                        "text": "#{data[0][:rating]}",
-                        "size": "xs",
-                        "color": "#8c8c8c",
-                        "margin": "md",
-                        "flex": 0
-                      },
-                      {
-                        "type": "text",
-                        "text": "クチコミ #{data[0][:review]}件",
-                        "flex": 0,
-                        "margin": "md",
-                        "size": "xs",
-                        "color": "#8c8c8c"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "box",
                     "layout": "vertical",
                     "contents": [
                       {
@@ -647,33 +620,6 @@ module JsonRequest
                     "weight": "bold",
                     "size": "sm",
                     "wrap": true
-                  },
-                  {
-                    "type": "box",
-                    "layout": "baseline",
-                    "contents": [
-                      {
-                        "type": "icon",
-                        "size": "xs",
-                        "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                      },
-                      {
-                        "type": "text",
-                        "text": "#{data[1][:rating]}",
-                        "size": "xs",
-                        "color": "#8c8c8c",
-                        "margin": "md",
-                        "flex": 0
-                      },
-                      {
-                        "type": "text",
-                        "text": "クチコミ #{data[1][:review]}件",
-                        "color": "#8c8c8c",
-                        "margin": "md",
-                        "size": "xs",
-                        "flex": 0
-                      }
-                    ]
                   },
                   {
                     "type": "box",
@@ -738,33 +684,6 @@ module JsonRequest
                   },
                   {
                     "type": "box",
-                    "layout": "baseline",
-                    "contents": [
-                      {
-                        "type": "icon",
-                        "size": "xs",
-                        "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
-                      },
-                      {
-                        "type": "text",
-                        "text": "#{data[2][:rating]}",
-                        "size": "xs",
-                        "color": "#8c8c8c",
-                        "margin": "md",
-                        "flex": 0
-                      },
-                      {
-                        "type": "text",
-                        "text": "クチコミ #{data[2][:review]}件",
-                        "margin": "md",
-                        "size": "xs",
-                        "color": "#8c8c8c",
-                        "flex": 0
-                      }
-                    ]
-                  },
-                  {
-                    "type": "box",
                     "layout": "vertical",
                     "contents": [
                       {
@@ -826,33 +745,6 @@ module JsonRequest
                   },
                   {
                     "type": "box",
-                    "layout": "baseline",
-                    "contents": [
-                      {
-                        "type": "icon",
-                        "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png",
-                        "size": "xs"
-                      },
-                      {
-                        "type": "text",
-                        "text": "#{data[3][:rating]}",
-                        "margin": "md",
-                        "size": "xs",
-                        "color": "#8c8c8c",
-                        "flex": 0
-                      },
-                      {
-                        "type": "text",
-                        "text": "クチコミ #{data[3][:review]}件",
-                        "margin": "md",
-                        "size": "xs",
-                        "flex": 0,
-                        "color": "#8c8c8c"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "box",
                     "layout": "vertical",
                     "contents": [
                       {
@@ -910,33 +802,6 @@ module JsonRequest
                     "weight": "bold",
                     "size": "sm",
                     "wrap": true
-                  },
-                  {
-                    "type": "box",
-                    "layout": "baseline",
-                    "contents": [
-                      {
-                        "type": "icon",
-                        "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png",
-                        "size": "xs"
-                      },
-                      {
-                        "type": "text",
-                        "text": "#{data[4][:rating]}",
-                        "color": "#8c8c8c",
-                        "margin": "md",
-                        "size": "xs",
-                        "flex": 0
-                      },
-                      {
-                        "type": "text",
-                        "text": "クチコミ #{data[4][:review]}件",
-                        "color": "#8c8c8c",
-                        "margin": "md",
-                        "size": "xs",
-                        "flex": 0
-                      }
-                    ]
                   },
                   {
                     "type": "box",

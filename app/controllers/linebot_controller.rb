@@ -96,8 +96,8 @@ class LinebotController < ApplicationController
                 #写真が無いとフロント部分が崩れるので存在を確認
                 a[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
                 #経路用のGoogleMapURLをエンコード
-                url = URI.encode ENV['G_STORE_URL'] + "&query=#{array[n][:results][0][:name]}&query_place_id=#{a[n][:results][0][:place_id]}"
-                data[n] = {photo: photo, name: a[:result][0][:name], address: a[:result][0][:formatted_address], url: url}
+                url = URI.encode ENV['G_STORE_URL'] + "&query=#{a[:result][:name]}&query_place_id=#{a[:result][:place_id]}"
+                data[n] = {photo: photo, name: a[:result][:name], address: a[:result][:formatted_address], url: url}
               end
               reply = change_msg(message,data)
               client.reply_message(event['replyToken'], reply)
