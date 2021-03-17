@@ -142,6 +142,14 @@ module FavoriteRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[0][:place_id]}3"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "ここにする！",
                       "uri": "#{data[0][:url]}"
@@ -200,6 +208,14 @@ module FavoriteRequest
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[1][:place_id]}3"
+                    }
+                  },
                   {
                     "type": "button",
                     "action": {
@@ -275,6 +291,14 @@ module FavoriteRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[0][:place_id]}3"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "ここにする！",
                       "uri": "#{data[0][:url]}"
@@ -336,6 +360,14 @@ module FavoriteRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[1][:place_id]}3"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "君に決めた！",
                       "uri": "#{data[1][:url]}"
@@ -394,6 +426,14 @@ module FavoriteRequest
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[2][:place_id]}3"
+                    }
+                  },
                   {
                     "type": "button",
                     "action": {
@@ -469,6 +509,14 @@ module FavoriteRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[0][:place_id]}3"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "ここにする！",
                       "uri": "#{data[0][:url]}"
@@ -527,6 +575,14 @@ module FavoriteRequest
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[1][:place_id]}3"
+                    }
+                  },
                   {
                     "type": "button",
                     "action": {
@@ -591,6 +647,14 @@ module FavoriteRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[2][:place_id]}3"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "すき！",
                       "uri": "#{data[2][:url]}"
@@ -648,6 +712,14 @@ module FavoriteRequest
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[3][:place_id]}3"
+                    }
+                  },
                   {
                     "type": "button",
                     "action": {
@@ -723,6 +795,14 @@ module FavoriteRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[0][:place_id]}3"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "ここにする！",
                       "uri": "#{data[0][:url]}"
@@ -781,6 +861,14 @@ module FavoriteRequest
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[1][:place_id]}3"
+                    }
+                  },
                   {
                     "type": "button",
                     "action": {
@@ -845,6 +933,14 @@ module FavoriteRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[2][:place_id]}3"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "すき！",
                       "uri": "#{data[2][:url]}"
@@ -905,6 +1001,14 @@ module FavoriteRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[3][:place_id]}3"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "寄っちゃう！",
                       "uri": "#{data[3][:url]}"
@@ -962,6 +1066,14 @@ module FavoriteRequest
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[4][:place_id]}3"
+                    }
+                  },
                   {
                     "type": "button",
                     "action": {
