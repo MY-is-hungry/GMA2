@@ -96,10 +96,11 @@ class LinebotController < ApplicationController
                 #写真が無いとフロント部分が崩れるので存在を確認
                 a[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
                 #経路用のGoogleMapURLをエンコード
-                url = URI.encode ENV['G_STORE_URL'] + "&query=#{a[:result][:name]}&query_place_id=#{a[:result][:place_id]}"
-                data[n] = {photo: photo, name: a[:result][:name], address: a[:result][:formatted_address], url: url}
+                # url = URI.encode ENV['G_STORE_URL'] + "&query=#{a[:result][:name]}&query_place_id=#{a[:result][:place_id]}"
+                data[n] = {photo: photo, name: a[:result][:name], address: a[:result][:formatted_address], url: a[:result][:url]}
               end
-              reply = change_msg(message,data)
+              count = data.count
+              reply = change_msg(message,data,count)
               client.reply_message(event['replyToken'], reply)
               
             when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
