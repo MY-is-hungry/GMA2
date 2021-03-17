@@ -84,50 +84,39 @@ class LinebotController < ApplicationController
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               array = Array.new
-              m = 0
-              fav_id.each do |f|
-                # url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{fav_id[n]}&language=ja&key=" + ENV['G_KEY']
-                url = URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{f}&fields=name,formatted_address,photo,url&language=ja&key=" + ENV['G_KEY']
-                # url = URI.encode "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=らーめん 柊&inputtype=textquery&fields=photos,formatted_address,name&language=ja&key=" + ENV['G_KEY']
-
-                response = open(url)
-                array[m] = JSON.parse(response.read, {symbolize_names: true})
-                logger.debug(array[m])
-                m += 1
+              fav_id.each_with_index do |f,n|
+                response = open(URI.encode "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{f}&fields=name,formatted_address,photo,url&language=ja&key=" + ENV['G_KEY'])
+                array[n] = JSON.parse(response.read, {symbolize_names: true})
+                logger.debug(array[n])
               end
               data = Array.new
-              n = 0
-              array.each do |a|
+              array.each_with_index do |a,n|
                 data[n] = Hash.new
                 logger.debug(a)
-                #写真、評価、クチコミは無いとフロントが崩れるのでチェックする
+                #写真が無いとフロント部分が崩れるので存在を確認
                 a[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
-                # a[n][:results][0].has_key?(:rating) ? rating = a[n][:results][0][:rating] : rating = "未評価"
-                # a[n][:results][0].has_key?(:user_ratings_total) ? review = a[n][:results][0][:user_ratings_total] : review = "0"
                 #経路用のGoogleMapURLをエンード
                 # url = URI.encode ENV['G_STORE_URL'] + "&query=#{array[n][:results][0][:name]}&query_place_id=#{a[n][:results][0][:place_id]}"
-                data[n] = {photo: photo, name: a[n][:results][0][:name], rating: rating,
-                  review: review, address: a[n][:results][0][:formatted_address], url: url
+                data[n] = {photo: photo, name: a[n][:result][0][:name], rating: rating,
+                  review: review, address: a[n][:result][0][:formatted_address], url: url
                 }
-                n += 1
               end
               reply = change_msg(message,data)
               client.reply_message(event['replyToken'], reply)
               
             when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
               #検索ワードの周辺店舗を検索
-              url = URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1000&language=ja&key=" + ENV['G_KEY']
-              response = open(url)
+              response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
               hash = JSON.parse(response.read, {symbolize_names: true})
               #配列にハッシュ化した店舗データを入れる（最大５件）
               data = Array.new
               (0..4).each do |n|
                 data[n] = Hash.new
-                #写真、評価、クチコミは無いとフロントが崩れるのでチェックする
+                #写真、評価、クチコミが無いとフロント部分が崩れるので存在を確認
                 hash[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
                 hash[:results][n].has_key?(:rating) ? rating = hash[:results][n][:rating] : rating = "未評価"
                 hash[:results][n].has_key?(:user_ratings_total) ? review = hash[:results][n][:user_ratings_total] : review = "0"
-                #経路用のGoogleMapURLをエンード
+                #経路用のGoogleMapURLをエンコード
                 url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
                 data[n] = {photo: photo, name: hash[:results][n][:name], rating: rating,
                   review: review, address: hash[:results][n][:formatted_address], url: url, place_id: hash[:results][n][:place_id]
