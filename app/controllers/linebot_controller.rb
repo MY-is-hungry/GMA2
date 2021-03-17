@@ -85,7 +85,7 @@ class LinebotController < ApplicationController
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               array = Array.new
               fav_id.each_with_index do |f,n|
-                response = open(URI.encode "https://maps.googleapis.com/maps/api/place/details/json?language=ja&place_id=#{f}&fields=name,formatted_address,photo,url&key=" + ENV['G_KEY'])
+                response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url&key=" + ENV['G_KEY'])
                 array[n] = JSON.parse(response.read, {symbolize_names: true})
                 logger.debug(array[n])
               end
@@ -138,7 +138,7 @@ class LinebotController < ApplicationController
             case state
             when 1 #到着地変更
               commute.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
-              response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
+              response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               result = data[:routes][0][:legs][0][:duration][:text]
               if commute.mode
@@ -198,6 +198,8 @@ class LinebotController < ApplicationController
                 text: "お気に入りの店舗を減らしてからもう一度お試しください。\n「お気に入り」と入力すると、現在のお気に入り店舗一覧が表示できます。"}
               ])
             end
+          when 3 #お気に入りの解除
+            
           end
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
