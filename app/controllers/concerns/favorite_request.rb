@@ -62,6 +62,14 @@ module FavoriteRequest
                   {
                     "type": "button",
                     "action": {
+                      "type": "postback",
+                      "label": "お気に入りから削除",
+                      "data": "#{data[0][:place_id]}3"
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "action": {
                       "type": "uri",
                       "label": "ここにする！",
                       "uri": "#{data[0][:url]}"

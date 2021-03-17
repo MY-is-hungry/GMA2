@@ -87,17 +87,13 @@ class LinebotController < ApplicationController
               fav_id.each_with_index do |f,n|
                 response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url,place_id&key=" + ENV['G_KEY'])
                 array[n] = JSON.parse(response.read, {symbolize_names: true})
-                logger.debug(array[n])
               end
               data = Array.new
               array.each_with_index do |a,n|
                 data[n] = Hash.new
-                logger.debug(a)
                 #写真が無いとフロント部分が崩れるので存在を確認
                 a[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
-                #経路用のGoogleMapURLをエンコード
-                # url = URI.encode ENV['G_STORE_URL'] + "&query=#{a[:result][:name]}&query_place_id=#{a[:result][:place_id]}"
-                data[n] = {photo: photo, name: a[:result][:name], address: a[:result][:formatted_address], url: a[:result][:url]}
+                data[n] = {photo: photo, name: a[:result][:name], address: a[:result][:formatted_address], url: a[:result][:url], place_id: a[:result][:place_id]}
               end
               count = data.count
               reply = change_msg(message,data,count)
