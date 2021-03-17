@@ -85,7 +85,7 @@ class LinebotController < ApplicationController
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               array = Array.new
               fav_id.each_with_index do |f,n|
-                response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url&key=" + ENV['G_KEY'])
+                response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url,place_id&key=" + ENV['G_KEY'])
                 array[n] = JSON.parse(response.read, {symbolize_names: true})
                 logger.debug(array[n])
               end
