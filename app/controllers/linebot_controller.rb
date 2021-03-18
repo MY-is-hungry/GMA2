@@ -84,10 +84,8 @@ class LinebotController < ApplicationController
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               if fav_id.nil?
-                client.reply_message(event['replyToken'], {
-                  type: 'text',
-                  text: "お気に入りがありません。"
-                })
+                client.reply_message(event['replyToken'], {type: 'text',text: "お気に入りがありません。"})
+                return
               end
               array = Array.new
               fav_id.each_with_index do |f,n|
