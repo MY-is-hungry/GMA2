@@ -83,11 +83,6 @@ class LinebotController < ApplicationController
               
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
-              unless fav_id
-                logger.debug(fav_id)
-                client.reply_message(event['replyToken'], {type: 'text',text: "お気に入りがありません。"})
-                return
-              end
               array = Array.new
               fav_id.each_with_index do |f,n|
                 response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url,place_id&key=" + ENV['G_KEY'])
