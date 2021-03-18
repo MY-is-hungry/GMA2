@@ -84,6 +84,7 @@ class LinebotController < ApplicationController
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               if fav_id.nil?
+                logger.debug(fav_id)
                 client.reply_message(event['replyToken'], {type: 'text',text: "お気に入りがありません。"})
                 return
               end
