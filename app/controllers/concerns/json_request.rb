@@ -43,6 +43,23 @@ module JsonRequest
         }
       }
       return result
+    when '中間地点登録'
+      result = {
+        "type": "text",
+        "text": "中間地点の位置情報を教えてください！",
+        "quickReply": {
+          "items": [
+            {
+              "type": "action",
+              "action": {
+                "type": "location",
+                "label": "位置情報"
+              }
+            }
+          ]
+        }
+      }
+      return result
     when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
       result = {
         "type": "flex",

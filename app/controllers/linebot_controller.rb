@@ -4,6 +4,7 @@ class LinebotController < ApplicationController
     require "open-uri" #Webサイトにアクセスできるようにする。
     require "date" #TimeZone
     include JsonRequest
+    include BadRequest
     
     # callbackアクションのCSRFトークン認証を無効
     protect_from_forgery :except => [:callback]
@@ -52,7 +53,15 @@ class LinebotController < ApplicationController
               commute.update_attributes(arrival_lat: nil,arrival_lng: nil)
               reply = change_msg(message)
               client.reply_message(event['replyToken'], reply)
-              
+            
+            when '中間地点登録'
+              state = commute.get_state
+              case state
+              when 0,1
+                change_msg(message)
+              when 2,3,4
+                bad_message(1)
+              end
             when '通勤時間'
               if commute.start_lat && commute.arrival_lat
                 #現在時刻をAPIで使用するため、UNIX時間に変換
@@ -105,7 +114,7 @@ class LinebotController < ApplicationController
               hash = JSON.parse(response.read, {symbolize_names: true})
               #配列にハッシュ化した店舗データを入れる（最大５件）
               data = Array.new
-              (0..4).each do |n|
+              5.times do |n|
                 data[n] = Hash.new
                 #写真、評価、クチコミが無いとフロント部分が崩れるので存在を確認
                 hash[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
@@ -132,29 +141,33 @@ class LinebotController < ApplicationController
             commute = Commute.find_by(user_id: event['source']['userId'])
             state = commute.get_state
             case state
-            when 1 #到着地変更
+            when 1 #中間地点登録
+              count = Via_place.where(commute_id: commute.id).count + 1
+              Via_place.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
+              client.reply_message(event['replyToken'], {
+                type: 'text',
+                text: "中間地点を登録しました。"
+              })
+            when 2 #到着地変更
               commute.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               result = data[:routes][0][:legs][0][:duration][:text]
               if commute.mode
-                client.reply_message(event['replyToken'], {
-                  type: 'text',
-                  text: "出発地点から到着地点までの所要時間は、#{result}です。"
-                })
+                reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
               else
-                client.reply_message(event['replyToken'], [
-                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
+                reply = [{type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
                   {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
-                ])
+                ]
               end
-            when 2 #出発地のみ変更
+              client.reply_message(event['replyToken'], reply)
+            when 3 #出発地のみ変更
               commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "出発地点を変更しました。"
               })
-            when 3 #初期設定or全部変更
+            when 4 #初期設定or全部変更
               commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
               reply = change_msg('全設定')
               client.reply_message(event['replyToken'], reply)

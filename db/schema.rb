@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_13_050350) do
+ActiveRecord::Schema.define(version: 2021_03_18_032650) do
 
   create_table "commutes", force: :cascade do |t|
     t.string "user_id", null: false
@@ -36,6 +36,16 @@ ActiveRecord::Schema.define(version: 2021_03_13_050350) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["id"], name: "index_users_on_id", unique: true
+  end
+
+  create_table "via_places", force: :cascade do |t|
+    t.integer "commute_id", null: false
+    t.float "via_lat"
+    t.float "via_lng"
+    t.integer "order"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commute_id"], name: "index_via_places_on_commute_id"
   end
 
 end
