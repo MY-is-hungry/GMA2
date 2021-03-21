@@ -58,38 +58,41 @@ class LinebotController < ApplicationController
               state = commute.get_state
               case state
               when 0,1
-                change_msg(message)
+                reply = change_msg(message)
               when 2,3,4
-                bad_message(1)
+                reply = bad_msg(message) #出発、到着地が登録されていない場合
               end
+              client.reply_message(event['replyToken'], reply)
             when '通勤時間'
-              if commute.start_lat && commute.arrival_lat
+              state = commute.get_state
+              if state == 0 || state == 1
                 #現在時刻をAPIで使用するため、UNIX時間に変換
                 time = Time.parse(Time.now.to_s).to_i
-                response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
-                &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                if state == 0
+                  via = Via_place.where(commute_id: commute.id).order(:order)
+                  count = 0
+                  location = Array.new
+                  via.each do |v|
+                    location[count] = {lat: via_lat, lng: via_lng}
+                    count += 1
+                  end
+                  m = ""
+                  location.each_with_index do |l,n|
+                    m = m + "via:#{l[n][lat]},#{l[n][lng]}"
+                  end
+                  response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                  &waypoints=#{m}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                else
+                  response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                  &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                end
                 data = JSON.parse(response.read, {symbolize_names: true})
                 result = data[:routes][0][:legs][0][:duration_in_traffic][:text]
-                if commute.mode.nil?
-                  client.reply_message(event['replyToken'], [
-                    {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
-                    {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
-                  ])
-                else
-                  client.reply_message(event['replyToken'], {
-                    type: 'text',
-                    text: "出発地点から到着地点までの所要時間は、#{result}です。"
-                  })
-                end
+                
               else
-                client.reply_message(event['replyToken'], [{
-                  type: 'text',
-                  text: "出発地点か、到着地点が設定されていません。"},{
-                  type: 'text',
-                  text: "「通勤設定」と送信すると、設定できます。"
-                  }])
+                reply = bad_msg(message) #地点が設定されていない場合
               end
-              
+              client.reply_message(event['replyToken'], reply)
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               array = Array.new

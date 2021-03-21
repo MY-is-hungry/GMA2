@@ -60,6 +60,15 @@ module JsonRequest
         }
       }
       return result
+    when '通勤時間'
+      if commute.mode
+        client.reply_message(event['replyToken'], {
+          type: 'text',
+          text: "出発地点から到着地点までの所要時間は、#{result}です。"
+        })
+      else
+        client.reply_message(event['replyToken'], )
+      end
     when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
       result = {
         "type": "flex",
