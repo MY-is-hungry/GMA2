@@ -79,6 +79,7 @@ class LinebotController < ApplicationController
                   m = ""
                   location.each_with_index do |l,n|
                     m = m + "via:#{l[n][lat]},#{l[n][lng]}"
+                    logger.debug(m)
                   end
                   response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
                   &waypoints=#{m}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
@@ -95,6 +96,8 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
+              return unless fav_id
+              logger.debug(fav_id)
               array = Array.new
               fav_id.each_with_index do |f,n|
                 response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url,place_id&key=" + ENV['G_KEY'])
