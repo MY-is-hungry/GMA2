@@ -11,15 +11,15 @@ module JsonRequest
       return result
     when '通勤設定','出発地点変更'
       result = {
-        "type": "text",
-        "text": "出発地点の位置情報を教えてください！",
-        "quickReply": {
-          "items": [
+        type: "text",
+        text: "出発地点の位置情報を教えてください！",
+        quickReply: {
+          items: [
             {
-              "type": "action",
-              "action": {
-                "type": "location",
-                "label": "位置情報"
+              type: "action",
+              action: {
+                type: "location",
+                label: "位置情報"
               }
             }
           ]
