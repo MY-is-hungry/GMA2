@@ -60,7 +60,7 @@ class LinebotController < ApplicationController
               when 0,1
                 reply = change_msg(message)
               when 2,3,4
-                reply = bad_msg(message) #出発、到着地が登録されていない場合
+                reply = bad_msg(message)#出発、到着地が登録されていない場合
               end
               logger.debug(reply)
               client.reply_message(event['replyToken'], reply)
