@@ -1,7 +1,7 @@
 module BadRequest
   extend ActiveSupport::Concern
-  def bad_message(n)
-    case n
+  def bad_msg(msg)
+    case msg
     when '中間地点登録'
       result = [
         {type: 'text',text: "出発地点か到着地点、もしくは両方とも設定されていません。"},
