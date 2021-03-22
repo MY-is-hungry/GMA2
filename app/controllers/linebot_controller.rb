@@ -56,6 +56,7 @@ class LinebotController < ApplicationController
             
             when '中間地点登録'
               state = commute.get_state
+              logger.debug(state)
               case state
               when 0,1
                 reply = change_msg(message)
