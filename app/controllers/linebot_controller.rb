@@ -58,7 +58,7 @@ class LinebotController < ApplicationController
               state = commute.get_state
               logger.debug(state)
               case state
-              when 0,1
+              when 0,1,5
                 reply = change_msg(message)
               when 2,3,4
                 reply = bad_msg(message)#出発、到着地が登録されていない場合
