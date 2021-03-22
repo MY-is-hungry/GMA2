@@ -55,7 +55,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
             
             when '中間地点登録'
-              state = commute.get_state
+              state = commute.get_state(commute)
               logger.debug(state)
               case state
               when 0,1,5
