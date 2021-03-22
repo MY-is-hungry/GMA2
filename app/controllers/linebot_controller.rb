@@ -45,7 +45,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
               
             when '出発地点変更'
-            　commute.update_attributes(start_lat: nil,start_lng: nil)
+              commute.update_attributes(start_lat: nil,start_lng: nil)
               reply = change_msg(message)
               client.reply_message(event['replyToken'], reply)
               
