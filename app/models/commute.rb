@@ -5,7 +5,7 @@ class Commute < ApplicationRecord
 
   def get_state
     if start_lat && arrival_lat && self.via_place #中間地点２つ目〜
-      state = 0
+      state = 5
     elsif start_lat && arrival_lat #中間地点設定
       state = 1
     elsif start_lat #最後のみ変更

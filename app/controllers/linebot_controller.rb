@@ -178,7 +178,7 @@ class LinebotController < ApplicationController
               commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
               reply = change_msg('全設定')
               client.reply_message(event['replyToken'], reply)
-            when 0 #エラー
+            when 5 #エラー
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "そのコマンドは存在しません。"
