@@ -13,7 +13,6 @@ module BadRequest
               action: {
                 type: "message",
                 label: "通勤設定",
-                text: "通勤設定"
               }
             }
           ]
