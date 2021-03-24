@@ -71,7 +71,7 @@ class LinebotController < ApplicationController
                 #現在時刻をAPIで使用するため、UNIX時間に変換
                 time = Time.parse(Time.now.to_s).to_i
                 if state == 0
-                  via = Via_place.where(commute_id: commute.id).order(:order)
+                  via = ViaPlace.where(commute_id: commute.id).order(:order)
                   count = 0
                   location = Array.new
                   via.each do |v|
@@ -150,8 +150,8 @@ class LinebotController < ApplicationController
             state = commute.get_state
             case state
             when 1 #中間地点登録
-              count = Via_place.where(commute_id: commute.id).count + 1
-              Via_place.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
+              count = ViaPlace.where(commute_id: commute.id).count + 1
+              ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "中間地点を登録しました。"
