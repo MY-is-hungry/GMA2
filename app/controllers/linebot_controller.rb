@@ -78,7 +78,7 @@ class LinebotController < ApplicationController
                   end
                   m = ""
                   location.each do |l|
-                    m = m + "via:#{l[:lat]},#{l[:lng]}"
+                    m = m + "via:#{l[:lat]},#{l[:lng]}|"
                     logger.debug(m)
                   end
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
