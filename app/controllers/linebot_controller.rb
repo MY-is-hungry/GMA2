@@ -88,6 +88,7 @@ class LinebotController < ApplicationController
                   &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 end
                 data = JSON.parse(response.read, {symbolize_names: true})
+                logger.debug(data)
                 result = data[:routes][0][:legs][0][:duration_in_traffic][:text]
                 
               else
