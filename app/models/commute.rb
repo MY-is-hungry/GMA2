@@ -3,7 +3,7 @@ class Commute < ApplicationRecord
   has_many :via_place, dependent: :destroy
   validates :user_id, presence: true, uniqueness: true
 
-  def get_state(commute)
+  def get_state
     if start_lat && arrival_lat && commute.via_place #中間地点２つ目〜
       state = 5
     elsif start_lat && arrival_lat #中間地点設定
