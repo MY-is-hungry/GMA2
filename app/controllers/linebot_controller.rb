@@ -147,7 +147,7 @@ class LinebotController < ApplicationController
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
             commute = Commute.find_by(user_id: event['source']['userId'])
-            state = commute.get_state(commute)
+            state = commute.get_state
             case state
             when 1 #中間地点登録
               count = Via_place.where(commute_id: commute.id).count + 1
