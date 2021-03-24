@@ -72,15 +72,13 @@ class LinebotController < ApplicationController
                 time = Time.parse(Time.now.to_s).to_i
                 if state == 0
                   via = ViaPlace.where(commute_id: commute.id).order(:order)
-                  count = 0
                   location = Array.new
-                  via.each do |v|
-                    location[count] = {lat: v.via_lat, lng: v.via_lng}
-                    count += 1
+                  via.each_with_index do |v,n|
+                    location[n] = {lat: v.via_lat, lng: v.via_lng}
                   end
                   m = ""
                   location.each do |l|
-                    m = m + "via:#{l[lat]},#{l[lng]}"
+                    m = m + "via:#{l[:lat]},#{l[:lng]}"
                     logger.debug(m)
                   end
                   response = open(ENV['G_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
