@@ -75,7 +75,7 @@ class LinebotController < ApplicationController
                   count = 0
                   location = Array.new
                   via.each do |v|
-                    location[count] = {lat: via_lat, lng: via_lng}
+                    location[count] = {lat: v.via_lat, lng: v.via_lng}
                     count += 1
                   end
                   m = ""
