@@ -4,9 +4,8 @@ class Commute < ApplicationRecord
   validates :user_id, presence: true, uniqueness: true
 
   def get_state
-      logger.debug(via_place.first)
     if start_lat && arrival_lat && via_place.first #中間地点２つ目〜
-      state = 5
+      state = 0
     elsif start_lat && arrival_lat #中間地点設定
       state = 1
     elsif start_lat #最後のみ変更

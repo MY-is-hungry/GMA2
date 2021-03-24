@@ -58,7 +58,7 @@ class LinebotController < ApplicationController
               state = commute.get_state
               logger.debug(state)
               case state
-              when 0,1,5
+              when 0,1
                 reply = change_msg(message)
               when 2,3,4
                 reply = bad_msg(message)#出発、到着地が登録されていない場合
@@ -179,7 +179,7 @@ class LinebotController < ApplicationController
               commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
               reply = change_msg('全設定')
               client.reply_message(event['replyToken'], reply)
-            when 5 #エラー
+            when 0 #エラー
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "そのコマンドは存在しません。"
