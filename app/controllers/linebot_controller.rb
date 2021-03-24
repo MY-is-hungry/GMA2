@@ -89,7 +89,8 @@ class LinebotController < ApplicationController
                 end
                 data = JSON.parse(response.read, {symbolize_names: true})
                 logger.debug(data)
-                result = data[:routes][0][:legs][0][:duration_in_traffic][:text]
+                reply = data[:routes][0][:legs][0][:duration_in_traffic][:text]
+                client.reply_message(event['replyToken'], reply)
                 
               else
                 reply = bad_msg(message) #地点が設定されていない場合
