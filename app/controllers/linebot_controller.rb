@@ -149,7 +149,7 @@ class LinebotController < ApplicationController
             commute = Commute.find_by(user_id: event['source']['userId'])
             state = commute.get_state
             case state
-            when 1 #中間地点登録
+            when 0,1 #中間地点登録
               count = ViaPlace.where(commute_id: commute.id).count + 1
               ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
               client.reply_message(event['replyToken'], {
@@ -179,7 +179,7 @@ class LinebotController < ApplicationController
               commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
               reply = change_msg('全設定')
               client.reply_message(event['replyToken'], reply)
-            when 0 #エラー
+            else #エラー
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "そのコマンドは存在しません。"
