@@ -73,24 +73,29 @@ class LinebotController < ApplicationController
                 reply = bad_msg(message)
               end
               client.reply_message(event['replyToken'], reply)
+              
+            when '制限'
+              avoid
+              
             when '通勤時間'
               state = commute.get_state
               if state == 0 || state == 1
                 #現在時刻をAPIで使用するため、UNIX時間に変換
                 time = Time.parse(Time.now.to_s).to_i
+                w = ""
                 if state == 0
                   via = ViaPlace.where(commute_id: commute.id).order(:order)
                   location = Array.new
                   via.each_with_index do |v,n|
                     location[n] = {lat: v.via_lat, lng: v.via_lng}
                   end
-                  w = ""
+                  w = "&waypoints="
                   location.each do |l|
                     w = w + "via:#{l[:lat]},#{l[:lng]}|"
                     logger.debug(m)
                   end
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
-                  &waypoints=#{m}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                  #{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 else
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
                   &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
@@ -106,11 +111,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
-              logger.debug(fav_id)
-              unless fav_id.first
-                return client.reply_message(event['replyToken'], bad_msg(message))
-              end
-              logger.debug(fav_id)
+              return client.reply_message(event['replyToken'], bad_msg(message)) unless fav_id.first
               array = Array.new
               fav_id.each_with_index do |f,n|
                 response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url,place_id&key=" + ENV['G_KEY'])
@@ -145,8 +146,7 @@ class LinebotController < ApplicationController
                   review: review, address: hash[:results][n][:formatted_address], url: url, place_id: hash[:results][n][:place_id]
                 }
               end
-              reply = change_msg(message,data)
-              client.reply_message(event['replyToken'], reply)
+              client.reply_message(event['replyToken'], change_msg(message,data))
               
             when 'テスト'
               commute.update_attributes(mode: nil)
