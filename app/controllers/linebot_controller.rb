@@ -82,16 +82,18 @@ class LinebotController < ApplicationController
               if state == 0 || state == 1
                 #現在時刻をAPIで使用するため、UNIX時間に変換
                 time = Time.parse(Time.now.to_s).to_i
-                w = ""
-                via = ViaPlace.where(commute_id: commute.id).order(:order)
-                location = Array.new
-                via.each_with_index do |v,n|
-                  location[n] = {lat: v.via_lat, lng: v.via_lng}
-                end
-                # w = "&waypoints="
-                location.each do |l|
-                  w = w + "via:#{l[:lat]},#{l[:lng]}|"
-                  logger.debug(w)
+                # w = ""
+                if state == 0
+                  via = ViaPlace.where(commute_id: commute.id).order(:order)
+                  location = Array.new
+                  via.each_with_index do |v,n|
+                    location[n] = {lat: v.via_lat, lng: v.via_lng}
+                  end
+                  # w = "&waypoints="
+                  location.each do |l|
+                    w = w + "via:#{l[:lat]},#{l[:lng]}|"
+                    logger.debug(w)
+                  end
                 end
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
                 &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
