@@ -4,14 +4,14 @@ class Commute < ApplicationRecord
   validates :user_id, presence: true, uniqueness: true
 
   def get_state
-    if start_lat && arrival_lat && via_place.first #中間地点２つ目〜
-      state = 0
-    elsif start_lat && arrival_lat #中間地点設定
-      state = 1
-    elsif start_lat #最後のみ変更
-      state = 2
+    if start_lat && arrival_lat && via_place.first
+      state = 0 #スタート、ゴール、中間地点あり
+    elsif start_lat && arrival_lat
+      state = 1 #スタート、ゴールあり
+    elsif start_lat
+      state = 2 #スタートあり
     elsif arrival_lat
-      state = 3 #スタートのみ変更
+      state = 3 #ゴールあり
     else
       state = 4 #通勤設定
     end

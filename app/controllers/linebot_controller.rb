@@ -79,6 +79,7 @@ class LinebotController < ApplicationController
               
             when '通勤時間'
               state = commute.get_state
+              return client.reply_message(event['replyToken'], bad_msg(message)) if state == 2,3,4
               time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
               if commute.mode
                 case state
@@ -98,8 +99,6 @@ class LinebotController < ApplicationController
                 when 1
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
                   &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
-                else
-                  return client.reply_message(event['replyToken'], bad_msg(message))
                 end
                 data = JSON.parse(response.read, {symbolize_names: true})
                 reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration_in_traffic][:text]}"}
