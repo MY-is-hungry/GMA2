@@ -84,9 +84,9 @@ class LinebotController < ApplicationController
                   via.each_with_index do |v,n|
                     location[n] = {lat: v.via_lat, lng: v.via_lng}
                   end
-                  m = ""
+                  w = ""
                   location.each do |l|
-                    m = m + "via:#{l[:lat]},#{l[:lng]}|"
+                    w = w + "via:#{l[:lat]},#{l[:lng]}|"
                     logger.debug(m)
                   end
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
@@ -106,6 +106,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
+              logger.debug(fav_id)
               return unless fav_id
               logger.debug(fav_id)
               array = Array.new
