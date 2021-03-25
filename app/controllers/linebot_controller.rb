@@ -107,7 +107,7 @@ class LinebotController < ApplicationController
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
                 &language=ja&key=" + ENV['G_KEY'])
                 data = JSON.parse(response.read, {symbolize_names: true})
-                reply = data[:routes][0][:legs][0][:duration][:text]
+                reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration][:text]}"}
               end
               client.reply_message(event['replyToken'], reply)
               
