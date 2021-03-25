@@ -67,7 +67,7 @@ class LinebotController < ApplicationController
               
             when '中間地点削除'
               if commute.via_place.first
-                ViaPlace.where(commute_id: commute.id).destroy
+                ViaPlace.where(commute_id: commute.id).destroy_all
                 reply = change_msg(message)
               else
                 reply = bad_msg(message)
