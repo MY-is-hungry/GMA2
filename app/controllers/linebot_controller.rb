@@ -80,10 +80,10 @@ class LinebotController < ApplicationController
             when '通勤時間'
               state = commute.get_state
               time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
-              case state
-              when 0
-                w = ""
-                if state == 0
+              if commute.mode
+                case state
+                when 0
+                  w = ""
                   via = ViaPlace.where(commute_id: commute.id).order(:order)
                   location = Array.new
                   via.each_with_index do |v,n|
@@ -93,23 +93,22 @@ class LinebotController < ApplicationController
                     w = w + "via:#{l[:lat]},#{l[:lng]}|"
                     logger.debug(w)
                   end
-                end
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
-                &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
-              when 1
-                if commute.mode
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                  &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                when 1
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
                   &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 else
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
-                  &language=ja&key=" + ENV['G_KEY'])
+                  return client.reply_message(event['replyToken'], bad_msg(message))
                 end
+                data = JSON.parse(response.read, {symbolize_names: true})
+                reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration_in_traffic][:text]}"}
               else
-                return client.reply_message(event['replyToken'], bad_msg(message))
+                response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                &language=ja&key=" + ENV['G_KEY'])
+                data = JSON.parse(response.read, {symbolize_names: true})
+                reply = data[:routes][0][:legs][0][:duration][:text]
               end
-              data = JSON.parse(response.read, {symbolize_names: true})
-              logger.debug(data)
-              reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration_in_traffic][:text]}"}
               client.reply_message(event['replyToken'], reply)
               
             when 'お気に入り'
