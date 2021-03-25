@@ -79,7 +79,8 @@ class LinebotController < ApplicationController
               
             when '通勤時間'
               state = commute.get_state
-              return client.reply_message(event['replyToken'], bad_msg(message)) if state == 2 || 3 || 4
+              logger.debug(state)
+              return client.reply_message(event['replyToken'], bad_msg(message)) if state.in?([2,3,4])
               time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
               if commute.mode
                 case state
