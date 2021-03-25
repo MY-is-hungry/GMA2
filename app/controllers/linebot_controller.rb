@@ -88,17 +88,13 @@ class LinebotController < ApplicationController
                 via.each_with_index do |v,n|
                   location[n] = {lat: v.via_lat, lng: v.via_lng}
                 end
-                w = "&waypoints="
+                # w = "&waypoints="
                 location.each do |l|
                   w = w + "via:#{l[:lat]},#{l[:lng]}|"
                   logger.debug(w)
                 end
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
-                #{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
-                # else
-                #   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
-                #   &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
-                # end
+                &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 data = JSON.parse(response.read, {symbolize_names: true})
                 logger.debug(data)
                 reply = data[:routes][0][:legs][0][:duration_in_traffic][:text]
