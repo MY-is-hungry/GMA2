@@ -19,6 +19,10 @@ module BadRequest
           ]
         }}
       ]
+      return result
+    when '中間地点削除'
+      result = {type: 'text',text: "中間地点が設定されていません。"}
+      return result
     when '通勤時間'
       result = [
         {type: 'text',text: "出発地点か、到着地点が設定されていません。"},

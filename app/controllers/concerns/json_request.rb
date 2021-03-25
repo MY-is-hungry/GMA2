@@ -60,6 +60,9 @@ module JsonRequest
         }
       }
       return result
+    when '中間地点削除'
+      result = {type: 'text',text: "中間地点の設定を削除しました。"}
+      return result
     when '通勤時間'
       if commute.mode
         client.reply_message(event['replyToken'], {

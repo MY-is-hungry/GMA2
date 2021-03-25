@@ -63,7 +63,15 @@ class LinebotController < ApplicationController
               when 2,3,4
                 reply = bad_msg(message)#出発、到着地が登録されていない場合
               end
-              logger.debug(reply)
+              client.reply_message(event['replyToken'], reply)
+              
+            when '中間地点削除'
+              if commute.via_place.first
+                ViaPlace.where(commute_id: commute.id).destroy
+                reply = change_msg(message)
+              else
+                reply = bad_msg(message)
+              end
               client.reply_message(event['replyToken'], reply)
             when '通勤時間'
               state = commute.get_state
