@@ -79,10 +79,9 @@ class LinebotController < ApplicationController
               
             when '通勤時間'
               state = commute.get_state
+              time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
               case state
               when 0
-                #現在時刻をAPIで使用するため、UNIX時間に変換
-                time = Time.parse(Time.now.to_s).to_i
                 w = ""
                 if state == 0
                   via = ViaPlace.where(commute_id: commute.id).order(:order)
@@ -98,8 +97,13 @@ class LinebotController < ApplicationController
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
                 &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
               when 1
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
-                &waypoints=#{w}&language=ja&key=" + ENV['G_KEY'])
+                if commute.mode
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                  &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                else
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                  &language=ja&key=" + ENV['G_KEY'])
+                end
               else
                 return client.reply_message(event['replyToken'], bad_msg(message))
               end
