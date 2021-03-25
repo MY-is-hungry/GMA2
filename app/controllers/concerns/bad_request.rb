@@ -41,8 +41,9 @@ module BadRequest
         }}
       ]
       return result
-    end
     when 'お気に入り'
       result = {type: "text", text: "お気に入りが登録されていません。"}
+      return result
+    end
   end
 end
