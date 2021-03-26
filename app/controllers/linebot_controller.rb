@@ -36,7 +36,7 @@ class LinebotController < ApplicationController
                 [{type: "text", text: reply}, {type: "text", text: '二言返信テスト'}])
                 
             when '通勤設定'
-              commute.update_attributes(start_lat: nil,start_lng: nil,arrival_lat: nil,arrival_lng: nil)
+              commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
               ViaPlace.where(commute_id: commute.id).destroy_all
               reply = change_msg(message)
               client.reply_message(event['replyToken'], reply)
@@ -51,7 +51,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
               
             when '到着地点変更'
-              commute.update_attributes(arrival_lat: nil,arrival_lng: nil)
+              commute.update_attributes(end_lat: nil,end_lng: nil)
               reply = change_msg(message)
               client.reply_message(event['replyToken'], reply)
             
@@ -95,16 +95,16 @@ class LinebotController < ApplicationController
                   location.each do |l|
                     w = w + "via:#{l[:lat]},#{l[:lng]}|"
                   end
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
                   &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 when 1
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
                   &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 end
                 data = JSON.parse(response.read, {symbolize_names: true})
                 reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration_in_traffic][:text]}"}
               else
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
+                response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
                 &language=ja&key=" + ENV['G_KEY'])
                 data = JSON.parse(response.read, {symbolize_names: true})
                 reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration][:text]}"}
@@ -137,7 +137,7 @@ class LinebotController < ApplicationController
               when 0
                 response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.first.via_lat},#{commute.via_place.first.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
               when 1
-                response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
+                response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
               else
                 return client.reply_message(event['replyToken'], bad_msg(message))
               end
@@ -178,8 +178,8 @@ class LinebotController < ApplicationController
                 text: "中間地点を登録しました。"
               })
             when 2 #到着地変更
-              commute.update_attributes(arrival_lat: event.message['latitude'],arrival_lng: event.message['longitude'])
-              response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}&language=ja&key=" + ENV['G_KEY'])
+              commute.update_attributes(end_lat: event.message['latitude'], end_lng: event.message['longitude'])
+              response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               result = data[:routes][0][:legs][0][:duration][:text]
               if commute.mode
