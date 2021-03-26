@@ -144,7 +144,7 @@ class LinebotController < ApplicationController
               hash = JSON.parse(response.read, {symbolize_names: true})
               #配列にハッシュ化した店舗データを入れる（最大５件）
               data = Array.new
-              7.times do |n|
+              5.times do |n|
                 data[n] = Hash.new
                 #写真、評価、クチコミが無いとフロント部分が崩れるので存在を確認
                 hash[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
@@ -222,7 +222,7 @@ class LinebotController < ApplicationController
                 text: "通勤モードを設定しました。"
             })
           when 2 #寄り道機能のお気に入り登録
-            if Favorite.where(user_id: user.id).count < 7
+            if Favorite.where(user_id: user.id).count < 5
               Favorite.create(user_id: user.id, place_id: data)
               client.reply_message(event['replyToken'], {
                   type: 'text',
