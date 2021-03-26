@@ -44,6 +44,24 @@ module BadRequest
     when 'お気に入り'
       result = {type: "text", text: "お気に入りが登録されていません。"}
       return result
+    when 'ラーメン','カフェ','コンビニ','ファミレス','焼肉'
+      result = {
+        "type": "text",
+        "text": "寄り道機能には、通勤場所の情報が必要です。",
+        "quickReply": {
+          "items": [
+            {
+              "type": "action",
+              "action": {
+                "type": "message",
+                "label": "通勤設定",
+                "text": "通勤設定"
+              }
+            }
+          ]
+        }
+      }
+      return result
     end
   end
 end

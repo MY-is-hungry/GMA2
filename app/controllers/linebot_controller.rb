@@ -93,7 +93,6 @@ class LinebotController < ApplicationController
                   end
                   location.each do |l|
                     w = w + "via:#{l[:lat]},#{l[:lng]}|"
-                    logger.debug(w)
                   end
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.arrival_lat},#{commute.arrival_lng}
                   &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
@@ -130,13 +129,21 @@ class LinebotController < ApplicationController
               reply = change_msg(message,data,count)
               client.reply_message(event['replyToken'], reply)
               
-            when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
+            when 'ラーメン','カフェ','コンビニ','ファミレス','焼肉'
               #検索ワードの周辺店舗を検索
-              response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
+              state = commute.get_state
+              case state
+              when 0
+                response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.first.via_lat},#{commute.via_place.first.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
+              when 1
+                response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.arrival_lat},#{commute.arrival_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
+              else
+                return client.reply_message(event['replyToken'], bad_msg(message))
+              end
               hash = JSON.parse(response.read, {symbolize_names: true})
               #配列にハッシュ化した店舗データを入れる（最大５件）
               data = Array.new
-              5.times do |n|
+              7.times do |n|
                 data[n] = Hash.new
                 #写真、評価、クチコミが無いとフロント部分が崩れるので存在を確認
                 hash[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
@@ -214,7 +221,7 @@ class LinebotController < ApplicationController
                 text: "通勤モードを設定しました。"
             })
           when 2 #寄り道機能のお気に入り登録
-            if Favorite.where(user_id: user.id).count < 5
+            if Favorite.where(user_id: user.id).count < 7
               Favorite.create(user_id: user.id, place_id: data)
               client.reply_message(event['replyToken'], {
                   type: 'text',
