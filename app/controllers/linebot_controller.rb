@@ -162,7 +162,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], change_msg(message))
               
             when 'テスト'
-              menu = client.get_default_rich_menu
+              menu = open(client.get_default_rich_menu)
               logger.debug(menu)
               client.set_default_rich_menu(open(menu))
               # commute.update_attributes(mode: nil)
