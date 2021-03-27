@@ -162,11 +162,13 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], change_msg(message))
               
             when 'テスト'
-              commute.update_attributes(mode: nil)
-              client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "modeをリセットしました。"
-              })
+              menu = client.get_default_rich_menu
+              client.set_default_rich_menu(menu)
+              # commute.update_attributes(mode: nil)
+              # client.reply_message(event['replyToken'], {
+              #   type: 'text',
+              #   text: "modeをリセットしました。"
+              # })
             end
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
