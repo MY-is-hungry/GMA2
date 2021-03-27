@@ -563,6 +563,7 @@ module JsonRequest
       return result
     when 'お気に入り','おきにいり','おきに'
       fav_list(data,count)
+      
     when '通勤モード'
       result = {
         "type": "flex",
@@ -617,6 +618,15 @@ module JsonRequest
           }
         }
       }
+      return result
+    when 'コマンド一覧'
+      result = [
+        {type: 'text',
+        text: "通勤設定：通勤経路を設定できます。流れに沿っていくと基本の設定が完了します。\n
+               通勤モード:通勤時間を算出するゆとりを設定できます。\n
+               "},
+        {type: 'text',text: "上記のコマンドは、画面左下のボタンから入力できます。"}
+      ]
       return result
     end
   end

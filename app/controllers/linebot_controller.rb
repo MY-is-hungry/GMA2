@@ -157,6 +157,9 @@ class LinebotController < ApplicationController
                 }
               end
               client.reply_message(event['replyToken'], change_msg(message,data))
+            
+            when 'コマンド一覧'
+              client.reply_message(event['replyToken'], change_msg(message))
               
             when 'テスト'
               commute.update_attributes(mode: nil)
