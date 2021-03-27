@@ -163,7 +163,7 @@ class LinebotController < ApplicationController
               
             when 'テスト'
               menu = client.get_default_rich_menu
-              client.set_default_rich_menu(menu)
+              client.set_default_rich_menu(open(menu))
               # commute.update_attributes(mode: nil)
               # client.reply_message(event['replyToken'], {
               #   type: 'text',
