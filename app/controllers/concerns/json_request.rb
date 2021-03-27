@@ -624,7 +624,7 @@ module JsonRequest
         {type: 'text',
         text: 
         "通勤設定：通勤経路を設定できます。流れに沿っていくと基本の設定が完了します。\n\n通勤モード:通勤時間を算出するゆとりを設定できます。\n\n
-      aa"},
+aa"},
         {type: 'text',text: "上記のコマンドは、画面左下のボタンから入力できます。"}
       ]
       return result
