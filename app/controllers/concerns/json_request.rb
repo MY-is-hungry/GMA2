@@ -669,8 +669,7 @@ module JsonRequest
                         "action": {
                           "type": "postback",
                           "data": "hello",
-                          "label": "高速道路",
-                          "wrap": true
+                          "label": "高速道路"                        
                         },
                         "style": "primary"
                       },
