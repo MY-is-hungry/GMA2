@@ -76,7 +76,9 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
               
             when '制限'
-              
+              state = commute.get_state
+              reply = change_msg(message)
+              client.reply_message(event['replyToken'], reply)
               
             when '通勤時間'
               state = commute.get_state
@@ -162,9 +164,6 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], change_msg(message))
               
             when 'テスト'
-              menu = open(client.get_default_rich_menu)
-              logger.debug(menu)
-              client.set_default_rich_menu(open(menu))
               # commute.update_attributes(mode: nil)
               # client.reply_message(event['replyToken'], {
               #   type: 'text',
