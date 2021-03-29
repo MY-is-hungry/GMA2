@@ -578,7 +578,7 @@ module JsonRequest
                 "type": "text",
                 "text": "通勤モードを選択してください。",
                 "weight": "bold",
-                "size": "lg",
+                "size": "xl",
                 "wrap": true,
                 "margin": "sm"
               },
@@ -669,7 +669,8 @@ module JsonRequest
                         "action": {
                           "type": "postback",
                           "data": "hello",
-                          "label": "高速道路"
+                          "label": "高速道路",
+                          "wrap": true
                         },
                         "style": "primary"
                       },
