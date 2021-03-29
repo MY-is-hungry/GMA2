@@ -188,13 +188,6 @@ module JsonRequest
                     },
                     "style": "primary"
                   },
-                ],
-                "spacing": "md"
-              },
-              {
-                "type": "box",
-                "layout": "horizontal",
-                "contents": [
                   {
                     "type": "button",
                     "action": {
@@ -204,6 +197,13 @@ module JsonRequest
                     },
                     "style": "primary"
                   },
+                ],
+                "spacing": "md"
+              },
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
                   {
                     "type": "button",
                     "action": {
