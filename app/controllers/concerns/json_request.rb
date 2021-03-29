@@ -708,7 +708,7 @@ module JsonRequest
                         "style": "secondary"
                       }
                     ],
-                    "spacing": "md"
+                    "spacing": "md",
                     "margin": "md"
                   }
                 ]
