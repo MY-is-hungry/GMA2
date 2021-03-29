@@ -589,7 +589,7 @@ module JsonRequest
                 "wrap": true
               }
             ],
-            # "spacing": "sm"
+            "spacing": "sm"
           },
           "body": {
             "type": "box",
@@ -682,6 +682,13 @@ module JsonRequest
                         },
                         "style": "primary"
                       },
+                    ],
+                    "spacing": "md"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
                       {
                         "type": "button",
                         "action": {
@@ -690,14 +697,7 @@ module JsonRequest
                           "data": "hello"
                         },
                         "style": "primary"
-                      }
-                    ],
-                    "spacing": "xs"
-                  },
-                  {
-                    "type": "box",
-                    "layout": "vertical",
-                    "contents": [
+                      },
                       {
                         "type": "button",
                         "action": {
@@ -708,6 +708,7 @@ module JsonRequest
                         "style": "secondary"
                       }
                     ],
+                    "spacing": "md"
                     "margin": "md"
                   }
                 ]
