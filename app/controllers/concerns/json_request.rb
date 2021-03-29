@@ -702,7 +702,7 @@ module JsonRequest
                         "type": "button",
                         "action": {
                           "type": "postback",
-                          "label": "どれも使用しない",
+                          "label": "使用しない",
                           "data": "hello"
                         },
                         "style": "secondary"
