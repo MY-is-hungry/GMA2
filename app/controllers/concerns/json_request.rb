@@ -687,7 +687,7 @@ module JsonRequest
                   },
                   {
                     "type": "box",
-                    "layout": "vertical",
+                    "layout": "horizontal",
                     "contents": [
                       {
                         "type": "button",
