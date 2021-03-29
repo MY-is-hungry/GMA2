@@ -589,7 +589,7 @@ module JsonRequest
                 "wrap": true
               }
             ],
-            "spacing": "sm"
+            # "spacing": "sm"
           },
           "body": {
             "type": "box",
