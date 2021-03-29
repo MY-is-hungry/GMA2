@@ -77,8 +77,11 @@ class LinebotController < ApplicationController
               
             when '制限'
               state = commute.get_state
-              commute.update_attributes(avoid: nil)
               reply = change_msg(message)
+              if commute.avoid
+                commute.update_attributes(avoid: nil)
+                reply = [reply,{type: 'text',text: "選択済みの設定をリセットしました。"}]
+              end
               client.reply_message(event['replyToken'], reply)
               
             when '通勤時間'
