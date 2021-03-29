@@ -74,7 +74,7 @@ module JsonRequest
         client.reply_message(event['replyToken'], )
       end
     when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
-      search_store(message, data)
+      search_store(msg, data)
       
     when 'お気に入り','おきにいり','おきに'
       fav_list(data,count)
