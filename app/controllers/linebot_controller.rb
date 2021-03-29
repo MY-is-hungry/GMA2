@@ -77,6 +77,7 @@ class LinebotController < ApplicationController
               
             when '制限'
               state = commute.get_state
+              commute.update_attributes(avoid: nil)
               reply = change_msg(message)
               client.reply_message(event['replyToken'], reply)
               
@@ -247,6 +248,22 @@ class LinebotController < ApplicationController
                 type: 'text',
                 text: "お気に入りを解除しました。"
             })
+          when 4 #通勤経路の制限
+          avoid = user.commute.avoid
+            if avoid
+              if avoid == data 
+                return client.reply_message(event['replyToken'], {
+                  type: 'text',
+                  text: "既に設定済みです。"
+                })
+              end
+              if data.length > 20
+                user.commute.update_attributes(avoid: data)
+              else
+                user.commute.update_attributes(avoid: "#{avoid}|#{data}")
+              end
+            else
+            end
           end
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])

@@ -62,17 +62,11 @@ module JsonRequest
       }
       return result
     when '中間地点削除'
-      result = {type: 'text',text: "中間地点の設定を削除しました。"}
+      result = {type: 'text',text: "中間地点の設定を全て削除しました。"}
       return result
+      
     when '通勤時間'
-      if commute.mode
-        client.reply_message(event['replyToken'], {
-          type: 'text',
-          text: "出発地点から到着地点までの所要時間は、#{result}です。"
-        })
-      else
-        client.reply_message(event['replyToken'], )
-      end
+      
     when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
       search_store(msg, data)
       
@@ -139,97 +133,92 @@ module JsonRequest
         "type": "flex",
         "altText": "通勤経路の設定",
         "contents": {
-          "type": "carousel",
-          "contents": [
-            {
-              "type": "bubble",
-              "size": "giga",
-              "header": {
-                "type": "box",
-                "layout": "vertical",
-                "contents": [
-                  {
-                    "type": "text",
-                    "text": "通勤経路に含まれるものを選んでください。",
-                    "size": "lg",
-                    "margin": "none",
-                    "weight": "bold",
-                    "wrap": true
-                  },
-                  {
-                    "type": "text",
-                    "text": "※複数回選択可能です。",
-                    "margin": "md",
-                    "color": "#8c8c8c"
-                  },
-                  {
-                    "type": "text",
-                    "text": "※誤った設定をした場合は、「制限」と入力して選び直してください。",
-                    "color": "#8c8c8c",
-                    "wrap": true,
-                    "margin": "sm"
-                  }
-                ]
+          "type": "bubble",
+          "size": "giga",
+          "header": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "通勤経路に含まれるものを選んでください。",
+                "size": "lg",
+                "margin": "none",
+                "weight": "bold",
+                "wrap": true
               },
-              "body": {
+              {
+                "type": "text",
+                "text": "※複数回選択可能です。",
+                "margin": "md",
+                "color": "#8c8c8c"
+              },
+              {
+                "type": "text",
+                "text": "※誤った設定をした場合は、「制限」と入力して選び直してください。",
+                "color": "#8c8c8c",
+                "wrap": true,
+                "margin": "sm"
+              }
+            ]
+          },
+          "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
                 "type": "box",
-                "layout": "vertical",
+                "layout": "horizontal",
                 "contents": [
                   {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                      {
-                        "type": "button",
-                        "action": {
-                          "type": "postback",
-                          "data": "hello",
-                          "label": "高速道路"                        
-                        },
-                        "style": "primary"
-                      },
-                      {
-                        "type": "button",
-                        "action": {
-                          "type": "postback",
-                          "label": "有料道路",
-                          "data": "hello"
-                        },
-                        "style": "primary"
-                      },
-                    ],
-                    "spacing": "md"
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "data": "hello",
+                      "label": "高速道路"                        
+                    },
+                    "style": "primary"
                   },
                   {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                      {
-                        "type": "button",
-                        "action": {
-                          "type": "postback",
-                          "label": "フェリー",
-                          "data": "hello"
-                        },
-                        "style": "primary"
-                      },
-                      {
-                        "type": "button",
-                        "action": {
-                          "type": "postback",
-                          "label": "使用しない",
-                          "data": "hello"
-                        },
-                        "style": "secondary"
-                      }
-                    ],
-                    "spacing": "md",
-                    "margin": "md"
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "有料道路",
+                      "data": "tolls4"
+                    },
+                    "style": "primary"
+                  },
+                ],
+                "spacing": "md"
+              },
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "フェリー",
+                      "data": "hello"
+                    },
+                    "style": "primary"
+                  },
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "使用しない",
+                      "data": "tolls|highways|ferries4"
+                    },
+                    "style": "secondary"
                   }
-                ]
+                ],
+                "spacing": "md",
+                "margin": "md"
               }
-            }
-          ]
+            ]
+          }
         }
       }
       return result
