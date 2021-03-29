@@ -692,7 +692,7 @@ module JsonRequest
                         "style": "primary"
                       }
                     ],
-                    "spacing": "md"
+                    "spacing": "sm"
                   },
                   {
                     "type": "box",
