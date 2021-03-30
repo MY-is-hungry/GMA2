@@ -349,6 +349,8 @@ class LinebotController < ApplicationController
         "有料道路、フェリー"
       when "ferries"
         "有料道路、高速道路"
+      else
+        "全て"
       end
     end
   
