@@ -253,7 +253,7 @@ class LinebotController < ApplicationController
             })
           when 4 #通勤経路の制限
           avoid = user.commute.avoid
-            if avoid #中身があるか確認（初めてかどうか）
+            if user.commute.avoid #中身があるか確認（初めてかどうか）
               return bad_msg('avoid') if avoid.length > 20 #全て使用しないがすでに入ってる場合はここで返す
               if data.length > 20 #全て使用しないが来た場合
                 user.commute.update_attributes(avoid: data)
@@ -290,21 +290,21 @@ class LinebotController < ApplicationController
     def change_avoid(avoid, data)
       case data
       when "tolls"
-        if avoid.include?(highways)
+        if avoid.include?("highways")
           "highways"
-        elsif avoid.include?(ferries)
+        elsif avoid.include?("ferries")
           "ferries"
         end
       when "highways"
-        if avoid.include?(tolls)
+        if avoid.include?("tolls")
           "tolls"
-        elsif avoid.include?(ferries)
+        elsif avoid.include?("ferries")
           "ferries"
         end
       when "ferries"
-        if avoid.include?(tolls)
+        if avoid.include?("tolls")
           "tolls"
-        elsif avoid.include?(highways)
+        elsif avoid.include?("highways")
           "highways"
         end
       end
