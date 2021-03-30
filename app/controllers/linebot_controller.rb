@@ -253,21 +253,24 @@ class LinebotController < ApplicationController
             })
           when 4 #通勤経路の制限
           avoid = user.commute.avoid
-            if avoid
-              return bad_msg('avoid') if avoid.length > 20
-              if data.length > 20
+            if avoid #中身があるか確認（初めてかどうか）
+              return bad_msg('avoid') if avoid.length > 20 #全て使用しないがすでに入ってる場合はここで返す
+              if data.length > 20 #全て使用しないが来た場合
                 user.commute.update_attributes(avoid: data)
                 reply = {type: 'text',text: "使用しないに設定しました。"}
               end
-              if avoid.include?(data)
+              if avoid.include?(data) #制限されている数が２個以下
                 add = change_avoid(avoid, data)
-                user.commute.update_attributes(avoid: "#{avoid}|#{add}")
+                user.commute.update_attributes(avoid: add)
                 reply = {type: 'text',text: "設定を追加しました。"}
               else
-                
+                #選択されたものが制限されていない場合
+                reply = {type: 'text',text: "すでに設定されています。"}
               end
             else
-              user.commute.update_attributes(avoid: data)
+              #初めて来たときの処理（未完成
+              add = change_avoid(avoid, data)
+              user.commute.update_attributes(avoid: add)
               reply = {type: 'text',text: "設定しました。"}
             end
             client.reply_message(event['replyToken'], reply)
@@ -288,8 +291,21 @@ class LinebotController < ApplicationController
       case data
       when "tolls"
         if avoid.include?(highways)
-          
+          "highways"
         elsif avoid.include?(ferries)
+          "ferries"
+        end
+      when "highways"
+        if avoid.include?(tolls)
+          "tolls"
+        elsif avoid.include?(ferries)
+          "ferries"
+        end
+      when "ferries"
+        if avoid.include?(tolls)
+          "tolls"
+        elsif avoid.include?(highways)
+          "highways"
         end
       end
     end
