@@ -144,7 +144,7 @@ module JsonRequest
               },
               {
                 "type": "text",
-                "text": "※複数回選択可能です。",
+                "text": "※複数ある場合は、それぞれ押してください。",
                 "margin": "md",
                 "color": "#8c8c8c"
               },
