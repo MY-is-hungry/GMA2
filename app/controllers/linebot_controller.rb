@@ -261,10 +261,10 @@ class LinebotController < ApplicationController
           when 4 #通勤経路の制限
           avoid = user.commute.avoid
             if avoid #中身があるか確認（初めてかどうか）
-              return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid.length > 20
-              if data.length > 20 #全て使用しないが来た場合
+              return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid == "tolls|highways|ferries"
+              if data == "tolls|highways|ferries" #全て使用しないが来た場合
                 user.commute.update_attributes(avoid: data)
-                reply = {type: 'text',text: "使用しないに設定しました。"}
+                reply = {type: 'text',text: "設定しました。"}
               end
               if avoid.include?(data) #制限されている数が２個以下
                 add = change_avoid(avoid, data)
@@ -272,26 +272,31 @@ class LinebotController < ApplicationController
                 reply = {type: 'text',text: "設定を追加しました。"}
               else
                 #選択されたものが制限されていない場合
-                reply = {type: 'text',text: "すでに設定されています。"}
+                reply = {type: 'text',text: "選択されたものは設定済みです。"}
               end
             else
-              #初めて来たときの処理（未完成
+              #初めて来たときの処理
               if data == "tolls|highways|ferries"
                 add = "tolls|highways|ferries"
+                text = "全て使用しない"
               else
                 case data
                 when "tolls"
                   add = "highways|ferries"
+                  text = "有料道路"
                 when "highways"
                   add = "tolls|ferries"
+                  text = "高速道路"
                 when "ferries"
                   add = "tolls|highways"
+                  text = "フェリー"
                 end
               end
               user.commute.update_attributes(avoid: add)
-              reply = {type: 'text',text: "設定しました。"}
+              reply = {type: 'text',text: "#{text}を設定しました。"}
             end
-            client.reply_message(event['replyToken'], reply)
+            now = avoid_now(avoid)
+            client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
           end
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
@@ -325,6 +330,25 @@ class LinebotController < ApplicationController
         elsif avoid.include?("highways")
           "highways"
         end
+      end
+    end
+    
+    def avoid_now(a)
+      case a
+      when "tolls|highways|ferries"
+        "全て使用しない"
+      when "tolls|highways"
+        "有料道路、高速道路"
+      when "tolls|ferries"
+        "有料道路、フェリー"
+      when "highways|ferries"
+        "高速道路、フェリー"
+      when "tolls"
+        "有料道路"
+      when "highways"
+        "高速道路"
+      when "ferries"
+        "フェリー"
       end
     end
   
