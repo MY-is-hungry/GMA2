@@ -276,13 +276,17 @@ class LinebotController < ApplicationController
               end
             else
               #初めて来たときの処理（未完成
-              case data
-              when "tolls"
-                add = "highways|ferries"
-              when "highways"
-                add = "tolls|ferries"
-              when "ferries"
-                add = "tolls|highways"
+              if data == "tolls|highways|ferries"
+                add = "tolls|highways|ferries"
+              else
+                case data
+                when "tolls"
+                  add = "highways|ferries"
+                when "highways"
+                  add = "tolls|ferries"
+                when "ferries"
+                  add = "tolls|highways"
+                end
               end
               user.commute.update_attributes(avoid: add)
               reply = {type: 'text',text: "設定しました。"}
