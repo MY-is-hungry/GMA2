@@ -254,23 +254,17 @@ class LinebotController < ApplicationController
           when 4 #通勤経路の制限
           avoid = user.commute.avoid
             if avoid
+              return bad_msg('avoid') if avoid.length > 20
               if data.length > 20
                 user.commute.update_attributes(avoid: data)
                 reply = {type: 'text',text: "使用しないに設定しました。"}
               end
               if avoid.include?(data)
-                case data
-                when a
-                end
-              else
-                return client.reply_message(event['replyToken'], {
-                  type: 'text',
-                  text: "既に設定済みです。"
-                })
-              end
-              if
-                user.commute.update_attributes(avoid: "#{avoid}|#{data}")
+                add = change_avoid(avoid, data)
+                user.commute.update_attributes(avoid: "#{avoid}|#{add}")
                 reply = {type: 'text',text: "設定を追加しました。"}
+              else
+                
               end
             else
               user.commute.update_attributes(avoid: data)
@@ -289,6 +283,17 @@ class LinebotController < ApplicationController
       }
       head :ok
     end
+    
+    def change_avoid(avoid, data)
+      case data
+      when "tolls"
+        if avoid.include?(highways)
+          
+        elsif avoid.include?(ferries)
+        end
+      end
+    end
+  
     
     
     def weather_text(weather_data)

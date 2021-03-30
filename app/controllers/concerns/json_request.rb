@@ -169,8 +169,8 @@ module JsonRequest
                     "type": "button",
                     "action": {
                       "type": "postback",
-                      "data": "hello",
-                      "label": "高速道路"                        
+                      "data": "tolls4",
+                      "label": "有料道路"                        
                     },
                     "style": "primary"
                   },
@@ -178,8 +178,8 @@ module JsonRequest
                     "type": "button",
                     "action": {
                       "type": "postback",
-                      "label": "有料道路",
-                      "data": "tolls4"
+                      "label": "高速道路",
+                      "data": "highways4"
                     },
                     "style": "primary"
                   },
@@ -188,7 +188,7 @@ module JsonRequest
                     "action": {
                       "type": "postback",
                       "label": "フェリー",
-                      "data": "hello"
+                      "data": "ferries4"
                     },
                     "style": "primary"
                   },
