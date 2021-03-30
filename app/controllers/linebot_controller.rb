@@ -261,7 +261,7 @@ class LinebotController < ApplicationController
           when 4 #通勤経路の制限
           avoid = user.commute.avoid
             if avoid #中身があるか確認（初めてかどうか）
-              return bad_msg('avoid') if avoid.length > 20 #全て使用しないがすでに入ってる場合はここで返す
+              return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid.length > 20
               if data.length > 20 #全て使用しないが来た場合
                 user.commute.update_attributes(avoid: data)
                 reply = {type: 'text',text: "使用しないに設定しました。"}

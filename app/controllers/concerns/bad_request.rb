@@ -58,7 +58,7 @@ module BadRequest
         }
       }
     when 'avoid'
-      client.reply_message(event['replyToken'],[
+      [
         {type: 'text',text: "全て使用しないに設定済みです。"},
         {type: 'text',text: "この設定をやり直すには、下の「制限」を押してください。",
         "quickReply": {
@@ -73,7 +73,7 @@ module BadRequest
             }
           ]
         }}
-      ])
+      ]
     end
   end
 end
