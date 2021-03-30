@@ -208,7 +208,7 @@ module JsonRequest
                     "type": "button",
                     "action": {
                       "type": "postback",
-                      "label": "使用しない",
+                      "label": "全て使用しない",
                       "data": "tolls|highways|ferries4"
                     },
                     "style": "secondary"
@@ -224,8 +224,8 @@ module JsonRequest
       return result
               
     when 'コマンド一覧'
-      result = [
-        {type: 'text',
+      # result = 
+        [{type: 'text',
         text: 
         "通勤設定\n通勤経路を設定できます。流れに沿っていくと基本の設定が完了します。すでに設定済みの場合は、このコマンドを入力すると初期化されます。
         \n中間地点登録\n通勤経路の中間地点を登録できます。より正確なルートで通勤時間を計算できます。
@@ -237,7 +237,7 @@ module JsonRequest
         \n"},
         {type: 'text',text: "上記のコマンドは、画面左下のボタンから入力できます。"}
       ]
-      return result
+      # return result
     end
   end
     

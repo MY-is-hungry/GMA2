@@ -254,19 +254,29 @@ class LinebotController < ApplicationController
           when 4 #通勤経路の制限
           avoid = user.commute.avoid
             if avoid
-              if avoid == data 
+              if data.length > 20
+                user.commute.update_attributes(avoid: data)
+                reply = {type: 'text',text: "使用しないに設定しました。"}
+              end
+              if avoid.include?(data)
+                case data
+                when a
+                end
+              else
                 return client.reply_message(event['replyToken'], {
                   type: 'text',
                   text: "既に設定済みです。"
                 })
               end
-              if data.length > 20
-                user.commute.update_attributes(avoid: data)
-              else
+              if
                 user.commute.update_attributes(avoid: "#{avoid}|#{data}")
+                reply = {type: 'text',text: "設定を追加しました。"}
               end
             else
+              user.commute.update_attributes(avoid: data)
+              reply = {type: 'text',text: "設定しました。"}
             end
+            client.reply_message(event['replyToken'], reply)
           end
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
