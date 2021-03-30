@@ -6,12 +6,12 @@ module JsonRequest
     case msg
     when 'おはよう'
       response = open(ENV['W_URL'] + "?q=Aichi&APPID=" + ENV['W_KEY'])
-      #JSONデータ(response)をハッシュ化
+      #JSONデータをハッシュ化
       data = JSON.parse(response.read, {symbolize_names: true})
       result = weather_text(data)
       return result
     when '通勤設定','出発地点変更'
-      result = {
+      {
         "type": "text",
         "text": "出発地点の位置情報を教えてください！",
         "quickReply": {
@@ -26,9 +26,8 @@ module JsonRequest
           ]
         }
       }
-      return result
     when '到着地点変更','全設定'
-      result = {
+      {
         "type": "text",
         "text": "到着地点の位置情報を教えてください！",
         "quickReply": {
@@ -43,9 +42,8 @@ module JsonRequest
           ]
         }
       }
-      return result
     when '中間地点登録'
-      result = {
+      {
         "type": "text",
         "text": "中間地点の位置情報を教えてください！",
         "quickReply": {
@@ -60,11 +58,9 @@ module JsonRequest
           ]
         }
       }
-      return result
     when '中間地点削除'
-      result = {type: 'text',text: "中間地点の設定を全て削除しました。"}
-      return result
-      
+      {type: 'text',text: "中間地点の設定を全て削除しました。"}
+
     when '通勤時間'
       
     when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
@@ -74,7 +70,7 @@ module JsonRequest
       fav_list(data,count)
       
     when '通勤モード'
-      result = {
+      {
         "type": "flex",
         "altText": "#{msg}の設定",
         "contents": {
@@ -127,9 +123,8 @@ module JsonRequest
           }
         }
       }
-      return result
     when '制限'
-      result = {
+      {
         "type": "flex",
         "altText": "通勤経路の設定",
         "contents": {
@@ -221,8 +216,6 @@ module JsonRequest
           }
         }
       }
-      return result
-              
     when 'コマンド一覧'
       [
         {

@@ -3,7 +3,7 @@ module FavoriteRequest
   def fav_list(data,count)
     case count
     when 1
-      result = {
+      {
         "type": "flex",
         "altText": "お気に入りのお店",
         "contents": {
@@ -81,9 +81,8 @@ module FavoriteRequest
           ]
         }
       }
-      return result
     when 2
-      result = {
+      {
         "type": "flex",
         "altText": "お気に入りのお店",
         "contents": {
@@ -230,9 +229,8 @@ module FavoriteRequest
           ]
         }
       }
-      return result
     when 3
-      result = {
+      {
         "type": "flex",
         "altText": "お気に入りにお店",
         "contents": {
@@ -448,9 +446,8 @@ module FavoriteRequest
           ]
         }
       }
-      return result
     when 4
-      result = {
+      {
         "type": "flex",
         "altText": "お気に入りのお店",
         "contents": {
@@ -734,9 +731,8 @@ module FavoriteRequest
           ]
         }
       }
-      return result
     when 5
-      result = {
+      {
         "type": "flex",
         "altText": "お気に入りのお店",
         "contents": {
@@ -1088,7 +1084,6 @@ module FavoriteRequest
           ]
         }
       }
-      return result
     end
   end
 end

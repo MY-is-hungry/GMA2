@@ -1,7 +1,7 @@
 module SearchRequest
   extend ActiveSupport::Concern
   def search_store(msg, data)
-    result = {
+    {
       "type": "flex",
       "altText": "#{msg}に寄り道",
       "contents": {
@@ -488,6 +488,5 @@ module SearchRequest
         ]
       }
     }
-    return result
   end
 end
