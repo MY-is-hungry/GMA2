@@ -295,7 +295,7 @@ class LinebotController < ApplicationController
               user.commute.update_attributes(avoid: add)
               reply = {type: 'text',text: "#{text}を設定しました。"}
             end
-            now = avoid_now(avoid)
+            now = avoid_now(user.commute.avoid)
             client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
           end
         when Line::Bot::Event::Follow
