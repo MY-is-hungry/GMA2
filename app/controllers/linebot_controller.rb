@@ -253,7 +253,7 @@ class LinebotController < ApplicationController
             })
           when 4 #通勤経路の制限
           avoid = user.commute.avoid
-            if user.commute.avoid #中身があるか確認（初めてかどうか）
+            if avoid #中身があるか確認（初めてかどうか）
               return bad_msg('avoid') if avoid.length > 20 #全て使用しないがすでに入ってる場合はここで返す
               if data.length > 20 #全て使用しないが来た場合
                 user.commute.update_attributes(avoid: data)
@@ -269,7 +269,14 @@ class LinebotController < ApplicationController
               end
             else
               #初めて来たときの処理（未完成
-              add = change_avoid(avoid, data)
+              case data
+              when "tolls"
+                add = "highways|ferries"
+              when "highways"
+                add = "tolls|ferries"
+              when "ferries"
+                add = "tolls|highways"
+              end
               user.commute.update_attributes(avoid: add)
               reply = {type: 'text',text: "設定しました。"}
             end
