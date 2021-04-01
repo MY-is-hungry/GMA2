@@ -3,7 +3,7 @@ class LinebotController < ApplicationController
     require "json" #jsonモジュールを利用
     require "open-uri" #Webサイトにアクセスできるようにする。
     require "date" #TimeZone
-    include JsonRequest
+    include BaseRequest
     include BadRequest
     
     # callbackアクションのCSRFトークン認証を無効
@@ -259,42 +259,9 @@ class LinebotController < ApplicationController
                 text: "お気に入りを解除しました。"
             })
           when 4 #通勤経路の制限
-          avoid = user.commute.avoid
-            if avoid #中身があるか確認（初めてかどうか）
-              return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid == "tolls|highways|ferries"
-              if data == "tolls|highways|ferries" #全て使用しないが来た場合
-                user.commute.update_attributes(avoid: data)
-                reply = {type: 'text',text: "設定しました。"}
-              end
-              if avoid.include?(data) #制限されている数が２個以下
-                add = change_avoid(avoid, data)
-                user.commute.update_attributes(avoid: add)
-                reply = {type: 'text',text: "設定を追加しました。"}
-              else
-                #選択されたものが制限されていない場合
-                reply = {type: 'text',text: "選択されたものは設定済みです。"}
-              end
-            else
-              #初めて来たときの処理
-              if data == "tolls|highways|ferries"
-                add = "tolls|highways|ferries"
-                text = "全て使用しない"
-              else
-                case data
-                when "tolls"
-                  add = "highways|ferries"
-                  text = "有料道路"
-                when "highways"
-                  add = "tolls|ferries"
-                  text = "高速道路"
-                when "ferries"
-                  add = "tolls|highways"
-                  text = "フェリー"
-                end
-              end
-              user.commute.update_attributes(avoid: add)
-              reply = {type: 'text',text: "#{text}を設定しました。"}
-            end
+            avoid = user.commute.avoid
+            return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid == "tolls|highways|ferries"
+            reply = get_reply(user, data)
             now = avoid_now(user.commute.avoid)
             client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
           end
@@ -308,6 +275,43 @@ class LinebotController < ApplicationController
         end
       }
       head :ok
+    end
+    
+    def get_reply(user, data)
+      if avoid #中身があるか確認（初めてかどうか）
+        if data == "tolls|highways|ferries" #全て使用しないが来た場合
+          user.commute.update_attributes(avoid: data)
+          {type: 'text',text: "設定しました。"}
+        end
+        if avoid.include?(data) #制限されている数が２個以下
+          add = change_avoid(avoid, data)
+          user.commute.update_attributes(avoid: add)
+          {type: 'text',text: "設定を追加しました。"}
+        else
+          #選択されたものが制限されていない場合
+          {type: 'text',text: "選択されたものは設定済みです。"}
+        end
+      else
+        #初めて来たときの処理
+        if data == "tolls|highways|ferries"
+          add = "tolls|highways|ferries"
+          text = "全て使用しない"
+        else
+          case data
+          when "tolls"
+            add = "highways|ferries"
+            text = "有料道路"
+          when "highways"
+            add = "tolls|ferries"
+            text = "高速道路"
+          when "ferries"
+            add = "tolls|highways"
+            text = "フェリー"
+          end
+        end
+        user.commute.update_attributes(avoid: add)
+        {type: 'text',text: "#{text}を設定しました。"}
+      end
     end
     
     def change_avoid(avoid, data)

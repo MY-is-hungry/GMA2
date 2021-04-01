@@ -59,8 +59,8 @@ module BadRequest
       }
     when 'avoid'
       [
-        {type: 'text',text: "全て使用しないに設定済みです。"},
-        {type: 'text',text: "設定をやり直すには、下の「制限」を押してください。",
+        {"type": 'text',"text": "全て使用しないに設定済みです。"},
+        {"type": 'text',"text": "設定をやり直すには、下の「制限」を押してください。",
         "quickReply": {
           "items": [
             {

@@ -1,4 +1,4 @@
-module JsonRequest
+module BaseRequest
   extend ActiveSupport::Concern
   include FavoriteRequest
   include SearchRequest
@@ -10,42 +10,18 @@ module JsonRequest
       data = JSON.parse(response.read, {symbolize_names: true})
       result = weather_text(data)
       return result
-    when '通勤設定','出発地点変更'
+    when '通勤設定','出発地点変更','到着地点変更','全設定','中間地点登録'
+      case msg
+      when '出発地点変更','通勤設定'
+        point = "出発"
+      when '到着地点変更','全設定'
+        point = "到着"
+      when '中間地点登録'
+        point = "中間"
+      end
       {
         "type": "text",
-        "text": "出発地点の位置情報を教えてください！",
-        "quickReply": {
-          "items": [
-            {
-              "type": "action",
-              "action": {
-                "type": "location",
-                "label": "位置情報"
-              }
-            }
-          ]
-        }
-      }
-    when '到着地点変更','全設定'
-      {
-        "type": "text",
-        "text": "到着地点の位置情報を教えてください！",
-        "quickReply": {
-          "items": [
-            {
-              "type": "action",
-              "action": {
-                "type": "location",
-                "label": "位置情報"
-              }
-            }
-          ]
-        }
-      }
-    when '中間地点登録'
-      {
-        "type": "text",
-        "text": "中間地点の位置情報を教えてください！",
+        "text": "#{point}地点の位置情報を教えてください！",
         "quickReply": {
           "items": [
             {
@@ -150,6 +126,12 @@ module JsonRequest
               },
               {
                 "type": "text",
+                "text": "※初期設定では、全て含まれています。",
+                "margin": "md",
+                "color": "#8c8c8c"
+              },
+              {
+                "type": "text",
                 "text": "※誤った設定をした場合は、「制限」と入力して選び直してください。",
                 "color": "#8c8c8c",
                 "wrap": true,
@@ -219,10 +201,10 @@ module JsonRequest
     when 'コマンド一覧'
       [
         {
-          type: 'text',text: 
+          "type": 'text',"text": 
           "通勤設定\n通勤経路を設定できます。流れに沿っていくと基本の設定が完了します。すでに設定済みの場合は、このコマンドを入力すると初期化されます。
           \n中間地点登録\n通勤経路の中間地点を登録できます。より正確なルートで通勤時間を計算できます。
-          \n制限\n有料道路、高速道路、フェリーを使用するか選択できます。設定していない場合、間違ったルートで通勤時間を算出する可能性があります。
+          \n制限\n有料道路、高速道路、フェリーを使用するか選択できます。デフォルトでは、全て使用可能の状態になっています。
           \n通勤モード\n通勤時間を算出するゆとりを設定できます。
           \n通勤時間\n現在時刻の予想通勤時間を算出します。
           \n出発地点変更\n通勤設定で登録した、出発地点のみ変更します。
@@ -230,8 +212,8 @@ module JsonRequest
           \n"
         },
         {
-          type: 'text',
-          text: "上記のコマンドは、画面左下のボタンから入力できます。"
+          "type": 'text',
+          "text": "上記のコマンドは、画面左下のボタンから入力できます。"
         }
       ]
     end
