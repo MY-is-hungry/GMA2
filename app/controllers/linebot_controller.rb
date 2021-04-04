@@ -117,6 +117,9 @@ class LinebotController < ApplicationController
               end
               client.reply_message(event['replyToken'], reply)
               
+            when '寄り道地域'
+              
+              
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               return client.reply_message(event['replyToken'], bad_msg(message)) unless fav_id.first
@@ -337,28 +340,18 @@ class LinebotController < ApplicationController
       end
     end
     
-    def avoid_now(a)
-      case a
-      when "tolls|highways|ferries"
-        "全て使用しない"
-      when "tolls|highways"
-        "フェリー"
-      when "tolls|ferries"
-        "高速道路"
-      when "highways|ferries"
-        "有料道路"
-      when "tolls"
-        "高速道路、フェリー"
-      when "highways"
-        "有料道路、フェリー"
-      when "ferries"
-        "有料道路、高速道路"
-      else
-        "全て"
+    def avoid_now(avoid)
+      case avoid
+      when "tolls|highways|ferries" then "全て使用しない"
+      when "tolls|highways" then "フェリー"
+      when "tolls|ferries" then "高速道路"
+      when "highways|ferries" then "有料道路"
+      when "tolls" then "高速道路、フェリー"
+      when "highways" then"有料道路、フェリー"
+      when "ferries" then "有料道路、高速道路"
+      else "全て"
       end
     end
-  
-    
     
     def weather_text(weather_data)
       item = weather_data[:list]
