@@ -118,7 +118,12 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
               
             when '寄り道地域'
-              
+              state = commute.get_state
+              case state
+                when 0 then reply = change_msg(message)
+                when 1 then reply = change_msg('中間なし')
+              end
+              client.reply_message(event['replyToken'], reply)
               
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
@@ -267,6 +272,9 @@ class LinebotController < ApplicationController
             reply = get_reply(user, data, avoid)
             now = avoid_now(user.commute.avoid)
             client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
+          when 5 #寄り道機能の検索位置設定
+            user.commute.update_attributes(search_area: data.to_i)
+            client.reply_message(event['replyToken'], {type: 'text',text: "検索エリアの設定が完了しました。"})
           end
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
