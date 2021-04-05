@@ -271,7 +271,7 @@ class LinebotController < ApplicationController
             avoid = user.commute.avoid
             return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid == "tolls|highways|ferries"
             reply = get_reply(user, data, avoid)
-            now = avoid_now(user.commute.avoid)
+            now = avoid_now(avoid)
             client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
           when 5 #寄り道機能の検索位置設定
             user.commute.update_attributes(search_area: data.to_i)
