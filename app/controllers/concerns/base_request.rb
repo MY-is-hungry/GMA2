@@ -114,7 +114,6 @@ module BaseRequest
                 "type": "text",
                 "text": "通勤経路に含まれるものを選んでください。",
                 "size": "xl",
-                "margin": "none",
                 "weight": "bold",
                 "wrap": true
               },
