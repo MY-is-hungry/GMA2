@@ -121,13 +121,15 @@ module BaseRequest
                 "type": "text",
                 "text": "※複数ある場合は、それぞれ押してください。",
                 "margin": "md",
-                "color": "#8c8c8c"
+                "color": "#8c8c8c",
+                "wrap": true
               },
               {
                 "type": "text",
                 "text": "※初期設定では、全て含まれています。",
                 "margin": "md",
-                "color": "#8c8c8c"
+                "color": "#8c8c8c",
+                "wrap": true
               },
               {
                 "type": "text",
