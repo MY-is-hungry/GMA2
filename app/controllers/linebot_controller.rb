@@ -146,16 +146,26 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
               
             when 'ラーメン','カフェ','コンビニ','ファミレス','焼肉'
-              #検索ワードの周辺店舗を検索
-              state = commute.get_state
-              case state
-              when 0
-                response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.first.via_lat},#{commute.via_place.first.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
-              when 1
-                response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
-              else
-                return client.reply_message(event['replyToken'], bad_msg(message))
-              end
+              response =
+                if commute.search_area
+                  case commute.search_area
+                  when 1 #自宅付近
+                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.start_lat},#{commute.start_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
+                  when 2 #職場付近
+                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
+                  when 3 #中間地点付近
+                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.first.via_lat},#{commute.via_place.first.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
+                  end
+                else #寄り道地域を未設定
+                  case commute.get_state
+                  when 0 #中間地点を設定済み
+                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.first.via_lat},#{commute.via_place.first.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
+                  when 1 #中間地点設定なし(職場周辺で検索)
+                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
+                  else
+                    return client.reply_message(event['replyToken'], bad_msg(message))
+                  end
+                end
               hash = JSON.parse(response.read, {symbolize_names: true})
               #配列にハッシュ化した店舗データを入れる（最大５件）
               data = Array.new
