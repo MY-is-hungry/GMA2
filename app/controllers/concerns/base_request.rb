@@ -238,7 +238,6 @@ module BaseRequest
                 {
                   "type": "button",
                   "style": "link",
-                  "height": "sm",
                   "action": {
                     "type": "postback",
                     "data": "15",
@@ -248,7 +247,6 @@ module BaseRequest
                 {
                   "type": "button",
                   "style": "link",
-                  "height": "sm",
                   "action": {
                     "type": "postback",
                     "label": "職場付近",
