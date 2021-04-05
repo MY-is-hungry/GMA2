@@ -119,10 +119,11 @@ class LinebotController < ApplicationController
               
             when '寄り道地域'
               state = commute.get_state
-              case state
-                when 0 then reply = change_msg(message)
-                when 1 then reply = change_msg(message, 1)
-              end
+              reply =
+                case state
+                  when 0 then change_msg(message)
+                  when 1 then change_msg(message, 1)
+                end
               client.reply_message(event['replyToken'], reply)
               
             when 'お気に入り'
