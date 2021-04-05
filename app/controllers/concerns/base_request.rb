@@ -65,7 +65,7 @@ module BaseRequest
               {
                 "type": "text",
                 "text": "※交通状況の変化もありますので、「ゆとり持つ」がオススメです。",
-                "size": "xs",
+                "size": "sm",
                 "wrap": true
               }
             ],
