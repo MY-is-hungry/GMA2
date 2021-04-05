@@ -193,7 +193,6 @@ module BaseRequest
                   }
                 ],
                 "spacing": "md",
-                "margin": "md"
               }
             ]
           }
