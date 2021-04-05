@@ -60,8 +60,7 @@ module BaseRequest
                 "text": "通勤モードを選択してください。",
                 "weight": "bold",
                 "size": "xl",
-                "wrap": true,
-                "margin": "sm"
+                "wrap": true
               },
               {
                 "type": "text",
