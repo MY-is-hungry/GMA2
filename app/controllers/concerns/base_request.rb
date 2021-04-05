@@ -201,7 +201,64 @@ module BaseRequest
       
     when '寄り道地域'
       case data
-      when 0
+      when 1
+        {
+          "type": "flex",
+          "altText": "#{msg}の設定",
+          "contents": {
+            "type": "bubble",
+            "body": {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "寄り道する地域を選んでください。",
+                  "size": "lg",
+                  "wrap": true,
+                  "weight": "bold"
+                },
+                {
+                  "type": "text",
+                  "text": "※自宅・職場とは、通勤設定で選んだ出発地点と到着地点です。",
+                  "wrap": true,
+                  "size": "xs",
+                  "color": "#8c8c8c",
+                  "margin": "sm"
+                }
+              ]
+            },
+            "footer": {
+              "type": "box",
+              "layout": "horizontal",
+              "spacing": "sm",
+              "contents": [
+                {
+                  "type": "button",
+                  "style": "link",
+                  "height": "sm",
+                  "action": {
+                    "type": "postback",
+                    "data": "15",
+                    "label": "自宅付近"
+                  }
+                },
+                {
+                  "type": "button",
+                  "style": "link",
+                  "height": "sm",
+                  "action": {
+                    "type": "postback",
+                    "label": "職場付近",
+                    "data": "25"
+                  }
+                }
+              ],
+              "flex": 0
+            }
+          }
+        }
+      else 
         {
           "type": "flex",
           "altText": "#{msg}の設定",
@@ -274,63 +331,6 @@ module BaseRequest
               ],
               "flex": 0,
               "spacing": "sm"
-            }
-          }
-        }  
-      when 1
-        {
-          "type": "flex",
-          "altText": "#{msg}の設定",
-          "contents": {
-            "type": "bubble",
-            "body": {
-              "type": "box",
-              "layout": "vertical",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "寄り道する地域を選んでください。",
-                  "size": "lg",
-                  "wrap": true,
-                  "weight": "bold"
-                },
-                {
-                  "type": "text",
-                  "text": "※自宅・職場とは、通勤設定で選んだ出発地点と到着地点です。",
-                  "wrap": true,
-                  "size": "xs",
-                  "color": "#8c8c8c",
-                  "margin": "sm"
-                }
-              ]
-            },
-            "footer": {
-              "type": "box",
-              "layout": "horizontal",
-              "spacing": "sm",
-              "contents": [
-                {
-                  "type": "button",
-                  "style": "link",
-                  "height": "sm",
-                  "action": {
-                    "type": "postback",
-                    "data": "15",
-                    "label": "自宅付近"
-                  }
-                },
-                {
-                  "type": "button",
-                  "style": "link",
-                  "height": "sm",
-                  "action": {
-                    "type": "postback",
-                    "label": "職場付近",
-                    "data": "25"
-                  }
-                }
-              ],
-              "flex": 0
             }
           }
         }
