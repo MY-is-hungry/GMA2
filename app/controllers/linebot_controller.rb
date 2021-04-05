@@ -122,6 +122,7 @@ class LinebotController < ApplicationController
               case state
                 when 0 then reply = change_msg(message)
                 when 1 then reply = change_msg('中間なし')
+                else bad_msg(message)
               end
               client.reply_message(event['replyToken'], reply)
               
