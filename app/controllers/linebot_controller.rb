@@ -271,7 +271,7 @@ class LinebotController < ApplicationController
             avoid = user.commute.avoid
             return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid == "tolls|highways|ferries"
             reply = get_reply(user, data, avoid)
-            now = avoid_now(avoid)
+            now = avoid_now(user.commute.avoid)
             client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
           when 5 #寄り道機能の検索位置設定
             user.commute.update_attributes(search_area: data.to_i)
@@ -292,12 +292,12 @@ class LinebotController < ApplicationController
     def get_reply(user, data, avoid)
       if avoid #中身があるか確認（初めてかどうか）
         if data == "tolls|highways|ferries" #全て使用しないが来た場合
-          user.commute.update_attributes!(avoid: data)
+          user.commute.update_attributes(avoid: data)
           {type: 'text',text: "設定しました。"}
         end
         if avoid.include?(data) #制限されている数が２個以下
           add = change_avoid(avoid, data)
-          user.commute.update_attributes!(avoid: add)
+          user.commute.update_attributes(avoid: add)
           {type: 'text',text: "設定を追加しました。"}
         else
           #選択されたものが制限されていない場合
