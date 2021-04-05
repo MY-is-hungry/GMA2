@@ -135,7 +135,7 @@ module BaseRequest
                 "text": "※誤った設定をした場合は、「制限」と入力して選び直してください。",
                 "color": "#8c8c8c",
                 "wrap": true,
-                "margin": "sm"
+                "margin": "md"
               }
             ]
           },
