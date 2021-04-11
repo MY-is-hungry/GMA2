@@ -30,8 +30,11 @@ class LinebotController < ApplicationController
             message = event.message['text']
             case message
             when 'おはよう'
-              message = change_msg(message)
-              reply = message.join
+              response = open(ENV['W_URL'] + "?q=Aichi&APPID=" + ENV['W_KEY'])
+              #JSONデータをハッシュ化
+              data = JSON.parse(response.read, {symbolize_names: true})
+              msg = weather_text(data)
+              reply = msg.join
               client.reply_message(event['replyToken'],
                 [{type: "text", text: reply}, {type: "text", text: '二言返信テスト'}])
                 
@@ -75,7 +78,7 @@ class LinebotController < ApplicationController
               end
               client.reply_message(event['replyToken'], reply)
               
-            when '制限'
+            when '経路制限'
               state = commute.get_state
               reply = change_msg(message)
               if commute.avoid
