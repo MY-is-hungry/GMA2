@@ -196,12 +196,17 @@ class LinebotController < ApplicationController
               #   type: 'text',
               #   text: "modeをリセットしました。"
               # })
-              
-              #avoid確認
+              response = ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&language=ja&key=" + ENV['G_KEY']
+              data = JSON.parse(response.read, {symbolize_names: true})
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: commute.avoid
+                text: data
               })
+              #avoid確認
+              # client.reply_message(event['replyToken'], {
+              #   type: 'text',
+              #   text: commute.avoid
+              # })
             end
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
