@@ -196,7 +196,7 @@ class LinebotController < ApplicationController
               #   type: 'text',
               #   text: "modeをリセットしました。"
               # })
-              response = open(ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&language=ja&key=" + ENV['G_KEY'])
+              response = open(ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               logger.debug(data)
               client.reply_message(event['replyToken'], {
