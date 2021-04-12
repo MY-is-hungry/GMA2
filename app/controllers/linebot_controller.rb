@@ -200,9 +200,9 @@ class LinebotController < ApplicationController
               data = JSON.parse(response.read, {symbolize_names: true})
               logger.debug(data[:results][0][:address_components])
               d =
-                data[:results][0][:address_components].each_with_index do |d, n|
-                  logger.debug(d[n][:types])
-                  break d[n][:long_name] if d[n][:types].include?("administrative_area_level_1")
+                data[:results][0][:address_components].each do |d|
+                  logger.debug(d[:types])
+                  break d[:long_name] if d[:types].include?("administrative_area_level_1")
                 end
               client.reply_message(event['replyToken'], {
                 type: 'text',
