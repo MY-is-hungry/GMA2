@@ -199,9 +199,13 @@ class LinebotController < ApplicationController
               response = open(ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               logger.debug(data[:results][0][:address_components])
+              d =
+                data[:results][0][:address_components].each_with_index do |d, n|
+                  break d[:long_name] if d[:type].include?("administrative_area_level_1")
+                end
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: data[:results][0][:address_components][5]
+                text: d
               })
               #avoid確認
               # client.reply_message(event['replyToken'], {
