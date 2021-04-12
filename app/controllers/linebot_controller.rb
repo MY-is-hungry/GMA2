@@ -198,10 +198,9 @@ class LinebotController < ApplicationController
               # })
               response = open(ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
-              logger.debug(data)
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: data[:result][0][:address_components][5]
+                text: data[:results][0][:address_components][5]
               })
               #avoid確認
               # client.reply_message(event['replyToken'], {
