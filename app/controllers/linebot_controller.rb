@@ -201,7 +201,7 @@ class LinebotController < ApplicationController
               logger.debug(data)
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: aa
+                text: data[:result][0][:address_components][5]
               })
               #avoid確認
               # client.reply_message(event['replyToken'], {
