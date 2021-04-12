@@ -201,8 +201,8 @@ class LinebotController < ApplicationController
               logger.debug(data[:results][0][:address_components])
               d =
                 data[:results][0][:address_components].each_with_index do |d, n|
-                  logger.debug(d[n][:type])
-                  break d[n][:long_name] if d[n][:type].include?("administrative_area_level_1")
+                  logger.debug(d[n][:types])
+                  break d[n][:long_name] if d[n][:types].include?("administrative_area_level_1")
                 end
               client.reply_message(event['replyToken'], {
                 type: 'text',
