@@ -30,7 +30,7 @@ class LinebotController < ApplicationController
             message = event.message['text']
             case message
             when 'おはよう'
-              response = open(ENV['W_URL'] + "?q=Chiyoda City&APPID=" + ENV['W_KEY'])
+              response = open(ENV['W_URL'] + "?q=Chiyoda&APPID=" + ENV['W_KEY'])
               #JSONデータをハッシュ化
               data = JSON.parse(response.read, {symbolize_names: true})
               msg = weather_text(data)
