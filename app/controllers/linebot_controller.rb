@@ -214,16 +214,19 @@ class LinebotController < ApplicationController
                 text: "中間地点を登録しました。"
               })
             when 2 #到着地変更
-              response_a = open(ENV['G_ADDRESS_URL'] + "latlng=#{event.message['latitude']},#{event.message['longitude']}&key=" + ENV['G_KEY'])
-              data = JSON.parse(response_a.read, {symbolize_names: true})
-              address =
-                data[:results][0][:address_components].each do |d|
-                  break d[:long_name] if d[:types].include?("administrative_area_level_1")
-                end
-              commute.update_attributes(end_lat: event.message['latitude'], end_lng: event.message['longitude'], end_address: address)
+              # response_a = open(ENV['G_ADDRESS_URL'] + "latlng=#{event.message['latitude']},#{event.message['longitude']}&key=" + ENV['G_KEY'])
+              # data = JSON.parse(response_a.read, {symbolize_names: true})
+              # address =
+              #   data[:results][0][:address_components].each do |d|
+              #     break d[:long_name] if d[:types].include?("administrative_area_level_1")
+              #   end
+              commute.update_attributes(end_lat: event.message['latitude'], end_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
-              logger.debug(data)
+              st = data[:routes][0][:legs][0][:start_address].slice(5..12)
+              en = data[:routes][0][:legs][0][:end_address].slice(5..12)
+              commute.update_attributes(start_address: st, end_address: en)
+              logger.debug(commute.start_address, commute.end_address)
               result = data[:routes][0][:legs][0][:duration][:text]
               if commute.mode
                 reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
