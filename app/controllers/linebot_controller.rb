@@ -192,7 +192,7 @@ class LinebotController < ApplicationController
             when 'テスト'
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: address
+                text: commute.address
               })
               
               #avoid確認
