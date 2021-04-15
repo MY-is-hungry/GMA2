@@ -23,7 +23,8 @@ ActiveRecord::Schema.define(version: 2021_04_15_022835) do
     t.datetime "updated_at", null: false
     t.integer "search_area"
     t.string "avoid"
-    t.string "address"
+    t.string "start_address"
+    t.string "end_address"
     t.index ["user_id"], name: "index_commutes_on_user_id"
   end
 
