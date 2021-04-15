@@ -392,7 +392,7 @@ class LinebotController < ApplicationController
       (0..7).each do |i|
         forecastDatetime = item[i][:dt_txt]
         logger.debug(forecastDatetime)
-        forecasttemp = (item[i][:main][:temp] - 273.15).round(1)
+        forecasttemp = item[i][:main][:temp]
         weather_id = item[i][:weather][0][:id]
         weather = get_weather(weather_id)
         # weather_icon = item[i][:weather][i][:icon]
