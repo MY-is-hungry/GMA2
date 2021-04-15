@@ -192,8 +192,20 @@ class LinebotController < ApplicationController
               
             when 'テスト'
               client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "よろしく$0x100078$"
+                "type": "text",
+                "text": "$ LINE emoji $",
+                  "emojis": [
+                    {
+                      "index": 0,
+                      "productId": "5ac1bfd5040ab15980c9b435",
+                      "emojiId": "001"
+                    },
+                    {
+                      "index": 13,
+                      "productId": "5ac1bfd5040ab15980c9b435",
+                      "emojiId": "002"
+                    }
+                  ]
               })
               
               #avoid確認
