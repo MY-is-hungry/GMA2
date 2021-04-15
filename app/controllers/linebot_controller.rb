@@ -227,7 +227,7 @@ class LinebotController < ApplicationController
               end
               client.reply_message(event['replyToken'], reply)
             when 3 #出発地のみ変更
-              response = open(ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&key=" + ENV['G_KEY'])
+              response = open(ENV['G_ADDRESS_URL'] + "latlng=#{event.message['latitude']},#{event.message['longitude']}&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               address =
                 data[:results][0][:address_components].each do |d|
@@ -240,7 +240,7 @@ class LinebotController < ApplicationController
                 text: "出発地点を変更しました。"
               })
             when 4 #初期設定or全部変更
-              response = open(ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&key=" + ENV['G_KEY'])
+              response = open(ENV['G_ADDRESS_URL'] + "latlng=#{event.message['latitude']},#{event.message['longitude']}&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               address =
                 data[:results][0][:address_components].each do |d|
