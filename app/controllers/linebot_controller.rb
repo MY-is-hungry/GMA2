@@ -30,7 +30,7 @@ class LinebotController < ApplicationController
             message = event.message['text']
             case message
             when 'おはよう'
-              response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&APPID=" + ENV['W_KEY'])
+              response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=4&APPID=" + ENV['W_KEY'])
               #JSONデータをハッシュ化
               data = JSON.parse(response.read, {symbolize_names: true})
               logger.debug(data)
@@ -303,6 +303,8 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
           Commute.create(user_id: event['source']['userId'])
+          reply = change_message("follow")
+          client.reply_message(event['replyToken'], {type: 'text', text: reply})
         when Line::Bot::Event::Unfollow
           User.find_by(id: event['source']['userId']).destroy
         else
