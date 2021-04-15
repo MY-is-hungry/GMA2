@@ -21,6 +21,21 @@ module BasicRequest
   end
   
   def follow_message
-    {"type": 'text',"text": "よろしく$0x100078$"}
+    {
+      "type": "text",
+      "text": "$よろしく$",
+        "emojis": [
+          {
+            "index": 0,
+            "productId": "5ac1bfd5040ab15980c9b435",
+            "emojiId": "001"
+          },
+          {
+            "index": 5,
+            "productId": "5ac1bfd5040ab15980c9b435",
+            "emojiId": "002"
+          }
+        ]
+    }
   end
 end
