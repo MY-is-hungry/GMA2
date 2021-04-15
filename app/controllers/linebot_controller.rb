@@ -190,20 +190,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], change_msg(message))
               
             when 'テスト'
-              #modeリセット
-              # commute.update_attributes(mode: nil)
-              # client.reply_message(event['replyToken'], {
-              #   type: 'text',
-              #   text: "modeをリセットしました。"
-              # })
-              response = open(ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&key=" + ENV['G_KEY'])
-              data = JSON.parse(response.read, {symbolize_names: true})
-              logger.debug(data[:results][0][:address_components])
-              d =
-                data[:results][0][:address_components].each do |d|
-                  logger.debug(d[:types])
-                  break d[:long_name] if d[:types].include?("administrative_area_level_1")
-                end
+              
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: d
@@ -240,13 +227,27 @@ class LinebotController < ApplicationController
               end
               client.reply_message(event['replyToken'], reply)
             when 3 #出発地のみ変更
-              commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
+              response = open(ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&key=" + ENV['G_KEY'])
+              data = JSON.parse(response.read, {symbolize_names: true})
+              address =
+                data[:results][0][:address_components].each do |d|
+                  logger.debug(d[:types])
+                  break d[:long_name] if d[:types].include?("administrative_area_level_1")
+                end
+              commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'], address: address)
               client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "出発地点を変更しました。"
               })
             when 4 #初期設定or全部変更
-              commute.update_attributes(start_lat: event.message['latitude'],start_lng: event.message['longitude'])
+              response = open(ENV['G_ADDRESS_URL'] + "latlng=#{commute.start_lat},#{commute.start_lng}&key=" + ENV['G_KEY'])
+              data = JSON.parse(response.read, {symbolize_names: true})
+              address =
+                data[:results][0][:address_components].each do |d|
+                  logger.debug(d[:types])
+                  break d[:long_name] if d[:types].include?("administrative_area_level_1")
+                end
+              commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'], address: address)
               reply = change_msg('全設定')
               client.reply_message(event['replyToken'], reply)
             else #エラー
