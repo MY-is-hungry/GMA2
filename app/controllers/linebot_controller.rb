@@ -226,7 +226,7 @@ class LinebotController < ApplicationController
               st = data[:routes][0][:legs][0][:start_address].slice(5..12)
               en = data[:routes][0][:legs][0][:end_address].slice(5..12)
               commute.update_attributes(start_address: st, end_address: en)
-              logger.debug(commute.start_address, commute.end_address)
+              logger.debug(commute.start_address)
               result = data[:routes][0][:legs][0][:duration][:text]
               if commute.mode
                 reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
