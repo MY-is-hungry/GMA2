@@ -190,11 +190,11 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], change_msg(message))
               
             when 'テスト'
-              
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: d
+                text: address
               })
+              
               #avoid確認
               # client.reply_message(event['replyToken'], {
               #   type: 'text',
@@ -231,7 +231,6 @@ class LinebotController < ApplicationController
               data = JSON.parse(response.read, {symbolize_names: true})
               address =
                 data[:results][0][:address_components].each do |d|
-                  logger.debug(d[:types])
                   break d[:long_name] if d[:types].include?("administrative_area_level_1")
                 end
               commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'], address: address)
@@ -244,7 +243,6 @@ class LinebotController < ApplicationController
               data = JSON.parse(response.read, {symbolize_names: true})
               address =
                 data[:results][0][:address_components].each do |d|
-                  logger.debug(d[:types])
                   break d[:long_name] if d[:types].include?("administrative_area_level_1")
                 end
               commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'], address: address)
