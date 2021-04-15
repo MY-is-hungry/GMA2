@@ -222,6 +222,7 @@ class LinebotController < ApplicationController
                   break d[:long_name] if d[:types].include?("administrative_area_level_1")
                 end
               commute.update_attributes(end_lat: event.message['latitude'], end_lng: event.message['longitude'], end_address: address)
+              logger.debug(commute.end_address)
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               result = data[:routes][0][:legs][0][:duration][:text]
@@ -253,6 +254,7 @@ class LinebotController < ApplicationController
                   break d[:long_name] if d[:types].include?("administrative_area_level_1")
                 end
               commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address)
+              logger.debug(commute.start_address)
               reply = change_msg('全設定')
               client.reply_message(event['replyToken'], reply)
             else #エラー
