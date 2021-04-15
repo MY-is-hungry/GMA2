@@ -396,8 +396,9 @@ class LinebotController < ApplicationController
         weather_id = item[i][:weather][0][:id]
         weather = get_weather(weather_id)
         # weather_icon = item[i][:weather][i][:icon]
-        result[i] = "#{forecastCityname}の天気をお知らせします。\n#{forecastDatetime}の天気は#{weather}\n温度は#{forecasttemp}\n"
+        result[i] = "#{forecastDatetime}の天気は#{weather}\n温度は#{forecasttemp}\n"
       end
+      result.unshift("#{forecastCityname}の天気をお知らせします。")
       return result
     end
     
