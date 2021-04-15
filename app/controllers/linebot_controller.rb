@@ -30,7 +30,7 @@ class LinebotController < ApplicationController
             message = event.message['text']
             case message
             when 'おはよう'
-              logger.debug(commute)
+              logger.debug(commute.start_address)
               response = open(ENV['W_URL'] + "?q=#{commute.start_address}&APPID=" + ENV['W_KEY'])
               #JSONデータをハッシュ化
               data = JSON.parse(response.read, {symbolize_names: true})
