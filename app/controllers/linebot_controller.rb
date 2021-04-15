@@ -193,7 +193,7 @@ class LinebotController < ApplicationController
             when 'テスト'
               client.reply_message(event['replyToken'], {
                 type: 'text',
-                text: commute.address
+                text: "よろしく$0x100078$"
               })
               
               #avoid確認
