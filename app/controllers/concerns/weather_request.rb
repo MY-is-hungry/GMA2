@@ -4,6 +4,7 @@ module WeatherRequest
   def weather_forcast(data)
     item = data[:list]
     forecastCityname = data[:city][:name]
+    result = Array.new
     (0..5).each do |i|
       time = "#{item[i][:dt_txt].slice(-8, 2)}時"
       time.slice!(0) if time[0] == "0"

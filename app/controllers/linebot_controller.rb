@@ -34,8 +34,7 @@ class LinebotController < ApplicationController
               #JSONデータをハッシュ化
               data = JSON.parse(response.read, {symbolize_names: true})
               reply = change_msg(msg: message, data: data)
-              client.reply_message(event['replyToken'],
-                [{type: "text", text: reply}, {type: "text", text: '二言返信テスト'}])
+              client.reply_message(event['replyToken'], {type: "text", text: reply})
                 
             when '通勤設定'
               commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
