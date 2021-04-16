@@ -30,7 +30,7 @@ class LinebotController < ApplicationController
             message = event.message['text']
             case message
             when 'おはよう'
-              response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=5&APPID=" + ENV['W_KEY'])
+              response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
               #JSONデータをハッシュ化
               data = JSON.parse(response.read, {symbolize_names: true})
               logger.debug(data)
@@ -403,7 +403,7 @@ class LinebotController < ApplicationController
       item = weather_data[:list]
       result = Array.new
       forecastCityname = weather_data[:city][:name]
-      (0..4).each do |i|
+      (0..5).each do |i|
         forecastDatetime = item[i][:dt_txt]
         logger.debug(forecastDatetime)
         forecasttemp = item[i][:main][:temp].round(1)
