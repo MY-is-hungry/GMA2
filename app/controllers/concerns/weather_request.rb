@@ -14,6 +14,7 @@ module WeatherRequest
       result[i] = "\n#{time}の天気は#{weather}\n温度は#{forecasttemp}℃"
     end
     result.unshift("今日の#{forecastCityname}の天気をお知らせします。")
+    return result
     data.each do |d|
       logger.debug(d[-12,2])
     end
