@@ -405,7 +405,7 @@ class LinebotController < ApplicationController
       forecastCityname = weather_data[:city][:name]
       (0..5).each do |i|
         time = "#{item[i][:dt_txt].slice(-8, 2)}時"
-        time.slice!(0) if time[0] == 0
+        time.slice!(0) if time[0] == "0"
         forecasttemp = item[i][:main][:temp].round(1)
         weather_id = item[i][:weather][0][:id]
         weather = get_weather(weather_id)
