@@ -7,6 +7,7 @@ module BaseRequest
   
   
   def change_msg(msg, data: '', count: 0)
+    logger.debug(msg)
     case msg
     when 'おはよう'
       logger.debug(data)
