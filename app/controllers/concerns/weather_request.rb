@@ -1,4 +1,6 @@
 module WeatherRequest
+  extend ActiveSupport::Concern
+  
   def weather_forcast(data)
     item = data[:list]
     forecastCityname = data[:city][:name]

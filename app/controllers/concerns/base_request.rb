@@ -6,7 +6,6 @@ module BaseRequest
   include SearchRequest
   include BasicRequest
   
-  
   def change_msg(msg: '', data: '', count: 0)
     case msg
     when 'おはよう'
