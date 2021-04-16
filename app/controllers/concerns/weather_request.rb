@@ -8,9 +8,9 @@ module WeatherRequest
       forecasttemp = item[i][:main][:temp].round(1)
       weather_id = item[i][:weather][0][:id]
       weather = get_weather(weather_id)
-      result[i] = "#{time}の天気は#{weather}\n温度は#{forecasttemp}℃\n"
+      result[i] = "\n#{time}の天気は#{weather}\n温度は#{forecasttemp}℃"
     end
-    result.unshift("今日の#{forecastCityname}の天気をお知らせします。\n")
+    result.unshift("今日の#{forecastCityname}の天気をお知らせします。")
     data.each do |d|
       logger.debug(d[-12,2])
     end
