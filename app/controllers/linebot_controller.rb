@@ -197,8 +197,8 @@ class LinebotController < ApplicationController
                   "emojis": [
                     {
                       "index": 0,
-                      "productId": "5ac1bfd5040ab15980c9b435",
-                      "emojiId": "001"
+                      "productId": "5ac21184040ab15980c9b43a",
+                      "emojiId": "225"
                     },
                     {
                       "index": 13,
@@ -406,7 +406,7 @@ class LinebotController < ApplicationController
       (0..4).each do |i|
         forecastDatetime = item[i][:dt_txt]
         logger.debug(forecastDatetime)
-        forecasttemp = item[i][:main][:temp]
+        forecasttemp = item[i][:main][:temp].round(1)
         weather_id = item[i][:weather][0][:id]
         weather = get_weather(weather_id)
         # weather_icon = item[i][:weather][i][:icon]
