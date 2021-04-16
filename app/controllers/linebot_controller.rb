@@ -33,8 +33,8 @@ class LinebotController < ApplicationController
               response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
               #JSONデータをハッシュ化
               data = JSON.parse(response.read, {symbolize_names: true})
-              msg = weather_text(data)
-              reply = change_msg(msg: message, data: msg)
+              ms = weather_text(data)
+              reply = change_msg(msg: message, data: ms)
               client.reply_message(event['replyToken'],
                 [{type: "text", text: reply}, {type: "text", text: '二言返信テスト'}])
                 
