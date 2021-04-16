@@ -34,6 +34,7 @@ class LinebotController < ApplicationController
               #JSONデータをハッシュ化
               data = JSON.parse(response.read, {symbolize_names: true})
               msg = weather_text(data)
+              logger.debug(msg)
               reply = msg.join
               client.reply_message(event['replyToken'],
                 [{type: "text", text: reply}, {type: "text", text: '二言返信テスト'}])
