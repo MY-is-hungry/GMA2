@@ -404,15 +404,15 @@ class LinebotController < ApplicationController
       result = Array.new
       forecastCityname = weather_data[:city][:name]
       (0..5).each do |i|
-        forecastDatetime = item[i][:dt_txt]
-        logger.debug(forecastDatetime)
+        time = "#{item[i][:dt_txt].slice(-8, 2)}時"
+        time.slice!(0) if time[0] == 0
         forecasttemp = item[i][:main][:temp].round(1)
         weather_id = item[i][:weather][0][:id]
         weather = get_weather(weather_id)
         # weather_icon = item[i][:weather][i][:icon]
-        result[i] = "#{forecastDatetime}の天気は#{weather}\n温度は#{forecasttemp}\n"
+        result[i] = "#{time}の天気は#{weather}℃\n温度は#{forecasttemp}\n"
       end
-      result.unshift("#{forecastCityname}の天気をお知らせします。\n")
+      result.unshift(今日の"#{forecastCityname}の天気をお知らせします。\n")
       return result
     end
     
