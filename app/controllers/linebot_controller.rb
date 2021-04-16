@@ -412,7 +412,7 @@ class LinebotController < ApplicationController
         # weather_icon = item[i][:weather][i][:icon]
         result[i] = "#{time}の天気は#{weather}℃\n温度は#{forecasttemp}\n"
       end
-      result.unshift(今日の"#{forecastCityname}の天気をお知らせします。\n")
+      result.unshift("今日の#{forecastCityname}の天気をお知らせします。\n")
       return result
     end
     
