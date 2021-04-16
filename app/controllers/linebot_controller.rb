@@ -403,7 +403,7 @@ class LinebotController < ApplicationController
       item = weather_data[:list]
       result = Array.new
       forecastCityname = weather_data[:city][:name]
-      (0..7).each do |i|
+      (0..3).each do |i|
         forecastDatetime = item[i][:dt_txt]
         logger.debug(forecastDatetime)
         forecasttemp = item[i][:main][:temp]
@@ -417,28 +417,29 @@ class LinebotController < ApplicationController
     end
     
     def get_weather(weather_id)
-      logger.debug(weather_id)
       case weather_id
-      when 200, 201, 202, 210, 211, 212, 221, 230, 231, 232, 
-        300, 301, 302, 310, 311, 312, 313, 314, 321, 
-        500, 501, 502, 503, 504, 511, 520, 521, 522, 523 ,531 then
-        weather = '雨'
-        return weather
-      when 601, 602, 611, 612, 615, 616, 620, 621, 622 then
-        weather = '雪'
-        return weather
-      when 701, 711, 721, 731, 741, 751, 761, 762, 771, 781 then
-        weather = '異常気象'
-        return weather
-      when 800 then
-        weather = '晴れ'
-        return weather
-      when 801, 802, 803, 804 then
-        weather = '曇り'
-        return weather
+      when 200, 201, 202, 210, 211, 212, 221, 230, 231, 232
+        '雷雨'
+      when 302, 312, 502, 503
+        '激しい雨'
+      when 300, 301, 310, 311, 313, 314, 500, 501, 504, 511, 522, 523
+        '雨'
+      when 321, 520, 521, 531
+        'にわか雨'
+      when 600, 601, 602, 611, 612, 615, 616, 620, 621, 622
+        '雪'
+      when 701, 711, 721, 741
+        '霧'
+      when 731, 751, 761, 762, 781
+        '異常気象'
+      when 771
+        'スコール'
+      when 800
+        '晴れ'
+      when 801, 802, 803, 804
+        '曇り'
       else
-        weather = '不明'
-        return weather
+        '不明'
       end
     end
     
