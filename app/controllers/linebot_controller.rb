@@ -35,7 +35,7 @@ class LinebotController < ApplicationController
               data = JSON.parse(response.read, {symbolize_names: true})
               logger.debug(data)
               msg = weather_text(data)
-              reply = msg.join
+              reply = msg
               client.reply_message(event['replyToken'],
                 [{type: "text", text: reply}, {type: "text", text: '二言返信テスト'}])
                 
@@ -409,7 +409,6 @@ class LinebotController < ApplicationController
         forecasttemp = item[i][:main][:temp].round(1)
         weather_id = item[i][:weather][0][:id]
         weather = get_weather(weather_id)
-        # weather_icon = item[i][:weather][i][:icon]
         result[i] = "#{time}の天気は#{weather}\n温度は#{forecasttemp}℃\n"
       end
       result.unshift("今日の#{forecastCityname}の天気をお知らせします。\n")
