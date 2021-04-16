@@ -202,7 +202,7 @@ class LinebotController < ApplicationController
                       "emojiId": "225"
                     },
                     {
-                      "index": 10,
+                      "index": 7,
                       "productId": "5ac1bfd5040ab15980c9b435",
                       "emojiId": "002"
                     }
