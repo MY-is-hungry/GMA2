@@ -11,7 +11,7 @@ module BaseRequest
     when 'おはよう'
       data.each do |d|
         logger.debug(d)
-        logger.debug(d[-13,2])
+        logger.debug(d[-12,2])
       end
     #ここからcommute_request.rb
     when '通勤設定','出発地点変更','到着地点変更','全設定','中間地点登録'
