@@ -6,10 +6,12 @@ module BaseRequest
   include BasicRequest
   
   
-  def change_msg(msg, data='', count=0)
+  def change_msg(msg, data: '', count: 0)
     case msg
     when 'おはよう'
-      
+      data.each do |d|
+        logger.debug(d)
+      end
     #ここからcommute_request.rb
     when '通勤設定','出発地点変更','到着地点変更','全設定','中間地点登録'
       commute_place(msg)
