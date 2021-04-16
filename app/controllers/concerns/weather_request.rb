@@ -15,9 +15,9 @@ module WeatherRequest
     end
     result.unshift("今日の#{forecastCityname}の天気をお知らせします。")
     return result
-    data.each do |d|
-      logger.debug(d[-12,2])
-    end
+    # data.each do |d|
+    #   logger.debug(d[-12,2])
+    # end
   end
   
   def get_weather(weather_id)
