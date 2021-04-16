@@ -191,9 +191,10 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], change_msg(message))
               
             when 'テスト'
+              moji = "おはよう"
               client.reply_message(event['replyToken'], {
                 "type": "text",
-                "text": "$ LINE emoji $",
+                "text": "$ #{moji} $",
                   "emojis": [
                     {
                       "index": 0,
@@ -201,7 +202,7 @@ class LinebotController < ApplicationController
                       "emojiId": "225"
                     },
                     {
-                      "index": 13,
+                      "index": 10,
                       "productId": "5ac1bfd5040ab15980c9b435",
                       "emojiId": "002"
                     }
@@ -420,19 +421,19 @@ class LinebotController < ApplicationController
       when 200, 201, 202, 210, 211, 212, 221, 230, 231, 232
         '雷雨'
       when 302, 312, 502, 503
-        '激しい雨'
+        '激雨'
       when 300, 301, 310, 311, 313, 314, 500, 501, 504, 511, 522, 523
-        '雨'
+        'あめ'
       when 321, 520, 521, 531
-        'にわか雨'
+        'に雨'
       when 600, 601, 602, 611, 612, 615, 616, 620, 621, 622
-        '雪'
+        'ゆき'
       when 701, 711, 721, 741
-        '霧'
+        'きり'
       when 731, 751, 761, 762, 781
-        '異常気象'
+        '異常'
       when 771
-        'スコール'
+        'スコ'
       when 800
         '晴れ'
       when 801, 802, 803, 804
