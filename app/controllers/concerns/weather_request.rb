@@ -11,7 +11,7 @@ module WeatherRequest
       forecasttemp = item[i][:main][:temp].round(1)
       weather_id = item[i][:weather][0][:id]
       weather = get_weather(weather_id)
-      result[i] = "\n#{time}の天気は#{weather}\n温度は#{forecasttemp}℃"
+      result[i] = "\n#{time}の天気は#{weather} 温度は#{forecasttemp}℃"
     end
     result.unshift("今日の#{forecastCityname}の天気をお知らせします。")
     logger.debug(result)
