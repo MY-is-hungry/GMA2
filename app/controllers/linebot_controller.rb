@@ -33,7 +33,7 @@ class LinebotController < ApplicationController
               response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
               #JSONデータをハッシュ化
               data = JSON.parse(response.read, {symbolize_names: true})
-              reply = change_msg(msg: message, data: data)
+              reply = change_msg(message, data: data)
               client.reply_message(event['replyToken'], {type: "text", text: reply.join})
                 
             when '通勤設定'
@@ -43,7 +43,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], reply)
             
             when '通勤モード'
-              reply = change_msg(message,commute)
+              reply = change_msg(message)
               client.reply_message(event['replyToken'], reply)
               
             when '出発地点変更'
@@ -142,8 +142,7 @@ class LinebotController < ApplicationController
                 a[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
                 data[n] = {photo: photo, name: a[:result][:name], address: a[:result][:formatted_address], url: a[:result][:url], place_id: a[:result][:place_id]}
               end
-              count = data.count
-              reply = change_msg(message,data,count)
+              reply = change_msg(message, data: data, count: data.count)
               client.reply_message(event['replyToken'], reply)
               
             when 'ラーメン','カフェ','コンビニ','ファミレス','焼肉'
@@ -182,7 +181,7 @@ class LinebotController < ApplicationController
                   review: review, address: hash[:results][n][:formatted_address], url: url, place_id: hash[:results][n][:place_id]
                 }
               end
-              client.reply_message(event['replyToken'], change_msg(message,data))
+              client.reply_message(event['replyToken'], change_msg(message, data: data))
             
             when 'コマンド一覧'
               client.reply_message(event['replyToken'], change_msg(message))
