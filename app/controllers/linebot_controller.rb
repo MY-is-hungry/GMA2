@@ -313,7 +313,7 @@ class LinebotController < ApplicationController
           User.create(id: event['source']['userId'])
           Commute.create(user_id: event['source']['userId'])
           reply = change_msg("follow")
-          client.reply_message(event['replyToken'], {type: 'text', text: reply})
+          client.reply_message(event['replyToken'], reply)
         when Line::Bot::Event::Unfollow
           User.find_by(id: event['source']['userId']).destroy
         else

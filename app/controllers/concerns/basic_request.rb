@@ -20,7 +20,7 @@ module BasicRequest
     ]
   end
   
-  def follow_message
+  def follow_msg
     {
       "type": "text",
       "text": "$よろしく$",

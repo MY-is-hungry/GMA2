@@ -43,7 +43,7 @@ module BaseRequest
       command_list
       
     when "follow"
-      follow_message
+      follow_msg
       
     end
   end
