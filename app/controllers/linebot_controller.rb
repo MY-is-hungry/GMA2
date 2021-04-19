@@ -317,7 +317,7 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Unfollow
           User.find_by(id: event['source']['userId']).destroy
         else
-          client.reply_message(event['replyToken'], {type: 'text', text: event.message['そのコマンドは存在しません。']})
+          client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
         end
       }
       head :ok
