@@ -2,24 +2,21 @@ module WeatherRequest
   extend ActiveSupport::Concern
   
   def weather_forcast(data)
-    item = data[:list]
-    cityname = data[:city][:name]
-    result = []
-    item.each_with_index do |i, n|
-      time = i[:dt_txt].slice(-8, 2).to_i + 9
-      break if time > 24
-      time -= 24 if time == 24
-      temp = i[:main][:temp].round(1)
-      weather_id = i[:weather][0][:id]
-      weather = get_weather(weather_id)
-      result[n] = "\n\n#{time}時 天気：#{weather} 温度：#{temp}℃"
-      logger.debug(i[:dt_txt])
+    city_name = [data[0][:city][:name], data[1][:city][:name]]
+    result = [[],[]]
+    2.times do |t|
+      data[t][:list].each_with_index do |d, n|
+        time = d[:dt_txt].slice(-8, 2).to_i + 9
+        break if time > 24
+        time -= 24 if time == 24
+        temp = d[:main][:temp].round(1)
+        weather_id = d[:weather][0][:id]
+        weather = get_weather(weather_id)
+        result[t][n] = "\n\n#{time}時 天気：#{weather} 温度：#{temp}℃"
+      end
+      result[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
     end
-    result.unshift("今日の#{cityname}の天気をお知らせします。")
     return result
-    # data.each do |d|
-    #   logger.debug(d[-12,2])
-    # end
   end
   
   def get_weather(weather_id)

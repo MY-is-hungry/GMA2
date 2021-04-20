@@ -30,9 +30,12 @@ class LinebotController < ApplicationController
             message = event.message['text']
             case message
             when 'おはよう'
-              response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
+              data = Array.new
+              start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
+              end_response = open(ENV['W_URL'] + "?zip=#{commute.end_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
               #JSONデータをハッシュ化
-              data = JSON.parse(response.read, {symbolize_names: true})
+              data[0] = JSON.parse(start_response.read, {symbolize_names: true})
+              data[1] = JSON.parse(end_response.read, {symbolize_names: true})
               reply = change_msg(message, data: data)
               client.reply_message(event['replyToken'], {type: "text", text: reply.join})
                 
