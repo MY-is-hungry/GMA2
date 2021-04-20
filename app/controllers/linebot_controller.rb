@@ -184,10 +184,27 @@ class LinebotController < ApplicationController
             when 0,1 #中間地点登録
               count = ViaPlace.where(commute_id: commute.id).count + 1
               ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
-              client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "中間地点を登録しました。"
-              })
+              if commute.avoid
+                client.reply_message(event['replyToken'], {
+                  type: 'text',
+                  text: "中間地点を登録しました。"
+                })
+              else
+                client.reply_message(event['replyToken'], {type: 'text', text: "中間地点を登録しました。",
+                "quickReply": {
+                    "items": [
+                      {
+                        "type": "action",
+                        "action": {
+                          "type": "message",
+                          "label": "次の設定へ",
+                          "text": "通勤モード"
+                        }
+                      }
+                    ]
+                  }
+                })
+              end
             when 2 #到着地変更
               commute.update_attributes(end_lat: event.message['latitude'], end_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
@@ -206,14 +223,14 @@ class LinebotController < ApplicationController
                 end
               else
                 reply =
-                  {type: 'text',text: "次に、下の「通勤経路の制限」から通勤経路で高速道路等を使用するか設定してください。",
+                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。",
                   "quickReply": {
                     "items": [
                       {
                         "type": "action",
                         "action": {
                           "type": "message",
-                          "label": "通勤経路の制限",
+                          "label": "次の設定へ",
                           "text": "経路の制限"
                         }
                       }
