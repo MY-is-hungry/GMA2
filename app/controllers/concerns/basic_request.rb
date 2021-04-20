@@ -1,6 +1,6 @@
 module BasicRequest
   extend ActiveSupport::Concern
-  def command_list
+  def help_list
     [
       {
         "type": 'text',"text": 

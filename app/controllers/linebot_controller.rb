@@ -53,6 +53,7 @@ class LinebotController < ApplicationController
               
             when '到着地点変更'
               commute.update_attributes(end_lat: nil,end_lng: nil)
+              commute.via_place.destroy_all
               reply = change_msg(message)
               client.reply_message(event['replyToken'], reply)
             
@@ -183,7 +184,7 @@ class LinebotController < ApplicationController
               end
               client.reply_message(event['replyToken'], change_msg(message, data: data))
             
-            when 'コマンド一覧'
+            when 'ヘルプ'
               client.reply_message(event['replyToken'], change_msg(message))
               
             when 'テスト'

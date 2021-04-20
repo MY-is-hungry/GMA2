@@ -39,8 +39,8 @@ module BaseRequest
       search_store(msg, data)
     
     #ここからbasic_request.rb
-    when 'コマンド一覧'
-      command_list
+    when 'ヘルプ'
+      help_list
       
     when "follow"
       follow_msg
