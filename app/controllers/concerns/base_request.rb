@@ -24,7 +24,7 @@ module BaseRequest
     when '通勤モード'
       commute_mode(msg)
       
-    when '経路制限'
+    when '経路の制限'
       commute_limit(msg)
       
     #favorite_request.rb

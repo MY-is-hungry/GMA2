@@ -72,7 +72,7 @@ class LinebotController < ApplicationController
                   bad_msg(message)
                 end
 
-            when '経路制限'
+            when '経路の制限'
               state = commute.get_state
               reply = change_msg(message)
               if commute.avoid
@@ -116,7 +116,7 @@ class LinebotController < ApplicationController
               reply =
                 case state
                   when 0 then change_msg(message)
-                  when 1 then change_msg(message, 1)
+                  when 1 then change_msg(message, data: 1)
                 end
 
             when 'お気に入り'
@@ -137,30 +137,25 @@ class LinebotController < ApplicationController
               reply = change_msg(message, data: data, count: data.count)
 
             when 'ラーメン','カフェ','コンビニ','ファミレス','焼肉'
-              response =
-                if commute.search_area
-                  case commute.search_area
+              if commute.search_area
+                response =
+                  case commute.search_area #寄り道地域設定済み
                   when 1 #自宅付近
-                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.start_lat},#{commute.start_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
+                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.start_lat},#{commute.start_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
                   when 2 #職場付近
-                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
-                  when 3 #中間地点付近
-                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.first.via_lat},#{commute.via_place.first.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
+                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+                  when 3 #中間地点付近（職場に最も近い中間地点）
+                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.last.via_lat},#{commute.via_place.last.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
                   end
-                else #寄り道地域を未設定
-                  case commute.get_state
-                  when 0 #中間地点を設定済み
-                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.first.via_lat},#{commute.via_place.first.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
-                  when 1 #中間地点設定なし(職場周辺で検索)
-                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=1000&language=ja&key=" + ENV['G_KEY'])
-                  else
-                    return client.reply_message(event['replyToken'], bad_msg(message))
-                  end
-                end
+              elsif commute.start_lat && commute.end_lat #寄り道地域は未設定だが、通勤場所は設定済み（職場付近で検索）
+                response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+              else
+                return client.reply_message(event['replyToken'], bad_msg(message))
+              end
               hash = JSON.parse(response.read, {symbolize_names: true})
               #配列にハッシュ化した店舗データを入れる（最大５件）
               data = Array.new
-              5.times do |n|
+              7.times do |n|
                 data[n] = Hash.new
                 #写真、評価、クチコミが無いとフロント部分が崩れるので存在を確認
                 hash[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
@@ -201,14 +196,30 @@ class LinebotController < ApplicationController
               en = data[:routes][0][:legs][0][:end_address].slice(4..11)
               commute.update_attributes(start_address: st, end_address: en)
               result = data[:routes][0][:legs][0][:duration][:text]
-              if commute.mode
-                reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
+              if commute.avoid
+                if commute.mode
+                  reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
+                else
+                  reply = [{type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
+                    {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
+                  ]
+                end
               else
-                reply = [{type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
-                  {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
-                ]
+                reply =
+                  {type: 'text',text: "次に、下の「通勤経路の制限」から通勤経路で高速道路等を使用するか設定してください。",
+                  "quickReply": {
+                    "items": [
+                      {
+                        "type": "action",
+                        "action": {
+                          "type": "message",
+                          "label": "通勤経路の制限",
+                          "text": "経路の制限"
+                        }
+                      }
+                    ]
+                  }}
               end
-              client.reply_message(event['replyToken'], reply)
             when 3 #出発地のみ変更
               commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
@@ -222,25 +233,19 @@ class LinebotController < ApplicationController
                   {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
                 ]
               end
-              client.reply_message(event['replyToken'], reply)
             when 4 #初期設定or全部変更
               commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
               reply = change_msg('全設定')
-              client.reply_message(event['replyToken'], reply)
             else #エラー
-              client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "そのコマンドは存在しません。"
-              })
+              reply = {type: 'text', text: "そのコマンドは存在しません。"}
             end
+            client.reply_message(event['replyToken'], reply)
           end
           
         when Line::Bot::Event::Postback
           user = User.find_by(id: event['source']['userId'])
           data = event['postback']['data']
           code = data.slice!(-1).to_i
-          logger.debug(data)
-          logger.debug(code)
           case code
           when 1 #通勤モード変更
             user.commute.update_attributes(mode: data)
@@ -275,6 +280,7 @@ class LinebotController < ApplicationController
             reply = get_reply(user, data, avoid)
             now = avoid_now(user.commute.avoid)
             client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
+            
           when 5 #寄り道機能の検索位置設定
             user.commute.update_attributes(search_area: data.to_i)
             client.reply_message(event['replyToken'], {type: 'text',text: "検索エリアの設定が完了しました。"})

@@ -88,7 +88,7 @@ module CommuteRequest
   def commute_limit(msg)
     {
       "type": "flex",
-      "altText": "経路の設定",
+      "altText": "#{msg}設定",
       "contents": {
         "type": "bubble",
         "size": "giga",
