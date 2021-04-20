@@ -119,7 +119,7 @@ module CommuteRequest
             },
             {
               "type": "text",
-              "text": "※誤った設定をした場合は、「制限」と入力して選び直してください。",
+              "text": "※誤った設定をした場合は、「経路の制限」と入力して選び直してください。",
               "color": "#8c8c8c",
               "wrap": true,
               "margin": "md"

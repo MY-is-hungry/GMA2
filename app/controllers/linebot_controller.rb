@@ -279,8 +279,43 @@ class LinebotController < ApplicationController
             return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid == "tolls|highways|ferries"
             reply = get_reply(user, data, avoid)
             now = avoid_now(user.commute.avoid)
-            client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
-            
+            if user.commute.via_place.first && user.commute.avoid
+              client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
+            else
+              unless user.commute.via_place.first
+                client.reply_message(event['replyToken'], 
+                  [reply,{type: 'text',text: "現在は、#{now}が設定されています。",
+                  "quickReply": {
+                    "items": [
+                      {
+                        "type": "action",
+                        "action": {
+                          "type": "message",
+                          "label": "次の設定へ",
+                          "text": "中間地点登録"
+                        }
+                      }
+                    ]
+                  }}]
+                )
+              else
+                client.reply_message(event['replyToken'], 
+                  [reply,{type: 'text',text: "現在は、#{now}が設定されています。",
+                  "quickReply": {
+                    "items": [
+                      {
+                        "type": "action",
+                        "action": {
+                          "type": "message",
+                          "label": "次の設定へ",
+                          "text": "通勤モード"
+                        }
+                      }
+                    ]
+                  }}]
+                )
+              end
+            end
           when 5 #寄り道機能の検索位置設定
             user.commute.update_attributes(search_area: data.to_i)
             client.reply_message(event['replyToken'], {type: 'text',text: "検索エリアの設定が完了しました。"})
@@ -303,7 +338,7 @@ class LinebotController < ApplicationController
       if avoid #中身があるか確認（初めてかどうか）
         if data == "tolls|highways|ferries" #全て使用しないが来た場合
           user.commute.update_attributes(avoid: data)
-          {type: 'text',text: "設定しました。"}
+          return {type: 'text',text: "全て使用しないを設定しました。"}
         end
         if avoid.include?(data) #制限されている数が２個以下
           add = change_avoid(avoid, data)
