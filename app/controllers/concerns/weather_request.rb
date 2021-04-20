@@ -12,9 +12,9 @@ module WeatherRequest
       weather_id = item[i][:weather][0][:id]
       weather = get_weather(weather_id)
       result[i] = "\n\n#{time} 天気：#{weather} 温度：#{forecasttemp}℃"
+      logger.debug(item[i][:dt_txt])
     end
     result.unshift("今日の#{forecastCityname}の天気をお知らせします。")
-    logger.debug(result)
     return result
     # data.each do |d|
     #   logger.debug(d[-12,2])
