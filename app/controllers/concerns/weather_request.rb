@@ -6,7 +6,7 @@ module WeatherRequest
     forecastCityname = data[:city][:name]
     result = Array.new
     (0..5).each do |i|
-      time = "#{item[i][:dt_txt].slice(-8, 2)}時"
+      time = "#{item[i][:dt_txt].slice(-8, 2).to_i + 9}時"
       time.slice!(0) if time[0] == "0"
       forecasttemp = item[i][:main][:temp].round(1)
       weather_id = item[i][:weather][0][:id]
