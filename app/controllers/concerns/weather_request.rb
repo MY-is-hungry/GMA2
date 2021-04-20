@@ -7,7 +7,8 @@ module WeatherRequest
     result = Array.new
     (0..5).each do |i|
       time = item[i][:dt_txt].slice(-8, 2).to_i + 9
-      time -= 24 if time >= 24
+      break result if time > 24
+      time -= 24 if time == 24
       forecasttemp = item[i][:main][:temp].round(1)
       weather_id = item[i][:weather][0][:id]
       weather = get_weather(weather_id)
