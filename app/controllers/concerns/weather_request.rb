@@ -3,19 +3,19 @@ module WeatherRequest
   
   def weather_forcast(data)
     item = data[:list]
-    forecastCityname = data[:city][:name]
-    result = Array.new
-    (0..5).each do |i|
-      time = item[i][:dt_txt].slice(-8, 2).to_i + 9
-      break result if time > 24
+    cityname = data[:city][:name]
+    result = []
+    item.each do |i|
+      time = i[:dt_txt].slice(-8, 2).to_i + 9
+      break if time > 24
       time -= 24 if time == 24
-      forecasttemp = item[i][:main][:temp].round(1)
-      weather_id = item[i][:weather][0][:id]
+      temp = i[:main][:temp].round(1)
+      weather_id = i[:weather][0][:id]
       weather = get_weather(weather_id)
-      result[i] = "\n\n#{time}時 天気：#{weather} 温度：#{forecasttemp}℃"
-      logger.debug(item[i][:dt_txt])
+      result[i] = "\n\n#{time}時 天気：#{weather} 温度：#{temp}℃"
+      logger.debug(i[:dt_txt])
     end
-    result.unshift("今日の#{forecastCityname}の天気をお知らせします。")
+    result.unshift("今日の#{cityname}の天気をお知らせします。")
     return result
     # data.each do |d|
     #   logger.debug(d[-12,2])
