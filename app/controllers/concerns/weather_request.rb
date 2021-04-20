@@ -12,7 +12,7 @@ module WeatherRequest
         temp = d[:main][:temp].round(1)
         weather_id = d[:weather][0][:id]
         weather = get_weather(weather_id)
-        result[t][n] = "\n\n#{time}時 天気：#{weather} 温度：#{temp}℃"
+        result[t][n] = "\n\n#{time}時 天気：#{weather}  温度：#{temp}℃"
       end
       result[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
     end
