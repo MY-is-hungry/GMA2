@@ -27,7 +27,7 @@ module CommuteRequest
   end
   
   def delete_via
-    {type: 'text',text: "中間地点の設定を全て削除しました。"}
+    {type: 'text',text: "中間地点の設定をリセットしました。"}
   end
     
   def commute_mode(msg)

@@ -37,8 +37,7 @@ class LinebotController < ApplicationController
               data[0] = JSON.parse(start_response.read, {symbolize_names: true})
               data[1] = JSON.parse(end_response.read, {symbolize_names: true})
               reply = change_msg(message, data: data)
-              client.reply_message(event['replyToken'], [{type: "text", text: reply[0].join}, {type: "text", text: reply[1].join}])
-                
+
             when '通勤設定'
               commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
               ViaPlace.where(commute_id: commute.id).destroy_all
@@ -91,7 +90,7 @@ class LinebotController < ApplicationController
                   w = ""
                   via = ViaPlace.where(commute_id: commute.id).order(:order)
                   location = Array.new
-                  via.each_with_index do |v,n|
+                  via.each_with_index do |v, n|
                     location[n] = {lat: v.via_lat, lng: v.via_lng}
                   end
                   location.each do |l|

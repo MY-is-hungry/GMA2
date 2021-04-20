@@ -3,7 +3,7 @@ module WeatherRequest
   
   def weather_forcast(data)
     city_name = [data[0][:city][:name], data[1][:city][:name]]
-    result = [[],[]]
+    weather_data = [[],[]]
     2.times do |t|
       data[t][:list].each_with_index do |d, n|
         time = d[:dt_txt].slice(-8, 2).to_i + 9
@@ -12,10 +12,11 @@ module WeatherRequest
         temp = d[:main][:temp].round(1)
         weather_id = d[:weather][0][:id]
         weather = get_weather(weather_id)
-        result[t][n] = "\n\n#{time}時 天気:#{weather}   温度:#{temp}℃"
+        weather_data[t][n] = "\n\n#{time}時 天気:#{weather}   温度:#{temp}℃"
       end
-      result[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
+      weather_data[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
     end
+    result = [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
     return result
   end
   
