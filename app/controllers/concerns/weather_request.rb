@@ -5,14 +5,14 @@ module WeatherRequest
     item = data[:list]
     cityname = data[:city][:name]
     result = []
-    item.each do |i|
+    item.each_with_index do |i, n|
       time = i[:dt_txt].slice(-8, 2).to_i + 9
       break if time > 24
       time -= 24 if time == 24
       temp = i[:main][:temp].round(1)
       weather_id = i[:weather][0][:id]
       weather = get_weather(weather_id)
-      result[i] = "\n\n#{time}時 天気：#{weather} 温度：#{temp}℃"
+      result[n] = "\n\n#{time}時 天気：#{weather} 温度：#{temp}℃"
       logger.debug(i[:dt_txt])
     end
     result.unshift("今日の#{cityname}の天気をお知らせします。")
