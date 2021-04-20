@@ -184,7 +184,7 @@ class LinebotController < ApplicationController
             when 0,1 #中間地点登録
               count = ViaPlace.where(commute_id: commute.id).count + 1
               ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
-              if commute.avoid
+              if commute.mode
                 client.reply_message(event['replyToken'], {
                   type: 'text',
                   text: "中間地点を登録しました。"
