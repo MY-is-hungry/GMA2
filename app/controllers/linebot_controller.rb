@@ -8,7 +8,7 @@ class LinebotController < ApplicationController
     
     # callbackアクションのCSRFトークン認証を無効
     protect_from_forgery :except => [:callback]
-
+    
     def callback
       body = request.body.read
       
@@ -43,43 +43,36 @@ class LinebotController < ApplicationController
               commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
               ViaPlace.where(commute_id: commute.id).destroy_all
               reply = change_msg(message)
-              client.reply_message(event['replyToken'], reply)
-            
+
             when '通勤モード'
-              reply = change_msg(message)
-              client.reply_message(event['replyToken'], reply)
-              
+              reply = commute.start_lat && commute.end_lat ? change_msg(message) : bad_msg(message)
+
             when '出発地点変更'
               commute.update_attributes(start_lat: nil,start_lng: nil)
               reply = change_msg(message)
-              client.reply_message(event['replyToken'], reply)
-              
+
             when '到着地点変更'
               commute.update_attributes(end_lat: nil,end_lng: nil)
               commute.via_place.destroy_all
               reply = change_msg(message)
-              client.reply_message(event['replyToken'], reply)
-            
+
             when '中間地点登録'
               state = commute.get_state
-              logger.debug(state)
-              case state
-              when 0,1
-                reply = change_msg(message)
-              when 2,3,4
-                reply = bad_msg(message)#出発、到着地が登録されていない場合
-              end
-              client.reply_message(event['replyToken'], reply)
-              
+              reply =
+                case state
+                when 0,1 then change_msg(message)
+                when 2,3,4 then bad_msg(message)#出発、到着地が登録されていない場合
+                end
+
             when '中間地点削除'
-              if commute.via_place.first
-                ViaPlace.where(commute_id: commute.id).destroy_all
-                reply = change_msg(message)
-              else
-                reply = bad_msg(message)
-              end
-              client.reply_message(event['replyToken'], reply)
-              
+              reply =
+                if commute.via_place.first
+                  ViaPlace.where(commute_id: commute.id).destroy_all
+                  change_msg(message)
+                else
+                  bad_msg(message)
+                end
+
             when '経路制限'
               state = commute.get_state
               reply = change_msg(message)
@@ -87,11 +80,9 @@ class LinebotController < ApplicationController
                 commute.update_attributes(avoid: nil)
                 reply = [reply,{type: 'text',text: "選択済みの設定をリセットしました。"}]
               end
-              client.reply_message(event['replyToken'], reply)
-              
+
             when '通勤時間'
               state = commute.get_state
-              logger.debug(state)
               return client.reply_message(event['replyToken'], bad_msg(message)) if state.in?([2,3,4])
               time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
               if commute.mode
@@ -120,8 +111,7 @@ class LinebotController < ApplicationController
                 data = JSON.parse(response.read, {symbolize_names: true})
                 reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration][:text]}"}
               end
-              client.reply_message(event['replyToken'], reply)
-              
+
             when '寄り道地域'
               state = commute.get_state
               reply =
@@ -129,8 +119,7 @@ class LinebotController < ApplicationController
                   when 0 then change_msg(message)
                   when 1 then change_msg(message, 1)
                 end
-              client.reply_message(event['replyToken'], reply)
-              
+
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               return client.reply_message(event['replyToken'], bad_msg(message)) unless fav_id.first
@@ -147,8 +136,7 @@ class LinebotController < ApplicationController
                 data[n] = {photo: photo, name: a[:result][:name], address: a[:result][:formatted_address], url: a[:result][:url], place_id: a[:result][:place_id]}
               end
               reply = change_msg(message, data: data, count: data.count)
-              client.reply_message(event['replyToken'], reply)
-              
+
             when 'ラーメン','カフェ','コンビニ','ファミレス','焼肉'
               response =
                 if commute.search_area
@@ -185,36 +173,15 @@ class LinebotController < ApplicationController
                   review: review, address: hash[:results][n][:formatted_address], url: url, place_id: hash[:results][n][:place_id]
                 }
               end
-              client.reply_message(event['replyToken'], change_msg(message, data: data))
+              reply = change_msg(message, data: data)
             
             when 'ヘルプ'
-              client.reply_message(event['replyToken'], change_msg(message))
+              reply = change_msg(message)
               
             when 'テスト'
-              moji = "おはよう"
-              client.reply_message(event['replyToken'], {
-                "type": "text",
-                "text": "$ #{moji} $",
-                  "emojis": [
-                    {
-                      "index": 0,
-                      "productId": "5ac21184040ab15980c9b43a",
-                      "emojiId": "225"
-                    },
-                    {
-                      "index": 7,
-                      "productId": "5ac1bfd5040ab15980c9b435",
-                      "emojiId": "002"
-                    }
-                  ]
-              })
               
-              #avoid確認
-              # client.reply_message(event['replyToken'], {
-              #   type: 'text',
-              #   text: commute.avoid
-              # })
             end
+            client.reply_message(event['replyToken'], reply)
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
             commute = Commute.find_by(user_id: event['source']['userId'])
