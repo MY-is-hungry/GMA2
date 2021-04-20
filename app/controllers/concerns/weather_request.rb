@@ -6,12 +6,12 @@ module WeatherRequest
     forecastCityname = data[:city][:name]
     result = Array.new
     (0..5).each do |i|
-      time = "#{item[i][:dt_txt].slice(-8, 2).to_i + 9}時"
-      time.slice!(0) if time[0] == "0"
+      time = item[i][:dt_txt].slice(-8, 2).to_i + 9
+      time -= 24 if time >= 24
       forecasttemp = item[i][:main][:temp].round(1)
       weather_id = item[i][:weather][0][:id]
       weather = get_weather(weather_id)
-      result[i] = "\n\n#{time} 天気：#{weather} 温度：#{forecasttemp}℃"
+      result[i] = "\n\n#{time}時 天気：#{weather} 温度：#{forecasttemp}℃"
       logger.debug(item[i][:dt_txt])
     end
     result.unshift("今日の#{forecastCityname}の天気をお知らせします。")
