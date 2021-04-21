@@ -13,8 +13,7 @@ module BaseRequest
       
     #ここからcommute_request.rb
     when '通勤設定','出発地点変更','到着地点変更'
-      logger.debug(msg)
-      commute_place(msg, data: '')
+      commute_place(msg, data: data)
       
     when '中間地点登録'
       via_create

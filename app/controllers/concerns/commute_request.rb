@@ -1,6 +1,7 @@
 module CommuteRequest
   extend ActiveSupport::Concern
   def commute_place(msg, data: '')
+    logger.debug(msg)
     case data.class
     when String
       logger.debug(msg)
