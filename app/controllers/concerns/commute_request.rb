@@ -4,7 +4,7 @@ module CommuteRequest
     logger.debug(msg)
     logger.debug(data.class)
     case data.class
-    when string
+    when "String"
       logger.debug(msg)
       point =
         case msg
