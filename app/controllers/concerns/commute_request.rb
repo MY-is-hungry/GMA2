@@ -1,21 +1,49 @@
 module CommuteRequest
   extend ActiveSupport::Concern
   def commute_place(msg, data: '')
-    logger.debug(msg)
-    logger.debug(data.class)
     case data
-    when ""
-      logger.debug(msg)
+    when "リセット"
+      point, reset = ""  
+      case msg
+      when '通勤設定'
+        point, reset = "出発地点", "出発地点と到着地点"
+      when '出発地点変更'
+        point, reset = "出発地点", "出発地点"
+      when '到着地点変更'
+        point, reset = "到着地点", "到着地点"
+      end
+      [
+        {
+          "type": "text", 
+          "text": "#{reset}をリセットしました。"
+        },
+        {
+          "type": "text", 
+          "text": "#{point}の位置情報を教えてください！",
+          "quickReply": {
+            "items": [
+              {
+                "type": "action",
+                "action": {
+                  "type": "location",
+                  "label": "位置情報"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    else
       point =
         case msg
         when '出発地点変更','通勤設定'
-          "出発"
+          "出発地点"
         when '到着地点変更','通勤設定2'
-          "到着"
+          "到着地点"
         end
       {
         "type": "text",
-        "text": "#{point}地点の位置情報を教えてください！",
+        "text": "#{point}の位置情報を教えてください！",
         "quickReply": {
           "items": [
             {
