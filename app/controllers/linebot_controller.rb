@@ -295,9 +295,14 @@ class LinebotController < ApplicationController
             # return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid == "tolls|highways|ferries"
             # reply = get_reply(commute, data, avoid)
             # now = avoid_now(commute.avoid)
-            commute.avoid.slice!(data) if commute.avoid.include?(data)
+            if commute.avoid.include?(data)
+              commute.avoid.slice!(data)
+            else
+              return client.reply_message(event['replyToken'], bad_msg('avoid'))
+            end
             commute.avoid.slice!(0) if commute.avoid[0] == "|"
             commute.avoid.slice!(-1) if commute.avoid[-1] == "|"
+            commute.avoid.slice!(7) if commute.avoid[7] == "|"
             logger.debug(commute.avoid)
             if commute.via_place.first && commute.avoid
               # client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
