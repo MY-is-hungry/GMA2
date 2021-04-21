@@ -298,13 +298,14 @@ class LinebotController < ApplicationController
             commute.avoid.slice!(data) if commute.avoid.include?(data)
             commute.avoid.slice!(0) if commute.avoid[0] == "|"
             commute.avoid.slice!(-1) if commute.avoid[-1] == "|"
+            logger.debug(commute.avoid)
             if commute.via_place.first && commute.avoid
               # client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
               client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{commute.avoid}が設定されています。"}])
             else
               unless commute.via_place.first
                 client.reply_message(event['replyToken'], 
-                  [reply,{type: 'text',text: "現在は、#{commute.avoid}が設定されています。",
+                  [reply,{type: 'text',text: "現在は、が設定されています。",
                   "quickReply": {
                     "items": [
                       {
