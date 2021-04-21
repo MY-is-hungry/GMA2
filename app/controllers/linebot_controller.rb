@@ -304,7 +304,7 @@ class LinebotController < ApplicationController
             else
               unless commute.via_place.first
                 client.reply_message(event['replyToken'], 
-                  [reply,{type: 'text',text: "現在は、#{now}が設定されています。",
+                  [reply,{type: 'text',text: "現在は、#{commute.avoid}が設定されています。",
                   "quickReply": {
                     "items": [
                       {
@@ -320,7 +320,7 @@ class LinebotController < ApplicationController
                 )
               else
                 client.reply_message(event['replyToken'], 
-                  [reply,{type: 'text',text: "現在は、#{now}が設定されています。",
+                  [reply,{type: 'text',text: "現在は、#{commute.avoid}が設定されています。",
                   "quickReply": {
                     "items": [
                       {
