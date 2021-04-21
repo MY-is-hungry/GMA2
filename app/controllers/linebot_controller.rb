@@ -295,7 +295,7 @@ class LinebotController < ApplicationController
             # return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid == "tolls|highways|ferries"
             # reply = get_reply(commute, data, avoid)
             # now = avoid_now(commute.avoid)
-            commute.avoid.include?(data) ? commute.avoid.slice!(data) : return client.reply_message(event['replyToken'], bad_msg('avoid'))
+            commute.avoid.slice!(data) if commute.avoid.include?(data)
             commute.avoid.slice!(0) if commute.avoid[0] == "|"
             commute.avoid.slice!(-1) if commute.avoid[-1] == "|"
             logger.debug(commute.avoid)
