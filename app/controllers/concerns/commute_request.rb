@@ -1,7 +1,8 @@
 module CommuteRequest
   extend ActiveSupport::Concern
   def commute_place(msg, data: '')
-    if data.nil?
+    case data.class
+    when String
       point =
         case msg
         when '出発地点変更','通勤設定'
