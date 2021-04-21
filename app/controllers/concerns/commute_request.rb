@@ -71,21 +71,27 @@ module CommuteRequest
   end
   
   def via_create
-    {
-      "type": "text",
-      "text": "中間地点の位置情報を教えてください！",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "location",
-              "label": "位置情報"
+    [
+      {
+        "type": "text",
+        "text": "中間地点の位置情報を教えてください！"
+      },
+      {
+        "type": "text",
+        "text": "中間地点は登録順に通るよう通勤時間を計算します。",
+        "quickReply": {
+          "items": [
+            {
+              "type": "action",
+              "action": {
+                "type": "location",
+                "label": "位置情報"
+              }
             }
-          }
-        ]
+          ]
+        }
       }
-    }
+    ]
   end
   
   def via_delete
