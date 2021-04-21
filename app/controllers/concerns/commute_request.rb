@@ -153,7 +153,7 @@ module CommuteRequest
     }
   end
   
-  def commute_limit(msg)
+  def commute_avoid(msg)
     {
       "type": "flex",
       "altText": "#{msg}設定",
