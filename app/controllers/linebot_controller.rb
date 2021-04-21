@@ -9,6 +9,10 @@ class LinebotController < ApplicationController
     # callbackアクションのCSRFトークン認証を無効
     protect_from_forgery :except => [:callback]
     
+    def get_commute(event)
+      Commute.find_by(user_id: event['source']['userId'])
+    end
+    
     def callback
       body = request.body.read
       
@@ -26,7 +30,7 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Message
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
-            commute = Commute.find_by(user_id: event['source']['userId'])
+            commute = get_commute(event)
             message = event.message['text']
             case message
             when 'おはよう'
@@ -171,12 +175,12 @@ class LinebotController < ApplicationController
             client.reply_message(event['replyToken'], reply)
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
-            commute = Commute.find_by(user_id: event['source']['userId'])
+            commute = get_commute(event)
             state = commute.get_state
             case state
             when 0,1 #中間地点登録
-              count = ViaPlace.where(commute_id: commute.id).count
-              ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count + 1)
+              count = ViaPlace.where(commute_id: commute.id).count + 1
+              ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
               if commute.mode
                 client.reply_message(event['replyToken'], {
                   type: 'text',
@@ -254,11 +258,12 @@ class LinebotController < ApplicationController
           
         when Line::Bot::Event::Postback
           user = User.find_by(id: event['source']['userId'])
+          commute = user.commute
           data = event['postback']['data']
           code = data.slice!(-1).to_i
           case code
           when 1 #通勤モード変更
-            user.commute.update_attributes(mode: data)
+            commute.update_attributes(mode: data)
             client.reply_message(event['replyToken'], {
                 type: 'text',
                 text: "通勤モードを設定しました。"
@@ -285,14 +290,14 @@ class LinebotController < ApplicationController
                 text: "お気に入りを解除しました。"
             })
           when 4 #通勤経路の制限
-            avoid = user.commute.avoid
+            avoid = commute.avoid
             return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid == "tolls|highways|ferries"
-            reply = get_reply(user, data, avoid)
-            now = avoid_now(user.commute.avoid)
-            if user.commute.via_place.first && user.commute.avoid
+            reply = get_reply(commute, data, avoid)
+            now = avoid_now(commute.avoid)
+            if commute.via_place.first && commute.avoid
               client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
             else
-              unless user.commute.via_place.first
+              unless commute.via_place.first
                 client.reply_message(event['replyToken'], 
                   [reply,{type: 'text',text: "現在は、#{now}が設定されています。",
                   "quickReply": {
@@ -327,7 +332,7 @@ class LinebotController < ApplicationController
               end
             end
           when 5 #寄り道機能の検索位置設定
-            user.commute.update_attributes(search_area: data.to_i)
+            commute.update_attributes(search_area: data.to_i)
             client.reply_message(event['replyToken'], {type: 'text',text: "検索エリアの設定が完了しました。"})
           end
         when Line::Bot::Event::Follow
@@ -344,15 +349,15 @@ class LinebotController < ApplicationController
       head :ok
     end
     
-    def get_reply(user, data, avoid)
+    def get_reply(commute, data, avoid)
       if avoid #中身があるか確認（初めてかどうか）
         if data == "tolls|highways|ferries" #全て使用しないが来た場合
-          user.commute.update_attributes(avoid: data)
+          commute.update_attributes(avoid: data)
           return {type: 'text',text: "全て使用しないを設定しました。"}
         end
         if avoid.include?(data) #制限されている数が２個以下
           add = change_avoid(avoid, data)
-          user.commute.update_attributes(avoid: add)
+          commute.update_attributes(avoid: add)
           {type: 'text',text: "設定を追加しました。"}
         else
           #選択されたものが制限されていない場合
@@ -376,7 +381,7 @@ class LinebotController < ApplicationController
             text = "フェリー"
           end
         end
-        user.commute.update_attributes(avoid: add)
+        commute.update_attributes(avoid: add)
         {type: 'text',text: "#{text}を設定しました。"}
       end
     end
