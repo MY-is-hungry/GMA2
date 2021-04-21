@@ -1,7 +1,7 @@
 module CommuteRequest
   extend ActiveSupport::Concern
   def commute_place(msg, data: '')
-    state = get_state
+    state = data.get_state
     logger.debug(state)
     case data
     when "リセット"
