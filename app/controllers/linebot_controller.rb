@@ -39,21 +39,22 @@ class LinebotController < ApplicationController
               reply = change_msg(message, data: data)
 
             when '通勤設定'
+              reply = change_msg(message, data: commute.get_state)
               commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
-              ViaPlace.where(commute_id: commute.id).destroy_all
-              reply = change_msg(message, data: commute)
+              commute.via_place.destroy_all
 
             when '通勤モード'
               reply = commute.start_lat && commute.end_lat ? change_msg(message) : bad_msg(message)
 
             when '出発地点変更'
-              commute.update_attributes(start_lat: nil,start_lng: nil)
               reply = change_msg(message)
+              commute.update_attributes(start_lat: nil,start_lng: nil)
+              commute.via_place.destroy_all
 
             when '到着地点変更'
+              reply = change_msg(message)
               commute.update_attributes(end_lat: nil,end_lng: nil)
               commute.via_place.destroy_all
-              reply = change_msg(message)
 
             when '中間地点登録'
               state = commute.get_state
