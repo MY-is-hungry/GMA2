@@ -13,7 +13,7 @@ class Commute < ApplicationRecord
     elsif end_lat
       state = 3 #ゴールあり
     else
-      state = 4 #通勤設定
+      state = 4 
     end
     return state
   end

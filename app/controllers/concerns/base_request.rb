@@ -12,11 +12,14 @@ module BaseRequest
       weather_forcast(data)
       
     #ここからcommute_request.rb
-    when '通勤設定','出発地点変更','到着地点変更','全設定','中間地点登録'
-      commute_place(msg)
+    when '通勤設定','出発地点変更','到着地点変更'
+      commute_place(msg, data: '')
+      
+    when '中間地点登録'
+      via_create
       
     when '中間地点削除'
-      delete_via
+      via_delete
 
     when '通勤時間'
       

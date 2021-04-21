@@ -1,17 +1,36 @@
 module CommuteRequest
   extend ActiveSupport::Concern
-  def commute_place(msg)
-    case msg
-    when '出発地点変更','通勤設定'
-      point = "出発"
-    when '到着地点変更','全設定'
-      point = "到着"
-    when '中間地点登録'
-      point = "中間"
+  def commute_place(msg, data: '')
+    if data.nil?
+      point =
+        case msg
+        when '出発地点変更','通勤設定'
+          "出発"
+        when '到着地点変更','通勤設定2'
+          "到着"
+        end
+      {
+        "type": "text",
+        "text": "#{point}地点の位置情報を教えてください！",
+        "quickReply": {
+          "items": [
+            {
+              "type": "action",
+              "action": {
+                "type": "location",
+                "label": "位置情報"
+              }
+            }
+          ]
+        }
+      }
     end
+  end
+  
+  def via_create
     {
       "type": "text",
-      "text": "#{point}地点の位置情報を教えてください！",
+      "text": "中間地点の位置情報を教えてください！",
       "quickReply": {
         "items": [
           {
@@ -26,7 +45,7 @@ module CommuteRequest
     }
   end
   
-  def delete_via
+  def via_delete
     {type: 'text',text: "中間地点の設定をリセットしました。"}
   end
     
