@@ -1,9 +1,11 @@
 module CommuteRequest
   extend ActiveSupport::Concern
   def commute_place(msg, data: '')
+    state = get_state
+    logger.debug(state)
     case data
     when "リセット"
-      point, reset = ""  
+      point, reset = ""
       case msg
       when '通勤設定'
         point, reset = "出発地点", "出発地点と到着地点"
