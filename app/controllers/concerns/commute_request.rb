@@ -3,8 +3,8 @@ module CommuteRequest
   def commute_place(msg, data: '')
     logger.debug(msg)
     logger.debug(data.class)
-    case data.class
-    when "String", 'String', String
+    case data
+    when ""
       logger.debug(msg)
       point =
         case msg
