@@ -41,7 +41,7 @@ class LinebotController < ApplicationController
             when '通勤設定'
               commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
               ViaPlace.where(commute_id: commute.id).destroy_all
-              reply = change_msg(message)
+              reply = change_msg(message, data: commute)
 
             when '通勤モード'
               reply = commute.start_lat && commute.end_lat ? change_msg(message) : bad_msg(message)
