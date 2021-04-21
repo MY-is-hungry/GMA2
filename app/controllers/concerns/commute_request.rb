@@ -3,6 +3,7 @@ module CommuteRequest
   def commute_place(msg, data: '')
     case data.class
     when String
+      logger.debug(msg)
       point =
         case msg
         when '出発地点変更','通勤設定'
