@@ -47,22 +47,18 @@ class LinebotController < ApplicationController
               reply = commute.start_lat && commute.end_lat ? change_msg(message) : bad_msg(message)
 
             when '出発地点変更'
-              reply = change_msg(message)
+              reply = change_msg(message, data: commute.get_state)
               commute.update_attributes(start_lat: nil,start_lng: nil)
               commute.via_place.destroy_all
 
             when '到着地点変更'
-              reply = change_msg(message)
+              reply = change_msg(message, data: commute.get_state)
               commute.update_attributes(end_lat: nil,end_lng: nil)
               commute.via_place.destroy_all
 
             when '中間地点登録'
               state = commute.get_state
-              reply =
-                case state
-                when 0,1 then change_msg(message)
-                when 2,3,4 then bad_msg(message)#出発、到着地が登録されていない場合
-                end
+              reply = state.in?([0, 1]) ? change_msg(message) : bad_msg(message, data: state)
 
             when '中間地点削除'
               reply =
@@ -114,11 +110,7 @@ class LinebotController < ApplicationController
 
             when '寄り道地域'
               state = commute.get_state
-              reply =
-                case state
-                  when 0 then change_msg(message)
-                  when 1 then change_msg(message, data: 1)
-                end
+              reply = state.in?([0, 1]) ? change_msg(message, data: state) : bad_msg(message)
 
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
@@ -183,15 +175,15 @@ class LinebotController < ApplicationController
             state = commute.get_state
             case state
             when 0,1 #中間地点登録
-              count = ViaPlace.where(commute_id: commute.id).count + 1
-              ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
+              count = ViaPlace.where(commute_id: commute.id).count
+              ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count + 1)
               if commute.mode
                 client.reply_message(event['replyToken'], {
                   type: 'text',
-                  text: "中間地点を登録しました。"
+                  text: "#{count}つ目の中間地点を登録しました。"
                 })
               else
-                client.reply_message(event['replyToken'], {type: 'text', text: "中間地点を登録しました。",
+                client.reply_message(event['replyToken'], {type: 'text', text: "#{count}つ目の中間地点を登録しました。",
                 "quickReply": {
                     "items": [
                       {

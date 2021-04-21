@@ -6,11 +6,22 @@ module CommuteRequest
       point, reset = ""
       case msg
       when '通勤設定'
-        point, reset = "出発地点", "出発地点、到着地点、中間地点"
+        point = "出発"
+        reset =
+          case data
+          when 0
+            "出発地点、到着地点、中間地点"
+          when 1
+            "出発地点、到着地点"
+          when 2
+            "出発地点"
+          when 3
+            "到着地点"
+          end
       when '出発地点変更'
-        point, reset = "出発地点", "出発地点"
+        point, reset = "出発", "出発地点"
       when '到着地点変更'
-        point, reset = "到着地点", "到着地点"
+        point, reset = "到着", "到着地点"
       end
       [
         {
@@ -19,7 +30,7 @@ module CommuteRequest
         },
         {
           "type": "text", 
-          "text": "#{point}の位置情報を教えてください！",
+          "text": "#{point}地点の位置情報を教えてください！",
           "quickReply": {
             "items": [
               {
