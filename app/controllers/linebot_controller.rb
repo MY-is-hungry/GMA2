@@ -170,7 +170,8 @@ class LinebotController < ApplicationController
               reply = change_msg(message)
               
             when 'テスト'
-              
+              commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil)
+              commute.via_place.destroy_all
             end
             client.reply_message(event['replyToken'], reply)
             
@@ -353,12 +354,12 @@ class LinebotController < ApplicationController
       if avoid #中身があるか確認（初めてかどうか）
         if data == "tolls|highways|ferries" #全て使用しないが来た場合
           commute.update_attributes(avoid: data)
-          return {type: 'text',text: "全て使用しないを設定しました。"}
+          return {type: 'text',text: "設定を変更しました。"}
         end
         if avoid.include?(data) #制限されている数が２個以下
           add = change_avoid(avoid, data)
           commute.update_attributes(avoid: add)
-          {type: 'text',text: "設定を追加しました。"}
+          {type: 'text',text: "設定を変更しました。"}
         else
           #選択されたものが制限されていない場合
           {type: 'text',text: "選択されたものは設定済みです。"}
