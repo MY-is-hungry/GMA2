@@ -154,105 +154,120 @@ module CommuteRequest
   end
   
   def avoid_menu(msg)
-    {
-      "type": "flex",
-      "altText": "#{msg}設定",
-      "contents": {
-        "type": "bubble",
-        "size": "giga",
-        "header": {
-          "type": "box",
-          "layout": "vertical",
-          "contents": [
-            {
-              "type": "text",
-              "text": "通勤経路に含まれるものを選んでください。",
-              "size": "xl",
-              "weight": "bold",
-              "wrap": true
-            },
-            {
-              "type": "text",
-              "text": "※複数ある場合は、それぞれ押してください。",
-              "margin": "md",
-              "color": "#8c8c8c",
-              "wrap": true
-            },
-            {
-              "type": "text",
-              "text": "※初期設定では、全て含まれています。",
-              "margin": "md",
-              "color": "#8c8c8c",
-              "wrap": true
-            },
-            {
-              "type": "text",
-              "text": "※誤った設定をした場合は、「経路の制限」と入力して選び直してください。",
-              "color": "#8c8c8c",
-              "wrap": true,
-              "margin": "md"
-            }
-          ]
-        },
-        "body": {
-          "type": "box",
-          "layout": "vertical",
-          "contents": [
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "contents": [
-                {
-                  "type": "button",
-                  "action": {
-                    "type": "postback",
-                    "data": "tolls4",
-                    "label": "有料道路"                        
+    [
+      {
+        type: 'text',
+        text: "選択済みの設定をリセットしました。"
+      },
+      {
+        "type": "flex",
+        "altText": "#{msg}設定",
+        "contents": {
+          "type": "bubble",
+          "size": "giga",
+          "header": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "通勤経路に含まれるものを選んでください。",
+                "size": "xl",
+                "weight": "bold",
+                "wrap": true
+              },
+              {
+                "type": "text",
+                "text": "※複数ある場合は、それぞれ押してください。",
+                "margin": "md",
+                "color": "#8c8c8c",
+                "wrap": true
+              },
+              {
+                "type": "text",
+                "text": "※初期設定では、全て含まれています。",
+                "margin": "md",
+                "color": "#8c8c8c",
+                "wrap": true
+              },
+              {
+                "type": "text",
+                "text": "※誤った設定をした場合は、「経路の制限」と入力して選び直してください。",
+                "color": "#8c8c8c",
+                "wrap": true,
+                "margin": "md"
+              }
+            ]
+          },
+          "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "data": "tolls4",
+                      "label": "有料道路"                        
+                    },
+                    "style": "primary"
                   },
-                  "style": "primary"
-                },
-                {
-                  "type": "button",
-                  "action": {
-                    "type": "postback",
-                    "label": "高速道路",
-                    "data": "highways4"
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "高速道路",
+                      "data": "highways4"
+                    },
+                    "style": "primary"
                   },
-                  "style": "primary"
-                },
-                {
-                  "type": "button",
-                  "action": {
-                    "type": "postback",
-                    "label": "フェリー",
-                    "data": "ferries4"
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "フェリー",
+                      "data": "ferries4"
+                    },
+                    "style": "primary"
                   },
-                  "style": "primary"
-                },
-              ],
-              "spacing": "md"
-            },
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "contents": [
-                {
-                  "type": "button",
-                  "action": {
-                    "type": "postback",
-                    "label": "全て使用する",
-                    "data": "tolls|highways|ferries4"
+                ],
+                "spacing": "md"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "全て使用する",
+                      "data": "tolls|highways|ferries4"
+                    },
+                    "style": "secondary"
                   },
-                  "style": "secondary"
-                }
-              ],
-              "spacing": "md",
-              "margin": "md"
-            }
-          ]
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "text",
+                      "label": "やり直す",
+                      "data": "経路の制限"
+                    },
+                    "style": "secondary"
+                  }
+                ],
+                "spacing": "md",
+                "margin": "md"
+              }
+            ]
+          }
         }
       }
-    }
+    ]
   end
   
   def change_avoid(commute)
