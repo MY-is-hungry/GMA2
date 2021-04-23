@@ -253,9 +253,9 @@ module CommuteRequest
                   {
                     "type": "button",
                     "action": {
-                      "type": "text",
+                      "type": "message",
                       "label": "やり直す",
-                      "data": "経路の制限"
+                      "text": "経路の制限"
                     },
                     "style": "secondary"
                   }
