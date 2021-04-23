@@ -240,7 +240,7 @@ module CommuteRequest
                   "type": "button",
                   "action": {
                     "type": "postback",
-                    "label": "全て使用しない",
+                    "label": "全て使用する",
                     "data": "tolls|highways|ferries4"
                   },
                   "style": "secondary"
@@ -258,44 +258,40 @@ module CommuteRequest
   def change_avoid(commute)
     now = avoid_now(commute.avoid)
     if commute.via_place.first && commute.mode
-      client.reply_message(event['replyToken'],
-        [
-            {
-              type: 'text',
-              text: "設定を変更しました。"
-            },
-            {
-              type: 'text',
-              text: "現在は、#{now}が通勤経路に含まれる可能性があります。"
-            }
-        ]
-      )
+      [
+          {
+            type: 'text',
+            text: "設定を変更しました。"
+          },
+          {
+            type: 'text',
+            text: now
+          }
+      ]
     else
       unless commute.via_place.first
-        client.reply_message(event['replyToken'], 
-          [
-            {
-              type: 'text',
-              text: "設定を変更しました。"
-            },
-            {
-              type: 'text',
-              text: "現在は、#{now}が通勤経路に含まれる可能性があります。",
-              "quickReply": {
-                "items": [
-                  {
-                    "type": "action",
-                    "action": {
-                      "type": "message",
-                      "label": "次の設定へ",
-                      "text": "中間地点登録"
-                    }
+        [
+          {
+            type: 'text',
+            text: "設定を変更しました。"
+          },
+          {
+            type: 'text',
+            text: now,
+            "quickReply": {
+              "items": [
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "message",
+                    "label": "次の設定へ",
+                    "text": "中間地点登録"
                   }
-                ]
-              }
+                }
+              ]
             }
-          ]
-        )
+          }
+        ]
       else
         [
           {
@@ -304,7 +300,7 @@ module CommuteRequest
           },
           {
             type: 'text',
-            text: "現在は、#{now}が通勤経路に含まれる可能性があります。",
+            text: now,
             "quickReply": {
               "items": [
                 {
@@ -324,15 +320,18 @@ module CommuteRequest
   end
   
   def avoid_now(avoid)
-    case avoid
-    when "tolls|highways|ferries" then "全て"
-    when "tolls|highways" then "フェリー"
-    when "tolls|ferries" then "高速道路"
-    when "highways|ferries" then "有料道路"
-    when "tolls" then "高速道路、フェリー"
-    when "highways" then"有料道路、フェリー"
-    when "ferries" then "有料道路、高速道路"
-    else "全て"
-    end
+    now =
+      case avoid
+      when "tolls|highways|ferries" then "全て"
+      when "tolls|highways" then "フェリー"
+      when "tolls|ferries" then "高速道路"
+      when "highways|ferries" then "有料道路"
+      when "tolls" then "高速道路、フェリー"
+      when "highways" then"有料道路、フェリー"
+      when "ferries" then "有料道路、高速道路"
+      else "全て通勤ルートには使用しません。"
+      end
+    now = "現在は、#{now}が通勤経路に含まれる可能性があります。" unless now == "全て通勤ルートには使用しません。"
+    return now
   end
 end
