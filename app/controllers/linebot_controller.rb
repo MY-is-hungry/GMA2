@@ -298,7 +298,7 @@ class LinebotController < ApplicationController
             commute.avoid.slice!(7) if commute.avoid[7] == "|"
             commute.save
             logger.debug(commute.avoid)
-            reply = change_msg(message, data: commute)
+            reply = change_msg(msg: 'avoid', data: commute)
             client.reply_message(event['replyToken'], reply)
             
           when 5 #寄り道機能の検索位置設定
