@@ -303,6 +303,7 @@ class LinebotController < ApplicationController
             commute.avoid.slice!(0) if commute.avoid[0] == "|"
             commute.avoid.slice!(-1) if commute.avoid[-1] == "|"
             commute.avoid.slice!(7) if commute.avoid[7] == "|"
+            commute.avoid.save
             logger.debug(commute.avoid)
             if commute.via_place.first && commute.avoid
               # client.reply_message(event['replyToken'], [reply,{type: 'text',text: "現在は、#{now}が設定されています。"}])
