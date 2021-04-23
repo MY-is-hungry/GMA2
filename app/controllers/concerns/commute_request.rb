@@ -153,7 +153,7 @@ module CommuteRequest
     }
   end
   
-  def commute_avoid(msg)
+  def avoid_menu(msg)
     {
       "type": "flex",
       "altText": "#{msg}設定",
@@ -253,5 +253,86 @@ module CommuteRequest
         }
       }
     }
+  end
+  
+  def change_avoid(commute)
+    now = avoid_now(commute.avoid)
+    if commute.via_place.first && commute.mode
+      client.reply_message(event['replyToken'],
+        [
+            {
+              type: 'text',
+              text: "設定を変更しました。"
+            },
+            {
+              type: 'text',
+              text: "現在は、#{now}が通勤経路に含まれる可能性があります。"
+            }
+        ]
+      )
+    else
+      unless commute.via_place.first
+        client.reply_message(event['replyToken'], 
+          [
+            {
+              type: 'text',
+              text: "設定を変更しました。"
+            },
+            {
+              type: 'text',
+              text: "現在は、#{now}が通勤経路に含まれる可能性があります。",
+              "quickReply": {
+                "items": [
+                  {
+                    "type": "action",
+                    "action": {
+                      "type": "message",
+                      "label": "次の設定へ",
+                      "text": "中間地点登録"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        )
+      else
+        [
+          {
+            type: 'text',
+            text: "設定を変更しました。"
+          },
+          {
+            type: 'text',
+            text: "現在は、#{now}が通勤経路に含まれる可能性があります。",
+            "quickReply": {
+              "items": [
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "message",
+                    "label": "次の設定へ",
+                    "text": "通勤モード"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      end
+    end
+  end
+  
+  def avoid_now(avoid)
+    case avoid
+    when "tolls|highways|ferries" then "全て"
+    when "tolls|highways" then "フェリー"
+    when "tolls|ferries" then "高速道路"
+    when "highways|ferries" then "有料道路"
+    when "tolls" then "高速道路、フェリー"
+    when "highways" then"有料道路、フェリー"
+    when "ferries" then "有料道路、高速道路"
+    else "全て"
+    end
   end
 end
