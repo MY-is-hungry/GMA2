@@ -153,10 +153,8 @@ module CommuteRequest
     }
   end
   
-  def avoid_menu(msg)
-    a = {}
-    [
-      a,
+  def avoid_menu(msg, commute)
+    result =
       {
         "type": "flex",
         "altText": "#{msg}設定",
@@ -265,7 +263,7 @@ module CommuteRequest
           }
         }
       }
-    ]
+    commute.avoid_first ? result : [{type: 'text', text: "選択済みの設定をリセットしました。"}, result]
   end
   
   def change_avoid(commute)

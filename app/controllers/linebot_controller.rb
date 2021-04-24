@@ -76,7 +76,7 @@ class LinebotController < ApplicationController
             when '経路の制限'
               state = commute.get_state
               commute.update_attributes(avoid: "tolls|highways|ferries")
-              reply = change_msg(message)
+              reply = change_msg(message, data: commute)
               
             when '通勤時間'
               state = commute.get_state
@@ -308,7 +308,7 @@ class LinebotController < ApplicationController
           
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
-          Commute.create(user_id: event['source']['userId'], avoid: "tolls|highways|ferries")
+          Commute.create(user_id: event['source']['userId'], avoid: "tolls|highways|ferries", avoid_first: true)
           reply = change_msg("follow")
           client.reply_message(event['replyToken'], reply)
         when Line::Bot::Event::Unfollow
