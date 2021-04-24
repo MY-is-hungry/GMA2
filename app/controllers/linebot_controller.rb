@@ -169,6 +169,8 @@ class LinebotController < ApplicationController
             when 'テスト'
               commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil)
               commute.via_place.destroy_all
+            else
+              return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end
             client.reply_message(event['replyToken'], reply)
             
