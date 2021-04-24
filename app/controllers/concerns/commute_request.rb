@@ -157,7 +157,7 @@ module CommuteRequest
     [
       {
         type: 'text',
-        text: "選択済みの設定をリセットしました。"
+        text: ""
       },
       {
         "type": "flex",

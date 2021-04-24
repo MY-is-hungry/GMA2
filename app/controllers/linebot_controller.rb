@@ -319,67 +319,7 @@ class LinebotController < ApplicationController
       }
       head :ok
     end
-    
-    # def get_reply(commute, data, avoid)
-    #   if avoid #中身があるか確認（初めてかどうか）
-    #     if data == "tolls|highways|ferries" #全て使用しないが来た場合
-    #       commute.update_attributes(avoid: data)
-    #       return {type: 'text',text: "設定を変更しました。"}
-    #     end
-    #     if avoid.include?(data) #制限されている数が２個以下
-    #       add = change_avoid(avoid, data)
-    #       commute.update_attributes(avoid: add)
-    #       {type: 'text',text: "設定を変更しました。"}
-    #     else
-    #       #選択されたものが制限されていない場合
-    #       {type: 'text',text: "選択されたものは設定済みです。"}
-    #     end
-    #   else
-    #     #初めて来たときの処理
-    #     if data == "tolls|highways|ferries"
-    #       add = "tolls|highways|ferries"
-    #       text = "全て使用しない"
-    #     else
-    #       case data
-    #       when "tolls"
-    #         add = "highways|ferries"
-    #         text = "有料道路"
-    #       when "highways"
-    #         add = "tolls|ferries"
-    #         text = "高速道路"
-    #       when "ferries"
-    #         add = "tolls|highways"
-    #         text = "フェリー"
-    #       end
-    #     end
-    #     commute.update_attributes(avoid: add)
-    #     {type: 'text',text: "#{text}を設定しました。"}
-    #   end
-    # end
-    
-    # def change_avoid(avoid, data)
-    #   case data
-    #   when "tolls"
-    #     if avoid.include?("highways")
-    #       "highways"
-    #     elsif avoid.include?("ferries")
-    #       "ferries"
-    #     end
-    #   when "highways"
-    #     if avoid.include?("tolls")
-    #       "tolls"
-    #     elsif avoid.include?("ferries")
-    #       "ferries"
-    #     end
-    #   when "ferries"
-    #     if avoid.include?("tolls")
-    #       "tolls"
-    #     elsif avoid.include?("highways")
-    #       "highways"
-    #     end
-    #   end
-    # end
-    
+
     private
 
     def client
