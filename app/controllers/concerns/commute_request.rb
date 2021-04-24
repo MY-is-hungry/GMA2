@@ -154,11 +154,9 @@ module CommuteRequest
   end
   
   def avoid_menu(msg)
+    a = {}
     [
-      {
-        type: 'text',
-        text: ""
-      },
+      a,
       {
         "type": "flex",
         "altText": "#{msg}設定",
