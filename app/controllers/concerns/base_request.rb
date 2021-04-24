@@ -28,7 +28,7 @@ module BaseRequest
       commute_mode(msg)
       
     when '経路の制限'
-      avoid_menu(msg, commute: data)
+      avoid_menu(msg, data)
       
     #favorite_request.rb
     when 'お気に入り','おきにいり','おきに'

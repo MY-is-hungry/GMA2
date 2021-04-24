@@ -263,6 +263,8 @@ module CommuteRequest
           }
         }
       }
+      logger.debug(commute)
+      logger.debug(commute.avoid_first)
     if commute.avoid_first
       result
     else
