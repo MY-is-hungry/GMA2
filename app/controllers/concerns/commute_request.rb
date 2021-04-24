@@ -263,7 +263,12 @@ module CommuteRequest
           }
         }
       }
-    commute.avoid_first ? result : [{type: 'text', text: "選択済みの設定をリセットしました。"}, result]
+    if commute.avoid_first
+      result
+    else
+      commute.update_attributes(avoid_first: false)
+      [{type: 'text', text: "選択済みの設定をリセットしました。"}, result]
+    end
   end
   
   def change_avoid(commute)
