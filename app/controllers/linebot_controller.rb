@@ -210,29 +210,48 @@ class LinebotController < ApplicationController
               en = data[:routes][0][:legs][0][:end_address].slice(4..11)
               commute.update_attributes(start_address: st, end_address: en)
               result = data[:routes][0][:legs][0][:duration][:text]
-              if commute.avoid
-                if commute.mode
-                  reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
-                else
-                  reply = [{type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
-                    {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
-                  ]
-                end
-              else
-                reply =
-                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。",
-                  "quickReply": {
-                    "items": [
+              if commute.via_place.first
+                if commute.avoid_first
+                  if commute.mode
+                    reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
+                  else
+                    reply = 
                       {
-                        "type": "action",
-                        "action": {
-                          "type": "message",
-                          "label": "次の設定へ",
-                          "text": "経路の制限"
+                        type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。",
+                        "quickReply": {
+                          "items": [
+                            {
+                              "type": "action",
+                              "action": {
+                                "type": "message",
+                                "label": "次の設定へ",
+                                "text": "通勤モード"
+                              }
+                            }
+                          ]
                         }
                       }
-                    ]
-                  }}
+                  end
+                else
+                  reply =
+                    {
+                      type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。",
+                      "quickReply": {
+                        "items": [
+                          {
+                            "type": "action",
+                            "action": {
+                              "type": "message",
+                              "label": "次の設定へ",
+                              "text": "中間地点登録"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                end
+              else
+                
               end
             when 3 #出発地のみ変更
               commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'])

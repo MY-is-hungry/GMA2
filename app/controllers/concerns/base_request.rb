@@ -32,7 +32,7 @@ module BaseRequest
       
     #favorite_request.rb
     when 'お気に入り','おきにいり','おきに'
-      fav_list(data,count)
+      fav_list(data, count)
       
     #ここからsearch_request.rb
     when '寄り道地域'
