@@ -266,9 +266,9 @@ module CommuteRequest
       logger.debug(commute)
       logger.debug(commute.avoid_first)
     if commute.avoid_first
+      commute.update_attributes(avoid_first: false)
       result
     else
-      commute.update_attributes(avoid_first: false)
       [{type: 'text', text: "選択済みの設定をリセットしました。"}, result]
     end
   end
