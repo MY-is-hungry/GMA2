@@ -30,6 +30,9 @@ module BaseRequest
     when '経路の制限'
       avoid_menu(msg, data)
       
+    when 'avoid'
+      change_avoid(data)
+      
     #favorite_request.rb
     when 'お気に入り','おきにいり','おきに'
       fav_list(data, count)
@@ -48,8 +51,6 @@ module BaseRequest
     when 'follow'
       follow_msg
     
-    when 'avoid'
-      change_avoid(data)
     end
   end
     

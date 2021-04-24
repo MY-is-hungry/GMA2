@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_24_050030) do
+ActiveRecord::Schema.define(version: 2021_04_24_123935) do
 
   create_table "commutes", force: :cascade do |t|
     t.string "user_id", null: false
@@ -25,7 +25,8 @@ ActiveRecord::Schema.define(version: 2021_04_24_050030) do
     t.string "avoid"
     t.string "start_address"
     t.string "end_address"
-    t.boolean "avoid_first"
+    t.integer "set_status"
+    t.integer "setting_id"
     t.index ["user_id"], name: "index_commutes_on_user_id"
   end
 
@@ -35,6 +36,12 @@ ActiveRecord::Schema.define(version: 2021_04_24_050030) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_favorites_on_user_id"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", id: :string, force: :cascade do |t|
