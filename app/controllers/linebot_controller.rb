@@ -173,7 +173,7 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], 
                 [
                   {type: 'text', text: "test"},
-                  commute.setting.content
+                  Setting.find(1).content
                 ]
               )
             else
