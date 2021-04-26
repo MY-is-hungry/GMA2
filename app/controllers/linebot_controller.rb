@@ -171,26 +171,7 @@ class LinebotController < ApplicationController
               # commute.via_place.destroy_all
               # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
               logger.debug(Setting.find(1).content)
-              reply = [
-                {
-                  type: 'text', text: "test"
-                },
-                {
-                  "type": 'text', "text": "基本設定は完了しました。お疲れ様でした！",
-                  "quickReply": {
-                    "items": [
-                      {
-                        "type": "action",
-                        "action": {
-                          "type": "message",
-                          "label": "次の設定へ",
-                          "text": "通勤モード"
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
+              reply = Setting.find(1).content
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end
