@@ -173,7 +173,8 @@ class LinebotController < ApplicationController
               client.reply_message(event['replyToken'], 
                 [
                   {type: 'text', text: "test"},
-                  {"quickReply": {
+                  {type: 'text', text: commute.setting.content,
+                    "quickReply": {
                       "items": [
                         {
                           "type": "action",
