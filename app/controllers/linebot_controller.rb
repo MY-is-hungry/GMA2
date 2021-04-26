@@ -187,6 +187,7 @@ class LinebotController < ApplicationController
                     }
                   }
                 ]
+              )
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end
