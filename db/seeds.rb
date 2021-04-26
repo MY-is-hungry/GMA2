@@ -1,31 +1,23 @@
 User.create(id: "Testuser")
-Setting.create(
+Setting.create(content:
   [
     {
-      content:
-      [
-        {
-          type: 'text', text: "test"
-        },
-        {
-          "type": 'text', "text": "基本設定は完了しました。お疲れ様でした！",
-          "quickReply": {
-            "items": [
-              {
-                "type": "action",
-                "action": {
-                  "type": "message",
-                  "label": "次の設定へ",
-                  "text": "通勤モード"
-                }
-              }
-            ]
-          }
-        }
-      ]
+      type: 'text', text: "test"
     },
     {
-      content: ""
+      "type": 'text', "text": "基本設定は完了しました。お疲れ様でした！",
+      "quickReply": {
+        "items": [
+          {
+            "type": "action",
+            "action": {
+              "type": "message",
+              "label": "次の設定へ",
+              "text": "通勤モード"
+            }
+          }
+        ]
+      }
     }
   ]
 )
