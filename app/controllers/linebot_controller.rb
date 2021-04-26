@@ -170,6 +170,7 @@ class LinebotController < ApplicationController
               # commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil)
               # commute.via_place.destroy_all
               # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
+              logger.debug(Setting.find(1).content)
               client.reply_message(event['replyToken'], 
                 [
                   {type: 'text', text: "test"},
