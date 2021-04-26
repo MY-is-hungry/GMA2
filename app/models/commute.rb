@@ -1,7 +1,7 @@
 class Commute < ApplicationRecord
   belongs_to :user, dependent: :destroy
   has_many :via_place, dependent: :destroy
-  belongs_to :setting, dependent: :destroy
+  has_many :setting, dependent: :destroy
   validates :user_id, presence: true, uniqueness: true
 
   def get_state

@@ -1,4 +1,4 @@
 class Setting < ApplicationRecord
-  has_many :user
-  has_many :commute
+  belongs_to :user
+  belongs_to :commute
 end
