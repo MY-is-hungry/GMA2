@@ -171,12 +171,7 @@ class LinebotController < ApplicationController
               # commute.via_place.destroy_all
               # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
               logger.debug(Setting.find(1).content)
-              client.reply_message(event['replyToken'], 
-                [
-                  {type: 'text', text: "test"},
-                  Setting.find(1).content
-                ]
-              )
+              reply = [{type: 'text', text: "test"},Setting.find(1).content]
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end
