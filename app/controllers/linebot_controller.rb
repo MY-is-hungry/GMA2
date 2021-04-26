@@ -169,8 +169,24 @@ class LinebotController < ApplicationController
             when 'テスト'
               # commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil)
               # commute.via_place.destroy_all
-              client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
-              
+              # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
+              client.reply_message(event['replyToken'], 
+                [
+                  {type: 'text', text: "test"},
+                  {"quickReply": {
+                      "items": [
+                        {
+                          "type": "action",
+                          "action": {
+                            "type": "message",
+                            "label": "次の設定へ",
+                            "text": "通勤モード"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end
