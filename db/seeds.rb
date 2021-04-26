@@ -4,8 +4,7 @@ Setting.create(
     {
       content: 
       {
-        type: 'text', 
-        text: "基本設定は完了しました。お疲れ様でした！",
+        type: 'text', text: "基本設定は完了しました。お疲れ様でした！",
         "quickReply": {
           "items": [
             {

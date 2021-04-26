@@ -173,7 +173,7 @@ class LinebotController < ApplicationController
               logger.debug(Setting.find(1).content)
               client.reply_message(event['replyToken'], 
                 [
-                  {:type => 'text', :text => "test"},
+                  {type: 'text', text: "test"},
                   Setting.find(1).content
                 ]
               )
