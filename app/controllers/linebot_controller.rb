@@ -174,6 +174,7 @@ class LinebotController < ApplicationController
               content = Setting.find(1).content
               change_content = content.gsub(/:(\w+)=>/, "\\1: ")
               logger.debug(change_content)
+              reply = change_content
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end
