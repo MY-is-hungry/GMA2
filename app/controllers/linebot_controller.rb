@@ -172,7 +172,7 @@ class LinebotController < ApplicationController
               # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
               logger.debug(Setting.find(1).content)
               content = Setting.find(1).content
-              change_content = content.gsub(/:(type|text|quickReply|items|action|label)=>/, {"type" => "type:"}) 
+              change_content = content.gsub(/:type=>/, "type:") 
               logger.debug(change_content)
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
