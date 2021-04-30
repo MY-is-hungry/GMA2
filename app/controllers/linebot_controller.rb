@@ -174,7 +174,7 @@ class LinebotController < ApplicationController
               logger.debug(Setting.find(1).content)
               content = Setting.find(1).content
               logger.debug(content)
-              change_content = content.scan(/:(\w+)=>/).map{|k, v| [k.to_sym, v] }.to_h
+              change_content = content.scan(/:(\w+)=>"(\w+)"/).map{|k, v| [k.to_sym, v] }.to_h
               # change_content = content.gsub(/:(\w+)=>/, '\1: ')
               logger.debug(change_content)
               reply = change_content
