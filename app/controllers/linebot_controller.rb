@@ -173,7 +173,7 @@ class LinebotController < ApplicationController
               logger.debug(Setting.find(1).content)
               content = Setting.find(1).content.to_a
               logger.debug(content)
-              change_content = content.gsub(/:(\w+)=>/, "\\1: ")
+              change_content = content.gsub(/:(\w+)=>/, '\1: ')
               logger.debug(change_content)
               reply = change_content
             else
