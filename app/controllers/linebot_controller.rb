@@ -64,7 +64,6 @@ class LinebotController < ApplicationController
             when '中間地点登録'
               state = commute.get_state
               reply = state.in?([0, 1]) ? change_msg(message) : bad_msg(message, data: state)
-              logger.debug(reply.class)
 
             when '中間地点削除'
               reply =
