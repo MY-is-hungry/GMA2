@@ -250,7 +250,7 @@ class LinebotController < ApplicationController
               en = data[:routes][0][:legs][0][:end_address].slice(4..11)
               commute.update_attributes(start_address: st, end_address: en)
               result = data[:routes][0][:legs][0][:duration][:text]
-              if commute.avoid_first
+              if commute.avoid
                 if commute.via_place.first
                   if commute.mode
                     reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
@@ -384,7 +384,7 @@ class LinebotController < ApplicationController
           
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
-          Commute.create(user_id: event['source']['userId'], avoid: "tolls|highways|ferries", setup_id: 9)
+          Commute.create(user_id: event['source']['userId'], setup_id: 9)
           reply = change_msg("follow")
           client.reply_message(event['replyToken'], reply)
         when Line::Bot::Event::Unfollow
