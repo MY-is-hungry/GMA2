@@ -207,9 +207,9 @@ class LinebotController < ApplicationController
               count = ViaPlace.where(commute_id: commute.id).count + 1
               ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
               reply =
-                if commute.avoid_first == false && commute.mode
+                if commute.avoid && commute.mode
                   {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
-                elsif commute.avoid_first
+                elsif commute.avoid
                   {type: 'text', text: "#{count}つ目の中間地点を登録しました。",
                   "quickReply": {
                       "items": [
