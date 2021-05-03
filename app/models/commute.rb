@@ -35,7 +35,7 @@ class Commute < ApplicationRecord
       7
     elsif start_lat && end_lat #残り経路制限、中間地点、通勤モード
       8
-    else
+    else #何も設定していない
       9
     end
   end
