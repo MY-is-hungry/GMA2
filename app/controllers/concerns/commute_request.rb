@@ -264,10 +264,9 @@ module CommuteRequest
         }
       }
     if commute.avoid
-      commute.update_attributes(avoid_first: false)
-      result
-    else
       [{type: 'text', text: "選択済みの設定をリセットしました。"}, result]
+    else
+      result
     end
   end
   
