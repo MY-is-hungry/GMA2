@@ -263,7 +263,7 @@ module CommuteRequest
           }
         }
       }
-    if commute.avoid_first
+    if commute.avoid
       commute.update_attributes(avoid_first: false)
       result
     else
