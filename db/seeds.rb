@@ -1,26 +1,5 @@
 User.create(id: "Testuser")
-Setup.create(content:
-  [
-    {
-      type: 'text', text: "test"
-    },
-    {
-      "type": 'text', "text": "基本設定は完了しました。お疲れ様でした！",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "message",
-              "label": "次の設定へ",
-              "text": "通勤モード"
-            }
-          }
-        ]
-      }
-    }
-  ]
-)
+Setup.create(content: "基本設定は完了しました。お疲れ様でした！", next_setup: "通勤モード")
 User.all.each do |user|
-  Commute.create(user_id: user.id, setting_id: 1)
+  Commute.create(user_id: user.id, setup_id: 1)
 end
