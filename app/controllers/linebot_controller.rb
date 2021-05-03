@@ -171,9 +171,27 @@ class LinebotController < ApplicationController
               # commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil)
               # commute.via_place.destroy_all
               # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
-              logger.debug(Setup.find(1).content)
               content = Setup.find(1).content
+              next_setup = Setup.find(1).next_setup
               logger.debug(content)
+              logger.debug(next_setup)
+              reply =
+              {
+                type: 'text',
+                text: content,
+                "quickReply": {
+                    "items": [
+                      {
+                        "type": "action",
+                        "action": {
+                          "type": "message",
+                          "label": "次の設定へ",
+                          "text": next_setup
+                        }
+                      }
+                    ]
+                  }
+                }
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end
