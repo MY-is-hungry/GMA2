@@ -171,13 +171,9 @@ class LinebotController < ApplicationController
               # commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil)
               # commute.via_place.destroy_all
               # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
-              logger.debug(Setting.find(1).content)
-              content = Setting.find(1).content
+              logger.debug(Setup.find(1).content)
+              content = Setup.find(1).content
               logger.debug(content)
-              change_content = content.scan(/:(\w+)=>"(\w+)"/).map{|k, v| [k.to_sym, v] }
-              # change_content = content.gsub(/:(\w+)=>/, '\1: ')
-              logger.debug(change_content)
-              reply = change_content
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end

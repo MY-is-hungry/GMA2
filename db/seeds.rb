@@ -1,5 +1,5 @@
 User.create(id: "Testuser")
-Setting.create(content:
+Setup.create(content:
   [
     {
       type: 'text', text: "test"

@@ -1,7 +1,7 @@
 class Commute < ApplicationRecord
   belongs_to :user
   has_many :via_place, dependent: :destroy
-  belongs_to :setting
+  belongs_to :setup
   validates :user_id, presence: true, uniqueness: true
 
   def get_state
@@ -18,7 +18,7 @@ class Commute < ApplicationRecord
     end
   end
   
-  def get_setting_id
+  def get_setup_id
     if start_lat && end_lat && avoid && via_place.first && mode #全て設定済み
       1
     elsif start_lat && end_lat && avoid && via_place.first #残り通勤モード
