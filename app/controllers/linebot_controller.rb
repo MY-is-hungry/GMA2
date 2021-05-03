@@ -381,7 +381,7 @@ class LinebotController < ApplicationController
           
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
-          Commute.create(user_id: event['source']['userId'], avoid: "tolls|highways|ferries", setup_id: 1)
+          Commute.create(user_id: event['source']['userId'], avoid: "tolls|highways|ferries", setup_id: 9)
           reply = change_msg("follow")
           client.reply_message(event['replyToken'], reply)
         when Line::Bot::Event::Unfollow
