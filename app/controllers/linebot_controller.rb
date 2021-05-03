@@ -174,7 +174,6 @@ class LinebotController < ApplicationController
               
               commute.update_attributes(setup_id: commute.get_setup_id)
               logger.debug(commute.setup_id)
-              logger.debug(Commute.find(1).setup_id)
               set = Setup.find(commute.setup_id)
               logger.debug(set.content)
               logger.debug(set.next_setup)
