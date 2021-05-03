@@ -171,17 +171,17 @@ class LinebotController < ApplicationController
               # commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil)
               # commute.via_place.destroy_all
               # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
-              content = Setup.find(1).content
-              next_setup = Setup.find(1).next_setup
-              logger.debug(content)
-              logger.debug(next_setup)
+              
               commute.update_attributes(setup_id: commute.get_setup_id)
               logger.debug(commute.setup_id)
               logger.debug(Commute.find(1).setup_id)
+              set = Setup.find(setup_id)
+              logger.debug(set.content)
+              logger.debug(set.next_setup)
               reply =
               {
                 type: 'text',
-                text: content,
+                text: set.content,
                 "quickReply": {
                     "items": [
                       {
@@ -189,7 +189,7 @@ class LinebotController < ApplicationController
                         "action": {
                           "type": "message",
                           "label": "次の設定へ",
-                          "text": next_setup
+                          "text": set.next_setup
                         }
                       }
                     ]
