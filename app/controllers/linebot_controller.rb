@@ -206,39 +206,34 @@ class LinebotController < ApplicationController
             when 0,1 #中間地点登録
               count = ViaPlace.where(commute_id: commute.id).count + 1
               ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
+              commute.update_attributes(setup_id: commute.get_setup_id)
+              set = Setup.find(commute.setup_id)
               reply =
                 if commute.avoid && commute.mode
                   {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
-                elsif commute.avoid
-                  {type: 'text', text: "#{count}つ目の中間地点を登録しました。",
-                  "quickReply": {
-                      "items": [
-                        {
-                          "type": "action",
-                          "action": {
-                            "type": "message",
-                            "label": "次の設定へ",
-                            "text": "経路の制限"
-                          }
-                        }
-                      ]
-                    }
-                  }
                 else
-                  {type: 'text', text: "#{count}つ目の中間地点を登録しました。",
-                  "quickReply": {
-                      "items": [
-                        {
-                          "type": "action",
-                          "action": {
-                            "type": "message",
-                            "label": "次の設定へ",
-                            "text": "通勤モード"
+                  [
+                    {
+                      type: 'text',
+                      text: "#{count}つ目の中間地点を登録しました。"
+                    },
+                    {
+                      type: 'text',
+                      text: set.content,
+                      "quickReply": {
+                        "items": [
+                          {
+                            "type": "action",
+                            "action": {
+                              "type": "message",
+                              "label": set.label,
+                              "text": set.next_setup
+                            }
                           }
-                        }
-                      ]
+                        ]
+                      }
                     }
-                  }
+                  ]
                 end
               client.reply_message(event['replyToken'], reply)
             when 2 #到着地変更
@@ -249,64 +244,35 @@ class LinebotController < ApplicationController
               en = data[:routes][0][:legs][0][:end_address].slice(4..11)
               commute.update_attributes(start_address: st, end_address: en)
               result = data[:routes][0][:legs][0][:duration][:text]
-              if commute.avoid
-                if commute.via_place.first
-                  if commute.mode
-                    reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
-                  else
-                    reply = 
-                      {
-                        type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。",
-                        "quickReply": {
-                          "items": [
-                            {
-                              "type": "action",
-                              "action": {
-                                "type": "message",
-                                "label": "次の設定へ",
-                                "text": "通勤モード"
-                              }
-                            }
-                          ]
-                        }
-                      }
-                  end
+              commute.update_attributes(setup_id: commute.get_setup_id)
+              set = Setup.find(commute.setup_id)
+              reply =
+                if commute.avoid && commute.via_place.first && commute.mode
+                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
                 else
-                  reply =
+                  [
                     {
-                      type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。",
+                      type: 'text',
+                      text: "出発地点から到着地点までの所要時間は、#{result}です。"
+                    },
+                    {
+                      type: 'text',
+                      text: set.content,
                       "quickReply": {
                         "items": [
                           {
                             "type": "action",
                             "action": {
                               "type": "message",
-                              "label": "次の設定へ",
-                              "text": "中間地点登録"
+                              "label": set.label,
+                              "text": set.next_setup
                             }
                           }
                         ]
                       }
                     }
+                  ]
                 end
-              else
-                reply =
-                    {
-                      type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。",
-                      "quickReply": {
-                        "items": [
-                          {
-                            "type": "action",
-                            "action": {
-                              "type": "message",
-                              "label": "次の設定へ",
-                              "text": "経路の制限"
-                            }
-                          }
-                        ]
-                      }
-                    }
-              end
             when 3 #出発地のみ変更
               commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
@@ -336,32 +302,50 @@ class LinebotController < ApplicationController
           code = data.slice!(-1).to_i
           case code
           when 1 #通勤モード変更
-            commute.update_attributes(mode: data)
-            client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "通勤モードを設定しました。"
-            })
+            commute.update_attributes(mode: data, setup_id: commute.get_setup_id)
+            set = Setup.find(commute.setup_id)
+            reply =
+              if commute.avoid && commute.via_place.first
+                {type: 'text', text: "通勤モードを設定しました。"}
+              else
+                [
+                  {
+                    type: 'text',
+                    text: "通勤モードを設定しました。"
+                  },
+                  {
+                    type: 'text',
+                    text: set.content,
+                    "quickReply": {
+                      "items": [
+                        {
+                          "type": "action",
+                          "action": {
+                            "type": "message",
+                            "label": set.label,
+                            "text": set.next_setup
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              end
           when 2 #寄り道機能のお気に入り登録
             if Favorite.where(user_id: user.id).count < 5
               Favorite.create(user_id: user.id, place_id: data)
-              client.reply_message(event['replyToken'], {
-                  type: 'text',
-                  text: "お気に入りに登録しました。"
-              })
+              reply = {type: 'text', text: "お気に入りに登録しました。"}
             else
-              client.reply_message(event['replyToken'], [{
+              reply = [{
                 type: 'text',
                 text: "登録に失敗しました。\nお気に入りは最大5件までです。"},{
                 type: 'text',
                 text: "お気に入りの店舗を減らしてからもう一度お試しください。\n「お気に入り」と入力すると、現在のお気に入り店舗一覧が表示できます。"}
-              ])
+              ]
             end
           when 3 #お気に入りの解除
             Favorite.find_by(user_id: user.id,place_id: data).destroy
-            client.reply_message(event['replyToken'], {
-                type: 'text',
-                text: "お気に入りを解除しました。"
-            })
+            reply = {type: 'text',text: "お気に入りを解除しました。"}
           when 4 #通勤経路の制限
             if commute.avoid.include?(data)
               commute.avoid.slice!(data)
@@ -374,12 +358,12 @@ class LinebotController < ApplicationController
             commute.save
             logger.debug(commute.avoid)
             reply = change_msg('avoid', data: commute)
-            client.reply_message(event['replyToken'], reply)
-            
+
           when 5 #寄り道機能の検索位置設定
             commute.update_attributes(search_area: data.to_i)
-            client.reply_message(event['replyToken'], {type: 'text',text: "検索エリアの設定が完了しました。"})
+            reply = {type: 'text',text: "検索エリアの設定が完了しました。"}
           end
+          client.reply_message(event['replyToken'], reply)
           
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
