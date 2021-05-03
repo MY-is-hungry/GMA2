@@ -175,6 +175,9 @@ class LinebotController < ApplicationController
               next_setup = Setup.find(1).next_setup
               logger.debug(content)
               logger.debug(next_setup)
+              commute.update_attributes(setup_id: commute.get_setup_id)
+              logger.debug(commute.setup_id)
+              logger.debug(Commute.find(1).setup_id)
               reply =
               {
                 type: 'text',
