@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 2021_05_03_013630) do
 
   create_table "setups", force: :cascade do |t|
     t.string "content"
+    t.string "label"
     t.string "next_setup"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

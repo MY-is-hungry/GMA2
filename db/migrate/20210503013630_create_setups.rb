@@ -2,6 +2,7 @@ class CreateSetups < ActiveRecord::Migration[5.2]
   def change
     create_table :setups do |t|
       t.string :content
+      t.string :label
       t.string :next_setup
 
       t.timestamps
