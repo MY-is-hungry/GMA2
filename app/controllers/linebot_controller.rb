@@ -45,7 +45,7 @@ class LinebotController < ApplicationController
             when '通勤設定'
               reply = change_msg(message, data: commute.get_state)
               logger.debug(reply.class)
-              commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
+              commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
               commute.via_place.destroy_all
 
             when '通勤モード'
@@ -53,12 +53,12 @@ class LinebotController < ApplicationController
 
             when '出発地点変更'
               reply = change_msg(message, data: commute.get_state)
-              commute.update_attributes(start_lat: nil,start_lng: nil)
+              commute.update(start_lat: nil,start_lng: nil)
               commute.via_place.destroy_all
 
             when '到着地点変更'
               reply = change_msg(message, data: commute.get_state)
-              commute.update_attributes(end_lat: nil,end_lng: nil)
+              commute.update(end_lat: nil,end_lng: nil)
               commute.via_place.destroy_all
 
             when '中間地点登録'
@@ -76,7 +76,7 @@ class LinebotController < ApplicationController
 
             when '経路の制限'
               state = commute.get_state
-              commute.update_attributes(avoid: nil)
+              commute.update(avoid: nil)
               reply = change_msg(message, data: commute)
               
             when '通勤時間'
@@ -172,7 +172,7 @@ class LinebotController < ApplicationController
               # commute.via_place.destroy_all
               # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
               
-              commute.update_attributes(setup_id: commute.get_setup_id)
+              commute.update(setup_id: commute.get_setup_id)
               logger.debug(commute.setup_id)
               set = Setup.find(commute.setup_id)
               logger.debug(set.content)
@@ -206,7 +206,7 @@ class LinebotController < ApplicationController
             when 0,1 #中間地点登録
               count = ViaPlace.where(commute_id: commute.id).count + 1
               ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
-              commute.update_attributes(setup_id: commute.get_setup_id)
+              commute.update(setup_id: commute.get_setup_id)
               set = Setup.find(commute.setup_id)
               reply =
                 if commute.avoid && commute.mode
@@ -237,14 +237,14 @@ class LinebotController < ApplicationController
                 end
               client.reply_message(event['replyToken'], reply)
             when 2 #到着地変更
-              commute.update_attributes(end_lat: event.message['latitude'], end_lng: event.message['longitude'])
+              commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               st = data[:routes][0][:legs][0][:start_address].slice(4..11)
               en = data[:routes][0][:legs][0][:end_address].slice(4..11)
-              commute.update_attributes(start_address: st, end_address: en)
+              commute.update(start_address: st, end_address: en)
               result = data[:routes][0][:legs][0][:duration][:text]
-              commute.update_attributes(setup_id: commute.get_setup_id)
+              commute.update(setup_id: commute.get_setup_id)
               set = Setup.find(commute.setup_id)
               reply =
                 if commute.avoid && commute.via_place.first && commute.mode
@@ -274,10 +274,10 @@ class LinebotController < ApplicationController
                   ]
                 end
             when 3 #出発地のみ変更
-              commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
+              commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
-              commute.update_attributes(start_address: data[:routes][0][:legs][0][:start_address].slice(4..11))
+              commute.update(start_address: data[:routes][0][:legs][0][:start_address].slice(4..11))
               result = data[:routes][0][:legs][0][:duration][:text]
               if commute.mode
                 reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
@@ -287,7 +287,7 @@ class LinebotController < ApplicationController
                 ]
               end
             when 4 #初期設定or全部変更
-              commute.update_attributes(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
+              commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
               reply = change_msg('通勤設定2')
             else #エラー
               reply = {type: 'text', text: "そのコマンドは存在しません。"}
@@ -302,7 +302,7 @@ class LinebotController < ApplicationController
           code = data.slice!(-1).to_i
           case code
           when 1 #通勤モード変更
-            commute.update_attributes(mode: data, setup_id: commute.get_setup_id)
+            commute.update(mode: data, setup_id: commute.get_setup_id)
             set = Setup.find(commute.setup_id)
             logger.debug(commute.setup_id)
             reply =
@@ -353,6 +353,7 @@ class LinebotController < ApplicationController
             logger.debug(avoid)
             case data
             when "tolls", "highways", "ferries" #有料道路、高速道路、フェリーのいずれか
+              return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid.include?(data)
               avoid.push(data)
             when "none", "tolls,highways,ferries" #全て使用する、全て使用しないのいずれか
               avoid = data.split(',')
@@ -363,7 +364,7 @@ class LinebotController < ApplicationController
             reply = change_msg('avoid', data: commute)
 
           when 5 #寄り道機能の検索位置設定
-            commute.update_attributes(search_area: data.to_i)
+            commute.update(search_area: data.to_i)
             reply = {type: 'text',text: "検索エリアの設定が完了しました。"}
           end
           client.reply_message(event['replyToken'], reply)
