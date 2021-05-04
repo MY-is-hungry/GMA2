@@ -235,7 +235,7 @@ module CommuteRequest
                     "action": {
                       "type": "postback",
                       "label": "全て使用する",
-                      "data": "tolls,highways,ferries4"
+                      "data": "none4"
                     },
                     "style": "secondary"
                   },
@@ -244,7 +244,7 @@ module CommuteRequest
                     "action": {
                       "type": "postback",
                       "label": "全て使用しない",
-                      "data": "none4"
+                      "data": "tolls,highways,ferries4"
                     },
                     "style": "secondary"
                   }

@@ -358,9 +358,7 @@ class LinebotController < ApplicationController
               avoid = data.split(',')
             end
             logger.debug(avoid)
-            a = avoid.join('|')
-            logger.debug(a)
-            commute.update!(avoid: a)
+            commute.update!(avoid: avoid.join('|'))
             logger.debug(commute.avoid)
             reply = change_msg('avoid', data: commute)
 
