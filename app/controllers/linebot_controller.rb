@@ -323,7 +323,7 @@ class LinebotController < ApplicationController
           when 1 #通勤モード変更
             commute.update(mode: data)
             commute.update(setup_id: commute.get_setup_id)
-            reply = change_msg('mode', commute: Commute.find(commute.id))
+            reply = change_msg('mode', commute: commute)
             
           when 2 #寄り道機能のお気に入り登録
             if Favorite.where(user_id: user.id).count < 5
