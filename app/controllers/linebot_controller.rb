@@ -166,17 +166,33 @@ class LinebotController < ApplicationController
             
             when 'ヘルプ'
               reply = change_msg(message)
+            
+            when 'リセット'
+              commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil)
+              commute.via_place.destroy_all
+              client.reply_message(event['replyToken'], 
+                {
+                  type: 'text',
+                  text: "基本設定をリセットしました。",
+                  "quickReply": {
+                    "items": [
+                      {
+                        "type": "action",
+                        "action": {
+                          "type": "message",
+                          "label": "基本設定",
+                          "text": "基本設定"
+                        }
+                      }
+                    ]
+                  }
+                }
+              )
               
             when 'テスト'
-              # commute.update_attributes(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil)
-              # commute.via_place.destroy_all
-              # client.reply_message(event['replyToken'], {type: 'text', text: commute.setting.content})
-              
+              #基本設定コマンドの予定
               commute.update(setup_id: commute.get_setup_id)
-              logger.debug(commute.setup_id)
               set = Setup.find(commute.setup_id)
-              logger.debug(set.content)
-              logger.debug(set.next_setup)
               reply =
               {
                 type: 'text',
@@ -350,7 +366,6 @@ class LinebotController < ApplicationController
             
           when 4 #通勤経路の制限
             avoid = commute.avoid ? commute.avoid.split('|') : []
-            logger.debug(avoid)
             case data
             when "tolls", "highways", "ferries" #有料道路、高速道路、フェリーのいずれか
               return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid.include?(data)
@@ -358,9 +373,7 @@ class LinebotController < ApplicationController
             when "none", "tolls,highways,ferries" #全て使用する、全て使用しないのいずれか
               avoid = data.split(',')
             end
-            logger.debug(avoid)
-            commute.update!(avoid: avoid.join('|'))
-            logger.debug(commute.avoid)
+            commute.update(avoid: avoid.join('|'))
             reply = change_msg('avoid', data: commute)
 
           when 5 #寄り道機能の検索位置設定
