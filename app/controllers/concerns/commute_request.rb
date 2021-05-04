@@ -331,12 +331,12 @@ module CommuteRequest
     now =
       case avoid
       when "tolls|highways|ferries" then "全て"
-      when "tolls|highways" then "有料道路、高速道路"
-      when "tolls|ferries" then "有料道路、フェリー"
-      when "highways|ferries" then "高速道路、フェリー"
-      when "tolls" then "有料道路"
-      when "highways" then "高速道路"
-      when "ferries" then "フェリー"
+      when "tolls|highways" then "フェリー"
+      when "tolls|ferries" then "高速道路"
+      when "highways|ferries" then "有料道路"
+      when "tolls" then "高速道路、フェリー"
+      when "highways" then"有料道路、フェリー"
+      when "ferries" then "有料道路、高速道路"
       else "全て通勤ルートには使用しません。"
       end
     now = "最短ルートに#{now}が含まれる場合、使用されます。" unless now == "全て通勤ルートには使用しません。"
