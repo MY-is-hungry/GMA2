@@ -304,6 +304,7 @@ class LinebotController < ApplicationController
           when 1 #通勤モード変更
             commute.update_attributes(mode: data, setup_id: commute.get_setup_id)
             set = Setup.find(commute.setup_id)
+            logger.debug(commute.setup_id)
             reply =
               if commute.avoid && commute.via_place.first
                 {type: 'text', text: "通勤モードを設定しました。"}
@@ -348,7 +349,7 @@ class LinebotController < ApplicationController
             reply = {type: 'text',text: "お気に入りを解除しました。"}
             
           when 4 #通勤経路の制限
-            avoid = commute.avoid.split('|')
+            avoid = commute.avoid&.split('|')
             logger.debug(avoid)
             case data
             when "tolls", "highways", "ferries" #有料道路、高速道路、フェリーのいずれか
