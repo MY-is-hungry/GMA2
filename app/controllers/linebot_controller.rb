@@ -349,7 +349,7 @@ class LinebotController < ApplicationController
             reply = {type: 'text',text: "お気に入りを解除しました。"}
             
           when 4 #通勤経路の制限
-            avoid = commute.avoid&.split('|')
+            avoid = commute.avoid ? commute.avoid.split('|') : []
             logger.debug(avoid)
             case data
             when "tolls", "highways", "ferries" #有料道路、高速道路、フェリーのいずれか
