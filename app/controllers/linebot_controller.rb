@@ -76,7 +76,6 @@ class LinebotController < ApplicationController
 
             when '経路の制限'
               state = commute.get_state
-              commute.update_attributes(avoid: "tolls|highways|ferries")
               reply = change_msg(message, data: commute)
               
             when '通勤時間'
