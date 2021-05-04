@@ -330,14 +330,16 @@ module CommuteRequest
   def avoid_now(avoid)
     now =
       case avoid
-      when "tolls|highways|ferries" then "全て"
-      when "tolls|highways" then "フェリー"
-      when "tolls|ferries" then "高速道路"
-      when "highways|ferries" then "有料道路"
+      when "tolls|highways|ferries", "tolls|ferries|highways", "highways|tolls|ferries",
+        "highways|ferries|tolls", "ferries|tolls|highways", "ferries|highways|tolls"
+        "全て通勤ルートには使用しません。"
+      when "tolls|highways", "highways|tolls" then "フェリー"
+      when "tolls|ferries", "ferries|tolls" then "高速道路"
+      when "highways|ferries", "ferries|highways" then "有料道路"
       when "tolls" then "高速道路、フェリー"
       when "highways" then"有料道路、フェリー"
       when "ferries" then "有料道路、高速道路"
-      else "全て通勤ルートには使用しません。"
+      else "有料道路、高速道路、フェリー"
       end
     now = "最短ルートに#{now}が含まれる場合、使用されます。" unless now == "全て通勤ルートには使用しません。"
     return now
