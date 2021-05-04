@@ -346,16 +346,17 @@ class LinebotController < ApplicationController
           when 3 #お気に入りの解除
             Favorite.find_by(user_id: user.id,place_id: data).destroy
             reply = {type: 'text',text: "お気に入りを解除しました。"}
+            
           when 4 #通勤経路の制限
-            if commute.avoid.include?(data)
-              commute.avoid.slice!(data)
-            else
-              return client.reply_message(event['replyToken'], bad_msg('avoid'))
+            avoid = commute.avoid.split('|')
+            case data
+            when "none", "tolls,highways,ferries"
+              avoid = data.split(',')
+            when "tolls", "highways", "ferries"
+              avoid.push(data)
             end
-            commute.avoid.slice!(0) if commute.avoid[0] == "|"
-            commute.avoid.slice!(-1) if commute.avoid[-1] == "|"
-            commute.avoid.slice!(7) if commute.avoid[7] == "|"
-            commute.save
+            logger.debug(avoid)
+            commute.update_attributes(avoid: avoid.join('|'))
             logger.debug(commute.avoid)
             reply = change_msg('avoid', data: commute)
 
@@ -368,8 +369,7 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
           Commute.create(user_id: event['source']['userId'], setup_id: 9)
-          reply = change_msg("follow")
-          client.reply_message(event['replyToken'], reply)
+          client.reply_message(event['replyToken'], change_msg("follow"))
         when Line::Bot::Event::Unfollow
           User.find_by(id: event['source']['userId']).destroy
         else

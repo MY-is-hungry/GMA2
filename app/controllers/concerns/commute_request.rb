@@ -167,7 +167,7 @@ module CommuteRequest
             "contents": [
               {
                 "type": "text",
-                "text": "通勤経路に含まれるものを選んでください。",
+                "text": "通勤経路では使用しないものを選んでください。",
                 "size": "xl",
                 "weight": "bold",
                 "wrap": true
@@ -175,13 +175,6 @@ module CommuteRequest
               {
                 "type": "text",
                 "text": "※複数ある場合は、それぞれ押してください。",
-                "margin": "md",
-                "color": "#8c8c8c",
-                "wrap": true
-              },
-              {
-                "type": "text",
-                "text": "※初期設定では、全て含まれています。",
                 "margin": "md",
                 "color": "#8c8c8c",
                 "wrap": true
@@ -242,16 +235,16 @@ module CommuteRequest
                     "action": {
                       "type": "postback",
                       "label": "全て使用する",
-                      "data": "tolls|highways|ferries4"
+                      "data": "tolls,highways,ferries4"
                     },
                     "style": "secondary"
                   },
                   {
                     "type": "button",
                     "action": {
-                      "type": "message",
-                      "label": "やり直す",
-                      "text": "経路の制限"
+                      "type": "postback",
+                      "label": "全て使用しない",
+                      "data": "none4"
                     },
                     "style": "secondary"
                   }
@@ -346,7 +339,7 @@ module CommuteRequest
       when "ferries" then "有料道路、高速道路"
       else "全て通勤ルートには使用しません。"
       end
-    now = "現在は、#{now}が通勤経路に含まれる可能性があります。" unless now == "全て通勤ルートには使用しません。"
+    now = "最短ルートに#{now}が含まれる場合、使用されます。" unless now == "全て通勤ルートには使用しません。"
     return now
   end
 end
