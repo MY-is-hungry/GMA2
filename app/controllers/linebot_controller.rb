@@ -349,11 +349,12 @@ class LinebotController < ApplicationController
             
           when 4 #通勤経路の制限
             avoid = commute.avoid.split('|')
+            
             case data
-            when "none", "tolls,highways,ferries"
-              avoid = data.split(',')
-            when "tolls", "highways", "ferries"
+            when "tolls", "highways", "ferries" #有料道路、高速道路、フェリーのいずれか
               avoid.push(data)
+            when "none", "tolls,highways,ferries" #全て使用する、全て使用しないのいずれか
+              avoid = data.split(',')
             end
             logger.debug(avoid)
             commute.update_attributes(avoid: avoid.join('|'))
