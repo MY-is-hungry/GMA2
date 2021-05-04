@@ -6,12 +6,15 @@ module BaseRequest
   include SearchRequest
   include BasicRequest
   
-  def change_msg(msg, data: '', count: 0)
+  def change_msg(msg, data: '', count: 0, commute: '')
     case msg
     when 'おはよう'
       weather_forcast(data)
       
     #ここからcommute_request.rb
+    when '基本設定'
+      commute_basic(msg, commute: commute)
+      
     when '通勤設定','出発地点変更','到着地点変更', '通勤設定2'
       commute_place(msg, data: data)
       
@@ -25,7 +28,10 @@ module BaseRequest
       
       
     when '通勤モード'
-      commute_mode(msg)
+      mode_menu(msg)
+      
+    when 'mode'
+      commute_mode(commute: commute)
       
     when '経路の制限'
       avoid_menu(msg, data)

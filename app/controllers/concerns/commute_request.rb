@@ -1,5 +1,24 @@
 module CommuteRequest
   extend ActiveSupport::Concern
+  def commute_basic(msg, commute: '')
+    set = Setup.find(commute.get_setup_id)
+    {
+      type: 'text',
+      text: set.content,
+      "quickReply": {
+        "items": [
+          {
+            "type": "action",
+            "action": {
+              "type": "message",
+              "label": set.label,
+              "text": set.next_setup
+            }
+          }
+        ]
+      }
+    }
+  end
   def commute_place(msg, data: '')
     case data
     when 0, 1, 2, 3
@@ -98,7 +117,7 @@ module CommuteRequest
     {type: 'text',text: "中間地点の設定をリセットしました。"}
   end
     
-  def commute_mode(msg)
+  def mode_menu(msg)
     {
       "type": "flex",
       "altText": "#{msg}の設定",
@@ -151,6 +170,37 @@ module CommuteRequest
         }
       }
     }
+  end
+  
+  def commute_mode(commute: '')
+    set = Setup.find(commute.setup_id)
+    logger.debug(commute.setup_id)
+    if commute.avoid && commute.via_place.first
+      {type: 'text', text: "通勤モードを設定しました。"}
+    else
+      [
+        {
+          type: 'text',
+          text: "通勤モードを設定しました。"
+        },
+        {
+          type: 'text',
+          text: set.content,
+          "quickReply": {
+            "items": [
+              {
+                "type": "action",
+                "action": {
+                  "type": "message",
+                  "label": set.label,
+                  "text": set.next_setup
+                }
+              }
+            ]
+          }
+        }
+      ]
+    end
   end
   
   def avoid_menu(msg, commute)

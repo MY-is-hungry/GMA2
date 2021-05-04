@@ -41,6 +41,9 @@ class LinebotController < ApplicationController
               data[0] = JSON.parse(start_response.read, {symbolize_names: true})
               data[1] = JSON.parse(end_response.read, {symbolize_names: true})
               reply = change_msg(message, data: data)
+              
+            when '基本設定'
+              reply = change_msg(message, commute: commute)
 
             when '通勤設定'
               reply = change_msg(message, data: commute.get_state)
@@ -258,9 +261,8 @@ class LinebotController < ApplicationController
               data = JSON.parse(response.read, {symbolize_names: true})
               st = data[:routes][0][:legs][0][:start_address].slice(4..11)
               en = data[:routes][0][:legs][0][:end_address].slice(4..11)
-              commute.update(start_address: st, end_address: en)
+              commute.update(start_address: st, end_address: en, setup_id: commute.get_setup_id)
               result = data[:routes][0][:legs][0][:duration][:text]
-              commute.update(setup_id: commute.get_setup_id)
               set = Setup.find(commute.setup_id)
               reply =
                 if commute.avoid && commute.via_place.first && commute.mode
@@ -313,41 +315,15 @@ class LinebotController < ApplicationController
           
         when Line::Bot::Event::Postback
           user = User.find_by(id: event['source']['userId'])
-          commute = user.commute
+          commute = Commute.find_by(user_id: user.id)
+          logger.debug(commute.setup_id)
           data = event['postback']['data']
           code = data.slice!(-1).to_i
           case code
           when 1 #通勤モード変更
             commute.update(mode: data, setup_id: commute.get_setup_id)
-            set = Setup.find(commute.setup_id)
-            logger.debug(commute.setup_id)
-            reply =
-              if commute.avoid && commute.via_place.first
-                {type: 'text', text: "通勤モードを設定しました。"}
-              else
-                [
-                  {
-                    type: 'text',
-                    text: "通勤モードを設定しました。"
-                  },
-                  {
-                    type: 'text',
-                    text: set.content,
-                    "quickReply": {
-                      "items": [
-                        {
-                          "type": "action",
-                          "action": {
-                            "type": "message",
-                            "label": set.label,
-                            "text": set.next_setup
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              end
+            reply = change_msg('mode', commute: commute)
+            
           when 2 #寄り道機能のお気に入り登録
             if Favorite.where(user_id: user.id).count < 5
               Favorite.create(user_id: user.id, place_id: data)
