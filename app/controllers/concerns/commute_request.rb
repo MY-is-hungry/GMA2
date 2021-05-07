@@ -340,10 +340,25 @@ module CommuteRequest
     when '完了'
       now = avoid_now(commute.avoid)
       if commute.via_place.first && commute.mode
-        {
-          type: 'text',
-          text: "#{now}"
-        }
+        if commute.basic_setup_status
+          {
+            type: 'text',
+            text: "#{now}"
+          }
+        else
+          commute.update(basic_setup_status: true)
+          set = Setup.find(commute.setup_id)
+          [
+            {
+              type: 'text',
+              text: "#{now}"
+            },
+            {
+              type: 'text',
+              text: "#{set.content}"
+            }
+          ]
+        end
       else
         unless commute.via_place.first
           [
@@ -393,7 +408,7 @@ module CommuteRequest
       case avoid
       when "tolls|highways|ferries", "tolls|ferries|highways", "highways|tolls|ferries",
         "highways|ferries|tolls", "ferries|tolls|highways", "ferries|highways|tolls"
-        "全て通勤ルートには使用しません。"
+        "全て通勤ルートには含まない設定に変更しました。"
       when "tolls|highways", "highways|tolls" then "フェリー"
       when "tolls|ferries", "ferries|tolls" then "高速道路"
       when "highways|ferries", "ferries|highways" then "有料道路"
