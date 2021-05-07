@@ -15,7 +15,7 @@ module WeatherRequest
         weather_id = d[:weather][0][:id]
         weather = get_weather(weather_id)
         logger.debug(weather_data)
-        weather_data[t].push("\n\n#{time}時 天気:#{weather}   温度:#{temp}℃")
+        weather_data[t][n] = "\n\n#{time}時 天気:#{weather}   温度:#{temp}℃"
       end
       weather_data[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
       t += 1
