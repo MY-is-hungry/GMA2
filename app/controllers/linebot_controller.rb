@@ -35,11 +35,16 @@ class LinebotController < ApplicationController
             case message
             when 'おはよう'
               data = Array.new
-              start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
-              end_response = open(ENV['W_URL'] + "?zip=#{commute.end_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
-              #JSONデータをハッシュ化
-              data[0] = JSON.parse(start_response.read, {symbolize_names: true})
-              data[1] = JSON.parse(end_response.read, {symbolize_names: true})
+              if start_address == end_address
+                start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
+                data[0] = JSON.parse(start_response.read, {symbolize_names: true})
+              else
+                start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
+                end_response = open(ENV['W_URL'] + "?zip=#{commute.end_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
+                #JSONデータをハッシュ化
+                data[0] = JSON.parse(start_response.read, {symbolize_names: true})
+                data[1] = JSON.parse(end_response.read, {symbolize_names: true})
+              end
               reply = change_msg(message, data: data)
               
             when '基本設定'
