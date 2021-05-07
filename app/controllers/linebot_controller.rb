@@ -242,8 +242,9 @@ class LinebotController < ApplicationController
               commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
-              logger.debug(data)
               address = data[:routes][0][:legs][0][:start_address].scan(/\d{3}-\d{4}/)
+              logger.debug(address[0])
+              logger.debug(commute.get_setup_id)
               commute.update(end_address: address[0], setup_id: commute.get_setup_id)
               result = data[:routes][0][:legs][0][:duration][:text]
               set = Setup.find(commute.setup_id)
