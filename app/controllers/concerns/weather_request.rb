@@ -3,7 +3,7 @@ module WeatherRequest
   
   def weather_forcast(data)
     city_name = []
-    weather_data = []
+    weather_data = [[],[]]
     t = 0
     data.each_with_index { |d, n| city_name[n] = d[:city][:name] }
     while data[t]
