@@ -36,8 +36,8 @@ module BaseRequest
     when '経路の制限'
       avoid_menu(msg, data)
       
-    when 'avoid'
-      change_avoid(data)
+    when '変更', '完了'
+      change_avoid(msg, data, commute)
       
     #favorite_request.rb
     when 'お気に入り','おきにいり','おきに'

@@ -2,22 +2,29 @@ module CommuteRequest
   extend ActiveSupport::Concern
   def commute_basic(msg, commute: '')
     set = Setup.find(commute.get_setup_id)
-    {
-      type: 'text',
-      text: set.content,
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "message",
-              "label": set.label,
-              "text": set.next_setup
-            }
-          }
-        ]
+    if set.id == 1
+      {
+        type: 'text',
+        text: set.content
       }
-    }
+    else
+      {
+        type: 'text',
+        text: set.content,
+        "quickReply": {
+          "items": [
+            {
+              "type": "action",
+              "action": {
+                "type": "message",
+                "label": set.label,
+                "text": set.next_setup
+              }
+            }
+          ]
+        }
+      }
+    end
   end
   def commute_place(msg, data: '')
     case data
@@ -253,7 +260,7 @@ module CommuteRequest
                       "data": "tolls4",
                       "label": "有料道路"                        
                     },
-                    "style": "primary"
+                    "style": "secondary"
                   },
                   {
                     "type": "button",
@@ -262,7 +269,7 @@ module CommuteRequest
                       "label": "高速道路",
                       "data": "highways4"
                     },
-                    "style": "primary"
+                    "style": "secondary"
                   },
                   {
                     "type": "button",
@@ -271,7 +278,7 @@ module CommuteRequest
                       "label": "フェリー",
                       "data": "ferries4"
                     },
-                    "style": "primary"
+                    "style": "secondary"
                   },
                 ],
                 "spacing": "md"
@@ -297,6 +304,15 @@ module CommuteRequest
                       "data": "tolls,highways,ferries4"
                     },
                     "style": "secondary"
+                  },
+                  {
+                    "type": "button",
+                    "action": {
+                      "type": "postback",
+                      "label": "設定完了",
+                      "data": "完了4"
+                    },
+                    "style": "primary"
                   }
                 ],
                 "spacing": "md",
@@ -313,66 +329,61 @@ module CommuteRequest
     end
   end
   
-  def change_avoid(commute)
-    now = avoid_now(commute.avoid)
-    if commute.via_place.first && commute.mode
-      [
-          {
-            type: 'text',
-            text: "設定を変更しました。"
-          },
-          {
-            type: 'text',
-            text: now
-          }
-      ]
-    else
-      unless commute.via_place.first
-        [
-          {
-            type: 'text',
-            text: "設定を変更しました。"
-          },
-          {
-            type: 'text',
-            text: now,
-            "quickReply": {
-              "items": [
-                {
-                  "type": "action",
-                  "action": {
-                    "type": "message",
-                    "label": "次の設定へ",
-                    "text": "中間地点登録"
-                  }
-                }
-              ]
-            }
-          }
-        ]
+  def change_avoid(msg, data, commute)
+    case msg
+    when '変更'
+      name = get_data_name(data)
+      {
+        type: 'text',
+        text: "#{name}"
+      }
+    when '完了'
+      now = avoid_now(commute.avoid)
+      if commute.via_place.first && commute.mode
+        {
+          type: 'text',
+          text: "#{now}"
+        }
       else
-        [
-          {
-            type: 'text',
-            text: "設定を変更しました。"
-          },
-          {
-            type: 'text',
-            text: now,
-            "quickReply": {
-              "items": [
-                {
-                  "type": "action",
-                  "action": {
-                    "type": "message",
-                    "label": "次の設定へ",
-                    "text": "通勤モード"
+        unless commute.via_place.first
+          [
+            {
+              type: 'text',
+              text: "#{now}",
+              "quickReply": {
+                "items": [
+                  {
+                    "type": "action",
+                    "action": {
+                      "type": "message",
+                      "label": "次の設定へ",
+                      "text": "中間地点登録"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             }
-          }
-        ]
+          ]
+        else
+          [
+            {
+              type: 'text',
+              text: "#{now}",
+              "quickReply": {
+                "items": [
+                  {
+                    "type": "action",
+                    "action": {
+                      "type": "message",
+                      "label": "次の設定へ",
+                      "text": "通勤モード"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        end
       end
     end
   end
@@ -387,11 +398,24 @@ module CommuteRequest
       when "tolls|ferries", "ferries|tolls" then "高速道路"
       when "highways|ferries", "ferries|highways" then "有料道路"
       when "tolls" then "高速道路、フェリー"
-      when "highways" then"有料道路、フェリー"
+      when "highways" then "有料道路、フェリー"
       when "ferries" then "有料道路、高速道路"
       else "有料道路、高速道路、フェリー"
       end
-    now = "最短ルートに#{now}が含まれる場合、使用されます。" unless now == "全て通勤ルートには使用しません。"
+    now = "最短ルートに#{now}が含まれる場合、使用する設定に変更しました。" unless now == "全て通勤ルートには含まない設定に変更しました。"
     return now
+  end
+  
+  def get_data_name(data)
+    name =
+      case data
+      when "tolls,highways,ferries" then "有料道路、高速道路、フェリー"
+      when "tolls" then "有料道路"
+      when "highways" then "高速道路"
+      when "ferries" then "フェリー"
+      when "none" then "全て使用します。"
+      end
+    name = "#{name}を経路から除外しました。" unless data == "none"
+    return name
   end
 end

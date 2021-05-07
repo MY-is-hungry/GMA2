@@ -344,14 +344,18 @@ class LinebotController < ApplicationController
           when 4 #通勤経路の制限
             avoid = commute.avoid ? commute.avoid.split('|') : []
             case data
-            when "tolls", "highways", "ferries" #有料道路、高速道路、フェリーのいずれか
+            when '完了'
+              message = '完了'
+            when 'tolls', 'highways', 'ferries' #有料道路、高速道路、フェリーのいずれか
               return client.reply_message(event['replyToken'], bad_msg('avoid')) if avoid.include?(data)
               avoid.push(data)
-            when "none", "tolls,highways,ferries" #全て使用する、全て使用しないのいずれか
+              message = '変更'
+            when 'none', 'tolls,highways,ferries' #全て使用する、全て使用しないのいずれか
               avoid = data.split(',')
+              message = '変更'
             end
             commute.update(avoid: avoid.join('|'))
-            reply = change_msg('avoid', data: commute)
+            reply = change_msg(message, data: data, commute: commute)
 
           when 5 #寄り道機能の検索位置設定
             commute.update(search_area: data.to_i)
