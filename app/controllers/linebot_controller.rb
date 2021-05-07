@@ -227,34 +227,9 @@ class LinebotController < ApplicationController
               ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
               commute.update(setup_id: commute.get_setup_id)
               set = Setup.find(commute.setup_id)
-              reply =
-                if commute.avoid && commute.mode
-                  {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
-                else
-                  [
-                    {
-                      type: 'text',
-                      text: "#{count}つ目の中間地点を登録しました。"
-                    },
-                    {
-                      type: 'text',
-                      text: set.content,
-                      "quickReply": {
-                        "items": [
-                          {
-                            "type": "action",
-                            "action": {
-                              "type": "message",
-                              "label": set.label,
-                              "text": set.next_setup
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                end
+              reply = {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
               client.reply_message(event['replyToken'], reply)
+              
             when 2 #到着地変更
               commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
@@ -266,7 +241,7 @@ class LinebotController < ApplicationController
               result = data[:routes][0][:legs][0][:duration][:text]
               set = Setup.find(commute.setup_id)
               reply =
-                if commute.avoid && commute.via_place.first && commute.mode
+                if commute.avoid && commute.mode
                   {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
                 else
                   [

@@ -182,7 +182,7 @@ module CommuteRequest
   def commute_mode(commute: '')
     set = Setup.find(commute.setup_id)
     logger.debug(commute.setup_id)
-    if commute.avoid && commute.via_place.first
+    if commute.avoid
       {type: 'text', text: "通勤モードを設定しました。"}
     else
       [
@@ -339,7 +339,7 @@ module CommuteRequest
       }
     when '完了'
       now = avoid_now(commute.avoid)
-      if commute.via_place.first && commute.mode
+      if commute.mode
         if commute.basic_setup_status
           {
             type: 'text',
@@ -360,45 +360,24 @@ module CommuteRequest
           ]
         end
       else
-        unless commute.via_place.first
-          [
-            {
-              type: 'text',
-              text: "#{now}",
-              "quickReply": {
-                "items": [
-                  {
-                    "type": "action",
-                    "action": {
-                      "type": "message",
-                      "label": "次の設定へ",
-                      "text": "中間地点登録"
-                    }
+        [
+          {
+            type: 'text',
+            text: "#{now}",
+            "quickReply": {
+              "items": [
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "message",
+                    "label": "次の設定へ",
+                    "text": "通勤モード"
                   }
-                ]
-              }
+                }
+              ]
             }
-          ]
-        else
-          [
-            {
-              type: 'text',
-              text: "#{now}",
-              "quickReply": {
-                "items": [
-                  {
-                    "type": "action",
-                    "action": {
-                      "type": "message",
-                      "label": "次の設定へ",
-                      "text": "通勤モード"
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        end
+          }
+        ]
       end
     end
   end

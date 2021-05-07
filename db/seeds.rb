@@ -14,41 +14,17 @@ Setup.create(
     {
       content: "残りの基本設定は１つです。",
       label: "次の設定へ",
-      next_setup: "中間地点登録"
+      next_setup: "経路の制限"
     },
     #id: 4
     {
-      content: "残りの基本設定は１つです。",
+      content: "残りの基本設定は2つです。",
       label: "次の設定へ",
-      next_setup: "経路の制限"
+      next_setup: "通勤モード"
     },
     #id: 5
     {
-      content: "残りの基本設定は2つです。",
-      label: "次の設定へ",
-      next_setup: "通勤モード"
-    },
-    #id: 6
-    {
-      content: "残りの基本設定は2つです。",
-      label: "次の設定へ",
-      next_setup: "通勤モード"
-    },
-    #id: 7
-    {
-      content: "残りの基本設定は2つです。",
-      label: "次の設定へ",
-      next_setup: "中間地点登録"
-    },
-    #id: 8
-    {
-      content: "残りの基本設定は3つです。",
-      label: "次の設定へ",
-      next_setup: "通勤モード"
-    },
-    #id: 9
-    {
-      content: "４つの設定をします。下の「設定を始める」を押してください。",
+      content: "3つの設定をします。下の「設定を始める」を押してください。",
       label: "設定を始める",
       next_setup: "通勤設定"
     }

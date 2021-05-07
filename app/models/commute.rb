@@ -19,24 +19,16 @@ class Commute < ApplicationRecord
   end
   
   def get_setup_id
-    if start_lat && end_lat && avoid && via_place.first && mode #全て設定済み
+    if start_lat && end_lat && avoid && mode #全て設定済み
       1
-    elsif start_lat && end_lat && avoid && via_place.first #残り通勤モード
+    elsif start_lat && end_lat && avoid #残り通勤モード
       2
-    elsif start_lat && end_lat && avoid && mode #残り中間地点
+    elsif start_lat && end_lat && mode #残り経路制限
       3
-    elsif start_lat && end_lat && via_place.first && mode #残り経路制限
+    elsif start_lat && end_lat #残り経路制限、通勤モード
       4
-    elsif start_lat && end_lat && avoid #残り中間地点、通勤モード
-      5
-    elsif start_lat && end_lat && via_place.first #残り経路制限、通勤モード
-      6
-    elsif start_lat && end_lat && mode #残り経路制限、中間地点
-      7
-    elsif start_lat && end_lat #残り経路制限、中間地点、通勤モード
-      8
     else #何も設定していない
-      9
+      5
     end
   end
 end
