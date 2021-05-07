@@ -183,7 +183,7 @@ class LinebotController < ApplicationController
                         "type": "action",
                         "action": {
                           "type": "message",
-                          "label": "基本設定",
+                          "label": "基本設定を始める",
                           "text": "基本設定"
                         }
                       }
@@ -259,6 +259,7 @@ class LinebotController < ApplicationController
               commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
+              logger.debug(data)
               st = data[:routes][0][:legs][0][:start_address].slice(4..11)
               en = data[:routes][0][:legs][0][:end_address].slice(4..11)
               commute.update(start_address: st, end_address: en, setup_id: commute.get_setup_id)
