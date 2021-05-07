@@ -44,6 +44,7 @@ class LinebotController < ApplicationController
                 #JSONデータをハッシュ化
                 data[0] = JSON.parse(start_response.read, {symbolize_names: true})
                 data[1] = JSON.parse(end_response.read, {symbolize_names: true})
+                logger.debug(data[1])
               end
               reply = change_msg(message, data: data)
               
