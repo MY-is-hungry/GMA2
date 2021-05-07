@@ -354,7 +354,7 @@ class LinebotController < ApplicationController
               avoid = data.split(',')
               message = '変更'
             end
-            commute.update(avoid: avoid.join('|'))
+            commute.update(avoid: avoid.join('|'), setup_id: commute.get_setup_id)
             reply = change_msg(message, data: data, commute: commute)
 
           when 5 #寄り道機能の検索位置設定
