@@ -35,7 +35,7 @@ class LinebotController < ApplicationController
             case message
             when 'おはよう'
               data = Array.new
-              if start_address == end_address
+              if commute.start_address == commute.end_address
                 start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
                 data[0] = JSON.parse(start_response.read, {symbolize_names: true})
               else
