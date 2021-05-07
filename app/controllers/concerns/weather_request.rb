@@ -6,6 +6,7 @@ module WeatherRequest
     weather_data = [[],[]]
     t = 0
     data.each_with_index { |d, n| city_name[n] = d[:city][:name] }
+    logger.debug(data)
     while data[t]
       data[t][:list].each_with_index do |d, n|
         time = d[:dt_txt].slice(-8, 2).to_i + 9
@@ -14,8 +15,8 @@ module WeatherRequest
         temp = d[:main][:temp].round(1)
         weather_id = d[:weather][0][:id]
         weather = get_weather(weather_id)
-        logger.debug(weather_data)
         weather_data[t][n] = "\n\n#{time}時 天気:#{weather}   温度:#{temp}℃"
+        logger.debug(weather_data)
       end
       weather_data[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
       t += 1
