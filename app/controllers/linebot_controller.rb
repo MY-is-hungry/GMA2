@@ -235,9 +235,8 @@ class LinebotController < ApplicationController
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
               logger.debug(data)
-              st = data[:routes][0][:legs][0][:start_address].slice(4..11)
-              en = data[:routes][0][:legs][0][:end_address].slice(4..11)
-              commute.update(start_address: st, end_address: en, setup_id: commute.get_setup_id)
+              address = data[:routes][0][:legs][0][:start_address].scan(/\d{3}-\d{4}/)
+              commute.update(end_address: address[0], setup_id: commute.get_setup_id)
               result = data[:routes][0][:legs][0][:duration][:text]
               set = Setup.find(commute.setup_id)
               reply =
@@ -271,7 +270,8 @@ class LinebotController < ApplicationController
               commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
               response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
               data = JSON.parse(response.read, {symbolize_names: true})
-              commute.update(start_address: data[:routes][0][:legs][0][:start_address].slice(4..11))
+              address = data[:routes][0][:legs][0][:start_address].scan(/\d{3}-\d{4}/)
+              commute.update(start_address: address)
               result = data[:routes][0][:legs][0][:duration][:text]
               if commute.mode
                 reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
