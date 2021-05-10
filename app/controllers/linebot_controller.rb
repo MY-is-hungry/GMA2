@@ -322,16 +322,16 @@ class LinebotController < ApplicationController
               response =
                 case commute.search_area #寄り道地域設定済み
                 when 1 #自宅付近
-                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.start_lat},#{commute.start_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.start_lat},#{commute.start_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
                 when 2 #職場付近
-                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
                 when 3 #中間地点付近（職場に最も近い中間地点）
-                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.last.via_lat},#{commute.via_place.last.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
+                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.via_place.last.via_lat},#{commute.via_place.last.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
                 end
-            elsif commute.start_lat && commute.end_lat #寄り道地域は未設定だが、通勤場所は設定済み（職場付近で検索）
-              response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+            elsif commute.get_state.in?([0, 1]) #寄り道地域は未設定だが、通勤場所は設定済み（職場付近で検索）
+              response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
             else
-              return client.reply_message(event['replyToken'], bad_msg(message))
+              return client.reply_message(event['replyToken'], bad_msg(data))
             end
             hash = JSON.parse(response.read, {symbolize_names: true})
             #配列にハッシュ化した店舗データを入れる（最大５件）
@@ -348,7 +348,7 @@ class LinebotController < ApplicationController
                 review: review, address: hash[:results][n][:formatted_address], url: url, place_id: hash[:results][n][:place_id]
               }
             end
-            reply = change_msg(message, data: data)
+            reply = change_msg(data, data: data)
           end
           client.reply_message(event['replyToken'], reply)
           
