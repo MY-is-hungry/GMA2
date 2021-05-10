@@ -60,7 +60,7 @@ class LinebotController < ApplicationController
               commute.via_place.destroy_all
 
             when '通勤モード'
-              reply = commute.start_lat && commute.end_lat ? change_msg(message) : bad_msg(message)
+              reply = commute.get_state.in?([0, 1]) ? change_msg(message) : bad_msg(message)
 
             when '出発地点変更'
               reply = change_msg(message, state: commute.get_state)
@@ -86,9 +86,9 @@ class LinebotController < ApplicationController
                 end
 
             when '経路の制限'
-              state = commute.get_state
+              commute.get_state
               commute.update(avoid: nil)
-              reply = change_msg(message, commute: commute)
+              reply = commute.get_state.in?([0, 1]) ? change_msg(message, commute: commute) : bad_msg(message)
               
             when '通勤時間'
               state = commute.get_state
