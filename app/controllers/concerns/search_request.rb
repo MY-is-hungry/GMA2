@@ -86,7 +86,7 @@ module SearchRequest
               },
               {
                 "type": "text",
-                "text": "中間地点は、１つ目の中間地点を指します。",
+                "text": "中間地点は、一番最後に設定したの中間地点を指します。",
                 "wrap": true,
                 "size": "xs",
                 "color": "#8c8c8c",
@@ -144,6 +144,106 @@ module SearchRequest
         }
       }
     end
+  end
+  
+  def select_store_menu
+    {
+      "type": "bubble",
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "寄り道したいお店を選択してください。",
+            "wrap": true,
+            "margin": "xs",
+            "size": "lg",
+            "weight": "bold"
+          },
+          {
+            "type": "text",
+            "text": "※設定されている寄り道エリアの周辺で検索します。（未設定の場合は到着地点周辺）",
+            "wrap": true,
+            "color": "#8c8c8c",
+            "size": "xs",
+            "margin": "sm"
+          }
+        ]
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "label": "ラーメン",
+                  "data": "ラーメン6"
+                }
+              },
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "label": "カフェ",
+                  "data": "カフェ6"
+                }
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "data": "焼き肉6",
+                  "label": "焼き肉"
+                }
+              },
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "label": "ファミレス",
+                  "data": "ファミレス6"
+                }
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "postback",
+                  "label": "コンビニ",
+                  "data": "コンビニ6"
+                }
+              },
+              {
+                "type": "button",
+                "action": {
+                  "type": "uri",
+                  "label": "action",
+                  "uri": "http://linecorp.com/"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
   end
   
   def search_store(msg, data)

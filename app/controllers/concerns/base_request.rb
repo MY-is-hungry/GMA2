@@ -47,6 +47,9 @@ module BaseRequest
     when '寄り道地域'
       search_area_msg(msg, data)
     
+    when '寄り道する！'
+      select_store_menu
+    
     when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
       search_store(msg, data)
     

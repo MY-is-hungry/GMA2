@@ -125,7 +125,11 @@ class LinebotController < ApplicationController
             when '寄り道地域'
               state = commute.get_state
               reply = state.in?([0, 1]) ? change_msg(message, state: state) : bad_msg(message)
-
+            
+            when '寄り道する！'
+              state = commute.get_state
+              reply = state.in?([0, 1]) ? change_msg(message) : bad_msg(message)
+              
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
               return client.reply_message(event['replyToken'], bad_msg(message)) unless fav_id.first
@@ -143,39 +147,6 @@ class LinebotController < ApplicationController
               end
               reply = change_msg(message, data: data, count: data.count)
 
-            when 'ラーメン','カフェ','コンビニ','ファミレス','焼肉'
-              if commute.search_area
-                response =
-                  case commute.search_area #寄り道地域設定済み
-                  when 1 #自宅付近
-                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.start_lat},#{commute.start_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
-                  when 2 #職場付近
-                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
-                  when 3 #中間地点付近（職場に最も近い中間地点）
-                    open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.last.via_lat},#{commute.via_place.last.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
-                  end
-              elsif commute.start_lat && commute.end_lat #寄り道地域は未設定だが、通勤場所は設定済み（職場付近で検索）
-                response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
-              else
-                return client.reply_message(event['replyToken'], bad_msg(message))
-              end
-              hash = JSON.parse(response.read, {symbolize_names: true})
-              #配列にハッシュ化した店舗データを入れる（最大５件）
-              data = Array.new
-              5.times do |n|
-                data[n] = Hash.new
-                #写真、評価、クチコミが無いとフロント部分が崩れるので存在を確認
-                hash[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
-                hash[:results][n].has_key?(:rating) ? rating = hash[:results][n][:rating] : rating = "未評価"
-                hash[:results][n].has_key?(:user_ratings_total) ? review = hash[:results][n][:user_ratings_total] : review = "0"
-                #経路用のGoogleMapURLをエンコード
-                url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
-                data[n] = {photo: photo, name: hash[:results][n][:name], rating: rating,
-                  review: review, address: hash[:results][n][:formatted_address], url: url, place_id: hash[:results][n][:place_id]
-                }
-              end
-              reply = change_msg(message, data: data)
-            
             when 'ヘルプ'
               reply = change_msg(message)
             
@@ -327,7 +298,7 @@ class LinebotController < ApplicationController
             Favorite.find_by(user_id: user.id,place_id: data).destroy
             reply = {type: 'text',text: "お気に入りを解除しました。"}
             
-          when 4 #通勤経路の制限
+          when 4 #経路の制限の変更・設定完了
             avoid = commute.avoid ? commute.avoid.split('|') : []
             case data
             when '完了'
@@ -343,9 +314,42 @@ class LinebotController < ApplicationController
             commute.update(avoid: avoid.join('|'), setup_id: commute.get_setup_id)
             reply = change_msg(message, data: data, commute: commute)
 
-          when 5 #寄り道機能の検索位置設定
+          when 5 #寄り道機能の検索位置を設定
             commute.update(search_area: data.to_i)
             reply = {type: 'text',text: "検索エリアの設定が完了しました。"}
+            
+          when 6 #寄り道するお店を選択
+            if commute.search_area
+              response =
+                case commute.search_area #寄り道地域設定済み
+                when 1 #自宅付近
+                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.start_lat},#{commute.start_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+                when 2 #職場付近
+                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+                when 3 #中間地点付近（職場に最も近い中間地点）
+                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.via_place.last.via_lat},#{commute.via_place.last.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
+                end
+            elsif commute.start_lat && commute.end_lat #寄り道地域は未設定だが、通勤場所は設定済み（職場付近で検索）
+              response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{message}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+            else
+              return client.reply_message(event['replyToken'], bad_msg(message))
+            end
+            hash = JSON.parse(response.read, {symbolize_names: true})
+            #配列にハッシュ化した店舗データを入れる（最大５件）
+            data = Array.new
+            5.times do |n|
+              data[n] = Hash.new
+              #写真、評価、クチコミが無いとフロント部分が崩れるので存在を確認
+              hash[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
+              hash[:results][n].has_key?(:rating) ? rating = hash[:results][n][:rating] : rating = "未評価"
+              hash[:results][n].has_key?(:user_ratings_total) ? review = hash[:results][n][:user_ratings_total] : review = "0"
+              #経路用のGoogleMapURLをエンコード
+              url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
+              data[n] = {photo: photo, name: hash[:results][n][:name], rating: rating,
+                review: review, address: hash[:results][n][:formatted_address], url: url, place_id: hash[:results][n][:place_id]
+              }
+            end
+            reply = change_msg(message, data: data)
           end
           client.reply_message(event['replyToken'], reply)
           
