@@ -27,7 +27,7 @@ module CommuteRequest
     end
   end
   def commute_place(msg, state: '')
-    case data
+    case state
     when 0, 1, 2, 3
       point, reset = ""
       case msg
