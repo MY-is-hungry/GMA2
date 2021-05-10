@@ -88,7 +88,7 @@ class LinebotController < ApplicationController
             when '経路の制限'
               state = commute.get_state
               commute.update(avoid: nil)
-              reply = change_msg(message, data: commute)
+              reply = change_msg(message, commute: commute)
               
             when '通勤時間'
               state = commute.get_state

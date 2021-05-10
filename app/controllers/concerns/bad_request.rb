@@ -2,7 +2,8 @@ module BadRequest
   extend ActiveSupport::Concern
   def bad_msg(msg)
     case msg
-    when '中間地点登録','通勤時間','ラーメン','カフェ','コンビニ','ファミレス','焼肉','寄り道地域'
+    when '中間地点登録','通勤時間','ラーメン','カフェ','コンビニ','ファミレス','焼肉',
+      '寄り道地域','経路の制限','通勤モード'
       [
         {type: 'text',text: "出発地点と到着地点がない場合、この操作はできません。"},
         {type: 'text',text: "「通勤設定」から設定してください。",

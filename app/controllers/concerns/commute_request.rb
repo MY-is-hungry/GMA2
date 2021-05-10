@@ -231,14 +231,14 @@ module CommuteRequest
               },
               {
                 "type": "text",
-                "text": "※複数ある場合は、それぞれ押してください。",
+                "text": "※選択が完了したら、「設定完了」を押してください。",
                 "margin": "md",
                 "color": "#8c8c8c",
                 "wrap": true
               },
               {
                 "type": "text",
-                "text": "※「経路の制限」と送信するとリセットできます。",
+                "text": "※「経路の制限」と送信すると設定をリセットできます。",
                 "color": "#8c8c8c",
                 "wrap": true,
                 "margin": "md"

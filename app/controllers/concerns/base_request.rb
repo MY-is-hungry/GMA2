@@ -34,7 +34,7 @@ module BaseRequest
       commute_mode(commute: commute)
       
     when '経路の制限'
-      avoid_menu(msg, data)
+      avoid_menu(msg, commute)
       
     when '変更', '完了'
       change_avoid(msg, data, commute)
