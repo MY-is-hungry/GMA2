@@ -54,7 +54,7 @@ class LinebotController < ApplicationController
               reply = change_msg(message, commute: commute)
 
             when '通勤設定'
-              reply = change_msg(message, data: commute.get_state)
+              reply = change_msg(message, state: commute.get_state)
               logger.debug(reply.class)
               commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
               commute.via_place.destroy_all
