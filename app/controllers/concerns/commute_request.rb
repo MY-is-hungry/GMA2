@@ -26,7 +26,7 @@ module CommuteRequest
       }
     end
   end
-  def commute_place(msg, data: '')
+  def commute_place(msg, state: '')
     case data
     when 0, 1, 2, 3
       point, reset = ""
@@ -34,7 +34,7 @@ module CommuteRequest
       when '通勤設定'
         point = "出発"
         reset =
-          case data
+          case state
           when 0
             "出発地点、到着地点、中間地点"
           when 1
@@ -45,9 +45,17 @@ module CommuteRequest
             "到着地点"
           end
       when '出発地点変更'
-        point, reset = "出発", "出発地点"
+        if state == 0
+          point, reset = "出発", "出発地点と中間地点"
+        else
+          point, reset = "出発", "出発地点"
+        end
       when '到着地点変更'
-        point, reset = "到着", "到着地点"
+        if state == 0
+          point, reset = "到着", "到着地点と中間地点"
+        else
+          point, reset = "到着", "到着地点"
+        end
       end
       [
         {

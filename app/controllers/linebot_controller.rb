@@ -63,18 +63,18 @@ class LinebotController < ApplicationController
               reply = commute.start_lat && commute.end_lat ? change_msg(message) : bad_msg(message)
 
             when '出発地点変更'
-              reply = change_msg(message, data: commute.get_state)
+              reply = change_msg(message, state: commute.get_state)
               commute.update(start_lat: nil,start_lng: nil)
               commute.via_place.destroy_all
 
             when '到着地点変更'
-              reply = change_msg(message, data: commute.get_state)
+              reply = change_msg(message, state: commute.get_state)
               commute.update(end_lat: nil,end_lng: nil)
               commute.via_place.destroy_all
 
             when '中間地点登録'
               state = commute.get_state
-              reply = state.in?([0, 1]) ? change_msg(message) : bad_msg(message, data: state)
+              reply = state.in?([0, 1]) ? change_msg(message) : bad_msg(message)
 
             when '中間地点削除'
               reply =
@@ -292,7 +292,7 @@ class LinebotController < ApplicationController
               end
             when 4 #初期設定or全部変更
               commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
-              reply = change_msg('通勤設定2')
+              reply = change_msg('通勤設定2', state: commute.get_state)
             else #エラー
               reply = {type: 'text', text: "そのコマンドは存在しません。"}
             end
