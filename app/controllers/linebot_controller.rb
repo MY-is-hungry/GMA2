@@ -115,15 +115,16 @@ class LinebotController < ApplicationController
                 data = JSON.parse(response.read, {symbolize_names: true})
                 reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration_in_traffic][:text]}"}
               else
+                logger.debug(commute.avoid)
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                &language=ja&key=" + ENV['G_KEY'])
+                &avoid=#{commute.avoid}&language=ja&key=" + ENV['G_KEY'])
                 data = JSON.parse(response.read, {symbolize_names: true})
                 reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration][:text]}"}
               end
 
             when '寄り道地域'
               state = commute.get_state
-              reply = state.in?([0, 1]) ? change_msg(message, data: state) : bad_msg(message)
+              reply = state.in?([0, 1]) ? change_msg(message, state: state) : bad_msg(message)
 
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)

@@ -1,7 +1,7 @@
 module SearchRequest
   extend ActiveSupport::Concern
-  def search_area_msg(msg, data)
-    case data
+  def search_area_msg(msg, state)
+    case state
     when 1
       {
         "type": "flex",
@@ -79,6 +79,14 @@ module SearchRequest
               {
                 "type": "text",
                 "text": "※自宅・職場とは、通勤設定で選んだ出発地点と到着地点です。",
+                "wrap": true,
+                "size": "xs",
+                "color": "#8c8c8c",
+                "margin": "sm"
+              },
+              {
+                "type": "text",
+                "text": "中間地点は、１つ目の中間地点を指します。",
                 "wrap": true,
                 "size": "xs",
                 "color": "#8c8c8c",
