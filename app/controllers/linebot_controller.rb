@@ -94,6 +94,7 @@ class LinebotController < ApplicationController
               state = commute.get_state
               return client.reply_message(event['replyToken'], bad_msg(message)) if state.in?([2,3,4])
               time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
+              logger.debug(commute.avoid)
               if commute.mode
                 case state
                 when 0
@@ -107,15 +108,14 @@ class LinebotController < ApplicationController
                     w = w + "via:#{l[:lat]},#{l[:lng]}|"
                   end
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                  &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                  &waypoints=#{w}&avoid=#{commute.avoid}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 when 1
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                  &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                  &avoid=#{commute.avoid}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 end
                 data = JSON.parse(response.read, {symbolize_names: true})
                 reply = {type: "text",text: "#{data[:routes][0][:legs][0][:duration_in_traffic][:text]}"}
               else
-                logger.debug(commute.avoid)
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
                 &avoid=#{commute.avoid}&language=ja&key=" + ENV['G_KEY'])
                 data = JSON.parse(response.read, {symbolize_names: true})
