@@ -335,20 +335,20 @@ class LinebotController < ApplicationController
             end
             hash = JSON.parse(response.read, {symbolize_names: true})
             #配列にハッシュ化した店舗データを入れる（最大５件）
-            data = Array.new
+            array = Array.new
             5.times do |n|
-              data[n] = Hash.new
+              array[n] = Hash.new
               #写真、評価、クチコミが無いとフロント部分が崩れるので存在を確認
               hash[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{hash[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
               hash[:results][n].has_key?(:rating) ? rating = hash[:results][n][:rating] : rating = "未評価"
               hash[:results][n].has_key?(:user_ratings_total) ? review = hash[:results][n][:user_ratings_total] : review = "0"
               #経路用のGoogleMapURLをエンコード
               url = URI.encode ENV['G_STORE_URL'] + "&query=#{hash[:results][n][:name]}&query_place_id=#{hash[:results][n][:place_id]}"
-              data[n] = {photo: photo, name: hash[:results][n][:name], rating: rating,
+              array[n] = {photo: photo, name: hash[:results][n][:name], rating: rating,
                 review: review, address: hash[:results][n][:formatted_address], url: url, place_id: hash[:results][n][:place_id]
               }
             end
-            reply = change_msg(data, data: data)
+            reply = change_msg(data, data: array)
           end
           client.reply_message(event['replyToken'], reply)
           
