@@ -57,6 +57,9 @@ module BaseRequest
     when 'ヘルプ'
       help_list
       
+    when 'リセット'
+      reset_setting(state)
+      
     when 'follow'
       follow_msg
     

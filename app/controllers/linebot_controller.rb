@@ -150,48 +150,17 @@ class LinebotController < ApplicationController
               reply = change_msg(message)
             
             when 'リセット'
-              commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil, setup_id: 5, basic_setup_status: false)
-              commute.via_place.destroy_all
-              client.reply_message(event['replyToken'], 
-                {
-                  type: 'text',
-                  text: "基本設定をリセットしました。",
-                  "quickReply": {
-                    "items": [
-                      {
-                        "type": "action",
-                        "action": {
-                          "type": "message",
-                          "label": "基本設定を始める",
-                          "text": "基本設定"
-                        }
-                      }
-                    ]
-                  }
-                }
-              )
+              state = commute.get_state
+              if state.in?([0,1,2,3])
+                commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil, setup_id: 5, basic_setup_status: false)
+                commute.via_place.destroy_all
+                reply = change_msg(state: state)
+              else
+                reply = bad_msg(message)
+              end
               
             when 'テスト'
-              #基本設定コマンドの予定
-              commute.update(setup_id: commute.get_setup_id)
-              set = Setup.find(commute.setup_id)
-              reply =
-              {
-                type: 'text',
-                text: set.content,
-                "quickReply": {
-                    "items": [
-                      {
-                        "type": "action",
-                        "action": {
-                          "type": "message",
-                          "label": "次の設定へ",
-                          "text": set.next_setup
-                        }
-                      }
-                    ]
-                  }
-                }
+              
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end

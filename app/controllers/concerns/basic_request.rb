@@ -20,6 +20,45 @@ module BasicRequest
     ]
   end
   
+  def reset_setting(state)
+    case state
+    when 0
+      {
+        type: 'text',
+        text: "基本設定と中間地点をリセットしました。",
+        "quickReply": {
+          "items": [
+            {
+              "type": "action",
+              "action": {
+                "type": "message",
+                "label": "基本設定を始める",
+                "text": "基本設定"
+              }
+            }
+          ]
+        }
+      }
+    else
+      {
+        type: 'text',
+        text: "基本設定をリセットしました。",
+        "quickReply": {
+          "items": [
+            {
+              "type": "action",
+              "action": {
+                "type": "message",
+                "label": "基本設定を始める",
+                "text": "基本設定"
+              }
+            }
+          ]
+        }
+      }
+    end
+  end
+  
   def follow_msg
     {
       "type": "text",
