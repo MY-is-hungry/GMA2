@@ -217,16 +217,10 @@ class LinebotController < ApplicationController
                 end
             when 3 #出発地のみ変更
               commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
-              address = data[:routes][0][:legs][0][:start_address].scan(/\d{3}-\d{4}/)
+              address = event.message['address'].scan(/\d{3}-\d{4}/)
               commute.update(start_address: address)
-              result = data[:routes][0][:legs][0][:duration][:text]
-              if commute.mode
-                reply = {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
-              else
-                reply = [{type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"},
-                  {type: 'text',text: "「通勤モード」と送信すると、よりあなたに合った通勤スタイルを選択できます。"}
-                ]
-              end
+              reply = {type: 'text',text: "出発地点を登録しました。"}
+ 
             when 4 #初期設定or全部変更
               commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
               logger.debug(event.message)
