@@ -68,6 +68,9 @@ module BadRequest
           }
         }
       ]
+      
+    when '該当コマンドなし'
+      {type: 'text', text: "そのコマンドは存在しません。"}
     end
   end
 end

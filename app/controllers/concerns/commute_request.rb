@@ -104,6 +104,35 @@ module CommuteRequest
     end
   end
   
+  def entry_location(msg, commute)
+    set = Setup.find(commute.setup_id)
+    if commute.avoid && commute.mode
+      {type: 'text',text: "到着地点を登録しました。"}
+    else
+      [
+        {
+          type: 'text',
+          text: "到着地点を登録しました。"
+        },
+        {
+          type: 'text',
+          text: set.content,
+          "quickReply": {
+            "items": [
+              {
+                "type": "action",
+                "action": {
+                  "type": "message",
+                  "label": set.label,
+                  "text": set.next_setup
+                }
+              }
+            ]
+          }
+        }
+      ]
+    end
+  
   def via_create
     [
       {

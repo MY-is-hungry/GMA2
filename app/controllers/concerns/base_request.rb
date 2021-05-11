@@ -18,6 +18,9 @@ module BaseRequest
     when '通勤設定','出発地点変更','到着地点変更', '通勤設定2'
       commute_place(msg, state: state)
       
+    when 'end_location'
+      entry_location(msg, commute)
+      
     when '中間地点登録'
       via_create
       

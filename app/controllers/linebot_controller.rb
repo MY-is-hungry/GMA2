@@ -64,6 +64,9 @@ class LinebotController < ApplicationController
             when '出発地点変更'
               reply = change_msg(message, state: commute.get_state)
               commute.update(start_lat: nil,start_lng: nil)
+              logger.debug(commute.setup_id)
+              commute.update(setup_id: commute.get_state)
+              logger.debug(commute.setup_id)
               commute.via_place.destroy_all
 
             when '到着地点変更'
@@ -173,60 +176,30 @@ class LinebotController < ApplicationController
             when 0,1 #中間地点登録
               count = ViaPlace.where(commute_id: commute.id).count + 1
               ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
-              commute.update(setup_id: commute.get_setup_id)
-              set = Setup.find(commute.setup_id)
               reply = {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
               client.reply_message(event['replyToken'], reply)
               
             when 2 #到着地変更
-              commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'])
-              response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
-              data = JSON.parse(response.read, {symbolize_names: true})
-              address = data[:routes][0][:legs][0][:start_address].scan(/\d{3}-\d{4}/)
-              logger.debug(address[0])
-              logger.debug(commute.get_setup_id)
-              commute.update(end_address: address[0], setup_id: commute.get_setup_id)
-              result = data[:routes][0][:legs][0][:duration][:text]
-              set = Setup.find(commute.setup_id)
-              reply =
-                if commute.avoid && commute.mode
-                  {type: 'text',text: "出発地点から到着地点までの所要時間は、#{result}です。"}
-                else
-                  [
-                    {
-                      type: 'text',
-                      text: "出発地点から到着地点までの所要時間は、#{result}です。"
-                    },
-                    {
-                      type: 'text',
-                      text: set.content,
-                      "quickReply": {
-                        "items": [
-                          {
-                            "type": "action",
-                            "action": {
-                              "type": "message",
-                              "label": set.label,
-                              "text": set.next_setup
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                end
+              address = event.message['address'].scan(/\d{3}-\d{4}/)
+              commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'], end_address: address[0])
+              logger.debug(commute.setup_id)
+              commute.update(setup_id: commute.get_setup_id)
+              logger.debug(commute.setup_id)
+              reply = change_msg('end_location', commute: commute)
+              
             when 3 #出発地のみ変更
               address = event.message['address'].scan(/\d{3}-\d{4}/)
-              logger.debug(address)
-              commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address)
+              logger.debug(commute.setup_id)
+              commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
+              commute.update(setup_id: commute.get_state)
+              logger.debug(commute.setup_id)
               reply = {type: 'text',text: "出発地点を登録しました。"}
  
             when 4 #初期設定or全部変更
               commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
-              logger.debug(event.message)
               reply = change_msg('通勤設定2')
             else #エラー
-              reply = {type: 'text', text: "そのコマンドは存在しません。"}
+              reply = bad_msg('該当コマンドなし')
             end
             client.reply_message(event['replyToken'], reply)
           end
@@ -321,7 +294,7 @@ class LinebotController < ApplicationController
         when Line::Bot::Event::Unfollow
           User.find_by(id: event['source']['userId']).destroy
         else
-          client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
+          client.reply_message(event['replyToken'], bad_msg('該当コマンドなし'))
         end
       }
       head :ok
@@ -335,5 +308,4 @@ class LinebotController < ApplicationController
         config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
       }
     end
-    
 end
