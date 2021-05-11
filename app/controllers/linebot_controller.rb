@@ -65,7 +65,7 @@ class LinebotController < ApplicationController
               reply = change_msg(message, state: commute.get_state)
               logger.debug(commute.setup_id)
               commute.update(start_lat: nil,start_lng: nil)
-              commute.update(setup_id: commute.get_state)
+              commute.update(setup_id: commute.get_setup_id)
               logger.debug(commute.setup_id)
               commute.via_place.destroy_all
 
