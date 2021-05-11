@@ -217,8 +217,6 @@ class LinebotController < ApplicationController
                 end
             when 3 #出発地のみ変更
               commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
-              response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}&language=ja&key=" + ENV['G_KEY'])
-              data = JSON.parse(response.read, {symbolize_names: true})
               address = data[:routes][0][:legs][0][:start_address].scan(/\d{3}-\d{4}/)
               commute.update(start_address: address)
               result = data[:routes][0][:legs][0][:duration][:text]
@@ -231,7 +229,7 @@ class LinebotController < ApplicationController
               end
             when 4 #初期設定or全部変更
               commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
-              logger.debug(event)
+              logger.debug(event.message)
               reply = change_msg('通勤設定2')
             else #エラー
               reply = {type: 'text', text: "そのコマンドは存在しません。"}
