@@ -154,7 +154,7 @@ class LinebotController < ApplicationController
               if state.in?([0,1,2,3])
                 commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil, setup_id: 5, basic_setup_status: false)
                 commute.via_place.destroy_all
-                reply = change_msg(state: state)
+                reply = change_msg(message, state: state)
               else
                 reply = bad_msg(message)
               end
