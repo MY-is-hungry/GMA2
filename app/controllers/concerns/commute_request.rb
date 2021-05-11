@@ -132,6 +132,7 @@ module CommuteRequest
         }
       ]
     end
+  end
   
   def via_create
     [
