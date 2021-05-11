@@ -231,6 +231,7 @@ class LinebotController < ApplicationController
               end
             when 4 #初期設定or全部変更
               commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
+              logger.debug(event)
               reply = change_msg('通勤設定2')
             else #エラー
               reply = {type: 'text', text: "そのコマンドは存在しません。"}
