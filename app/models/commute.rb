@@ -4,33 +4,66 @@ class Commute < ApplicationRecord
   belongs_to :setup
   validates :user_id, presence: true, uniqueness: true
 
-  #位置情報の設定状況を返す
   def get_state
-    if start_lat && end_lat && via_place.first #スタート、ゴール、中間地点あり
-      0
-    elsif start_lat && end_lat #スタート、ゴールあり
+    if start_lat && end_lat && via_place.first && avoid && mode #全ての設定済み
       1
-    elsif start_lat #スタートあり
+    elsif start_lat && end_lat && via_place.first && avoid
       2
-    elsif end_lat #ゴールあり
+    elsif start_lat && end_lat && via_place.first && mode
       3
-    else #設定なし
-      4 
-    end
-  end
-  
-  #基本設定の設定状況を返す
-  def get_setup_id
-    if start_lat && end_lat && avoid && mode #全て設定済み
-      1
-    elsif start_lat && end_lat && avoid #残り通勤モード
-      2
-    elsif start_lat && end_lat && mode #残り経路制限
-      3
-    elsif start_lat && end_lat #残り通勤モード、経路制限
+    elsif start_lat && end_lat && via_place.first
       4
-    else #設定なし
+    elsif start_lat && end_lat && avoid && mode
       5
+    elsif start_lat && end_lat && avoid
+      6
+    elsif start_lat && end_lat && mode
+      7
+    elsif start_lat && end_lat
+      8
+    elsif start_lat #スタートあり
+      9
+    elsif end_lat #ゴールあり
+      10
+    elsif avoid && mode
+      11
+    elsif avoid
+      12
+    elsif mode
+      13
+    else #設定なし
+      14
     end
   end
 end
+
+
+# 位置情報の設定状況を返す
+#   def get_state
+#     if start_lat && end_lat && via_place.first #スタート、ゴール、中間地点あり
+#       0
+#     elsif start_lat && end_lat #スタート、ゴールあり
+#       1
+#     elsif start_lat #スタートあり
+#       2
+#     elsif end_lat #ゴールあり
+#       3
+#     else #設定なし
+#       4 
+#     end
+#   end
+  
+#   #基本設定の設定状況を返す
+#   def get_setup_id
+#     if start_lat && end_lat && avoid && mode #全て設定済み
+#       1
+#     elsif start_lat && end_lat && avoid #残り通勤モード
+#       2
+#     elsif start_lat && end_lat && mode #残り経路制限
+#       3
+#     elsif start_lat && end_lat #残り通勤モード、経路制限
+#       4
+#     else #設定なし
+#       5
+#     end
+#   end

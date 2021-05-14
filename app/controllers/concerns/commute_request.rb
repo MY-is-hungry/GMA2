@@ -1,7 +1,7 @@
 module CommuteRequest
   extend ActiveSupport::Concern
   def commute_basic(msg, commute: '')
-    set = Setup.find(commute.get_setup_id)
+    set = Setup.find(commute.get_state)
     if set.id == 1
       {
         type: 'text',
@@ -28,30 +28,30 @@ module CommuteRequest
   end
   def commute_place(msg, state: '')
     case state
-    when 0, 1, 2, 3
+    when 1..8
       point, reset = ""
       case msg
       when '通勤設定'
         point = "出発"
         reset =
           case state
-          when 0
+          when 1..4
             "出発地点、到着地点、中間地点"
-          when 1
+          when 5..8
             "出発地点、到着地点"
-          when 2
+          when 10
             "出発地点"
-          when 3
+          when 9
             "到着地点"
           end
       when '出発地点変更'
-        if state == 0
+        if state.in?([1..4])
           point, reset = "出発", "出発地点と中間地点"
         else
           point, reset = "出発", "出発地点"
         end
       when '到着地点変更'
-        if state == 0
+        if state.in?([1..4])
           point, reset = "到着", "到着地点と中間地点"
         else
           point, reset = "到着", "到着地点"
