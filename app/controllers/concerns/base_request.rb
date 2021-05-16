@@ -22,7 +22,10 @@ module BaseRequest
       entry_location(msg, commute)
       
     when '中間地点登録'
-      via_create
+      via_location
+      
+    when 'via_place'
+      via_create(count)
       
     when '中間地点削除'
       via_delete

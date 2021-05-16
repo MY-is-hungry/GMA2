@@ -26,6 +26,7 @@ module CommuteRequest
       }
     end
   end
+  
   def commute_place(msg, state: '')
     case state
     when 1..8
@@ -134,7 +135,7 @@ module CommuteRequest
     end
   end
   
-  def via_create
+  def via_location
     [
       {
         "type": "text",
@@ -156,6 +157,30 @@ module CommuteRequest
         }
       }
     ]
+  end
+  
+  def via_create(count)
+    if state == 1
+      {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
+    else
+      set = Setup.find(@commute.setup_id)
+      {
+        type: 'text',
+        text: set.content,
+        "quickReply": {
+          "items": [
+            {
+              "type": "action",
+              "action": {
+                "type": "message",
+                "label": set.label,
+                "text": set.next_setup
+              }
+            }
+          ]
+        }
+      }
+    end
   end
   
   def via_delete

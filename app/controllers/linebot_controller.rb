@@ -180,33 +180,33 @@ class LinebotController < ApplicationController
             client.reply_message(event['replyToken'], reply)
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
-            commute = get_commute(event)
+            @commute = get_commute(event)
             state = commute.get_state
             case state
             when 1..8 #中間地点登録
-              count = ViaPlace.where(commute_id: commute.id).count + 1
-              ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
-              reply = {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
+              count = ViaPlace.where(commute_id: @commute.id).count + 1
+              ViaPlace.create(commute_id: @commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
+              reply = change_msg('via_place', count: count)
               client.reply_message(event['replyToken'], reply)
               
             when 9 #到着地変更
               address = event.message['address'].scan(/\d{3}-\d{4}/)
-              commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'], end_address: address[0])
-              logger.debug(commute.setup_id)
-              commute.update(setup_id: commute.get_state)
-              logger.debug(commute.setup_id)
-              reply = change_msg('end_location', commute: commute)
+              @commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'], end_address: address[0])
+              logger.debug(@commute.setup_id)
+              @commute.update(setup_id: @commute.get_state)
+              logger.debug(@commute.setup_id)
+              reply = change_msg('end_location', commute: @commute)
               
             when 10 #出発地のみ変更
               address = event.message['address'].scan(/\d{3}-\d{4}/)
-              logger.debug(commute.setup_id)
-              commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
-              commute.update(setup_id: commute.get_state)
-              logger.debug(commute.setup_id)
+              logger.debug(@commute.setup_id)
+              @commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
+              @commute.update(setup_id: @commute.get_state)
+              logger.debug(@commute.setup_id)
               reply = {type: 'text',text: "出発地点を登録しました。"}
  
             when 11..14 #初期設定or全部変更
-              commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
+              @commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
               reply = change_msg('通勤設定2')
             else #エラー
               reply = bad_msg('該当コマンドなし')
