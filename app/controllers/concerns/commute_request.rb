@@ -1,6 +1,6 @@
 module CommuteRequest
   extend ActiveSupport::Concern
-  def commute_basic(msg, commute: '')
+  def commute_basic(msg)
     set = Setup.find(commute.get_state)
     if set.id == 1
       {
@@ -105,9 +105,9 @@ module CommuteRequest
     end
   end
   
-  def entry_location(msg, commute)
-    set = Setup.find(commute.setup_id)
-    if commute.avoid && commute.mode
+  def entry_location(msg)
+    set = Setup.find(@@commute.setup_id)
+    if @@commute.avoid && @@commute.mode
       {type: 'text',text: "到着地点を登録しました。"}
     else
       [
@@ -163,7 +163,7 @@ module CommuteRequest
     if state == 1
       {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
     else
-      set = Setup.find(@commute.setup_id)
+      set = Setup.find(commute.setup_id)
       {
         type: 'text',
         text: set.content,
@@ -242,10 +242,10 @@ module CommuteRequest
     }
   end
   
-  def commute_mode(commute: '')
-    set = Setup.find(commute.setup_id)
-    logger.debug(commute.setup_id)
-    if commute.avoid
+  def commute_mode
+    set = Setup.find(@@commute.setup_id)
+    logger.debug(@@commute.setup_id)
+    if @@commute.avoid
       {type: 'text', text: "通勤モードを設定しました。"}
     else
       [
@@ -273,7 +273,7 @@ module CommuteRequest
     end
   end
   
-  def avoid_menu(msg, commute)
+  def avoid_menu(msg)
     result =
       {
         "type": "flex",
@@ -385,14 +385,14 @@ module CommuteRequest
           }
         }
       }
-    if commute.avoid
+    if @@commute.avoid
       [{type: 'text', text: "選択済みの設定をリセットしました。"}, result]
     else
       result
     end
   end
   
-  def change_avoid(msg, data, commute)
+  def change_avoid(msg, data)
     case msg
     when '変更'
       name = get_data_name(data)
@@ -401,16 +401,16 @@ module CommuteRequest
         text: "#{name}"
       }
     when '完了'
-      now = avoid_now(commute.avoid)
-      if commute.mode
-        if commute.basic_setup_status
+      now = avoid_now(@@commute.avoid)
+      if @@commute.mode
+        if @@commute.basic_setup_status
           {
             type: 'text',
             text: "#{now}"
           }
         else
-          commute.update(basic_setup_status: true)
-          set = Setup.find(commute.setup_id)
+          @@commute.update(basic_setup_status: true)
+          set = Setup.find(@@commute.setup_id)
           [
             {
               type: 'text',

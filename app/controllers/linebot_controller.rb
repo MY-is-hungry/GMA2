@@ -26,21 +26,21 @@ class LinebotController < ApplicationController
       events = client.parse_events_from(body)
 
       events.each { |event|
+        @@commute = get_commute(event)
         case event
         when Line::Bot::Event::Message
           case event.type
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
-            commute = get_commute(event)
             message = event.message['text']
             case message
             when 'おはよう'
               data = Array.new
-              if commute.start_address == commute.end_address
-                start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
+              if @@commute.start_address == @@commute.end_address
+                start_response = open(ENV['W_URL'] + "?zip=#{@@commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
                 data[0] = JSON.parse(start_response.read, {symbolize_names: true})
               else
-                start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
-                end_response = open(ENV['W_URL'] + "?zip=#{commute.end_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
+                start_response = open(ENV['W_URL'] + "?zip=#{@@commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
+                end_response = open(ENV['W_URL'] + "?zip=#{@@commute.end_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
                 #JSONデータをハッシュ化
                 data[0] = JSON.parse(start_response.read, {symbolize_names: true})
                 data[1] = JSON.parse(end_response.read, {symbolize_names: true})
@@ -48,49 +48,49 @@ class LinebotController < ApplicationController
               reply = change_msg(message, data: data)
               
             when '基本設定'
-              reply = change_msg(message, commute: commute)
+              reply = change_msg(message)
 
             when '通勤設定'
-              reply = change_msg(message, state: commute.get_state)
-              commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
-              commute.via_place.destroy_all
+              reply = change_msg(message, state: @@commute.get_state)
+              @@commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil)
+              @@commute.via_place.destroy_all
 
             when '通勤モード'
-              reply = commute.get_state.in?([1..8]) ? change_msg(message) : bad_msg(message)
+              reply = @@commute.get_state.in?([1..8]) ? change_msg(message) : bad_msg(message)
 
             when '出発地点変更', '到着地点変更'
-              reply = change_msg(message, state: commute.get_state)
-              logger.debug(commute.setup_id)
-              message == '出発地点変更' ? commute.update(start_lat: nil,start_lng: nil) : commute.update(end_lat: nil,end_lng: nil)
-              commute.update(setup_id: commute.get_state)
-              logger.debug(commute.setup_id)
-              commute.via_place.destroy_all
+              reply = change_msg(message, state: @@commute.get_state)
+              logger.debug(@@commute.setup_id)
+              message == '出発地点変更' ? @@commute.update(start_lat: nil,start_lng: nil) : @@commute.update(end_lat: nil,end_lng: nil)
+              @@commute.update(setup_id: @@commute.get_state)
+              logger.debug(@@commute.setup_id)
+              @@commute.via_place.destroy_all
 
             when '中間地点登録'
-              state = commute.get_state
+              state = @@commute.get_state
               reply = state.in?([1..8]) ? change_msg(message) : bad_msg(message)
 
             when '中間地点削除'
               reply =
-                if commute.via_place.first
-                  ViaPlace.where(commute_id: commute.id).destroy_all
+                if @@commute.via_place.first
+                  ViaPlace.where(commute_id: @@commute.id).destroy_all
                   change_msg(message)
                 else
                   bad_msg(message)
                 end
 
             when '経路の制限'
-              commute.get_state
-              commute.update(avoid: nil)
-              reply = commute.get_state.in?([1..8]) ? change_msg(message, commute: commute) : bad_msg(message)
+              @@commute.get_state
+              @@commute.update(avoid: nil)
+              reply = @@commute.get_state.in?([1..8]) ? change_msg(message) : bad_msg(message)
               
             when '通勤時間'
-              state = commute.get_state
+              state = @@commute.get_state
               time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
               case state
               when 1..4 #中間地点が設定済み
                 w = ""
-                via = ViaPlace.where(commute_id: commute.id).order(:order)
+                via = ViaPlace.where(commute_id: @@commute.id).order(:order)
                 location = Array.new
                 via.each_with_index do |v, n|
                   location[n] = {lat: v.via_lat, lng: v.via_lng}
@@ -100,33 +100,33 @@ class LinebotController < ApplicationController
                 end
                 case state
                 when 0
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                  &waypoints=#{w}&avoid=#{commute.avoid}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{@@commute.start_lat},#{@@commute.start_lng}&destination=#{@@commute.end_lat},#{@@commute.end_lng}
+                  &waypoints=#{w}&avoid=#{@@commute.avoid}&departure_time=#{time}&traffic_model=#{@@commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 when 1
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                  &waypoints=#{w}&avoid=#{commute.avoid}&language=ja&key=" + ENV['G_KEY'])
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{@@commute.start_lat},#{@@commute.start_lng}&destination=#{@@commute.end_lat},#{@@commute.end_lng}
+                  &waypoints=#{w}&avoid=#{@@commute.avoid}&language=ja&key=" + ENV['G_KEY'])
                 when 2
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                  &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{@@commute.start_lat},#{@@commute.start_lng}&destination=#{@@commute.end_lat},#{@@commute.end_lng}
+                  &waypoints=#{w}&departure_time=#{time}&traffic_model=#{@@commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 when 3
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{@@commute.start_lat},#{@@commute.start_lng}&destination=#{@@commute.end_lat},#{@@commute.end_lng}
                   &waypoints=#{w}&language=ja&key=" + ENV['G_KEY'])
                 end
                 
               when 4 #経路の制限、通勤モードが設定済み
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                &avoid=#{commute.avoid}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                response = open(ENV['G_DIRECTION_URL'] + "origin=#{@@commute.start_lat},#{@@commute.start_lng}&destination=#{@@commute.end_lat},#{@@commute.end_lng}
+                &avoid=#{@@commute.avoid}&departure_time=#{time}&traffic_model=#{@@commute.mode}&language=ja&key=" + ENV['G_KEY'])
 
               when 5 #経路の制限が設定済み
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                &avoid=#{commute.avoid}&language=ja&key=" + ENV['G_KEY'])
+                response = open(ENV['G_DIRECTION_URL'] + "origin=#{@@commute.start_lat},#{@@commute.start_lng}&destination=#{@@commute.end_lat},#{@@commute.end_lng}
+                &avoid=#{@@commute.avoid}&language=ja&key=" + ENV['G_KEY'])
 
               when 6 #通勤モードが設定済み
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                response = open(ENV['G_DIRECTION_URL'] + "origin=#{@@commute.start_lat},#{@@commute.start_lng}&destination=#{@@commute.end_lat},#{@@commute.end_lng}
+                &departure_time=#{time}&traffic_model=#{@@commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 
               when 7 #通勤設定のみ
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
+                response = open(ENV['G_DIRECTION_URL'] + "origin=#{@@commute.start_lat},#{@@commute.start_lng}&destination=#{@@commute.end_lat},#{@@commute.end_lng}
                 &language=ja&key=" + ENV['G_KEY'])
                 
               else
@@ -135,15 +135,15 @@ class LinebotController < ApplicationController
               reply = get_commute_time(response, state)
 
             when '寄り道地域'
-              state = commute.get_state
+              state = @@commute.get_state
               reply = state.in?([1..8]) ? change_msg(message, state: state) : bad_msg(message)
             
             when '寄り道する！'
-              state = commute.get_state
+              state = @@commute.get_state
               reply = state.in?([1..8]) ? change_msg(message) : bad_msg(message)
               
             when 'お気に入り'
-              fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
+              fav_id = Favorite.where(user_id: @@commute.user_id).pluck(:place_id)
               return client.reply_message(event['replyToken'], bad_msg(message)) unless fav_id.first
               array = Array.new
               fav_id.each_with_index do |f,n|
@@ -163,12 +163,12 @@ class LinebotController < ApplicationController
               reply = change_msg(message)
             
             when 'リセット'
-              state = commute.get_state
+              state = @@commute.get_state
               if state == 14
                 reply = bad_msg(message)
               else
-                commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil, setup_id: 14, basic_setup_status: false)
-                commute.via_place.destroy_all
+                @@commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil, setup_id: 14, basic_setup_status: false)
+                @@commute.via_place.destroy_all
                 reply = change_msg(message, state: state)
               end
               
@@ -180,33 +180,32 @@ class LinebotController < ApplicationController
             client.reply_message(event['replyToken'], reply)
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
-            @commute = get_commute(event)
-            state = @commute.get_state
+            state = @@commute.get_state
             case state
             when 1..8 #中間地点登録
-              count = ViaPlace.where(commute_id: @commute.id).count + 1
-              ViaPlace.create(commute_id: @commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
+              count = ViaPlace.where(commute_id: @@commute.id).count + 1
+              ViaPlace.create(commute_id: @@commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
               reply = change_msg('via_place', count: count)
               client.reply_message(event['replyToken'], reply)
               
             when 9 #到着地変更
               address = event.message['address'].scan(/\d{3}-\d{4}/)
-              @commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'], end_address: address[0])
-              logger.debug(@commute.setup_id)
-              @commute.update(setup_id: @commute.get_state)
-              logger.debug(@commute.setup_id)
-              reply = change_msg('end_location', commute: @commute)
+              @@commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'], end_address: address[0])
+              logger.debug(@@commute.setup_id)
+              @@commute.update(setup_id: @@commute.get_state)
+              logger.debug(@@commute.setup_id)
+              reply = change_msg('end_location')
               
             when 10 #出発地のみ変更
               address = event.message['address'].scan(/\d{3}-\d{4}/)
-              logger.debug(@commute.setup_id)
-              @commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
-              @commute.update(setup_id: @commute.get_state)
-              logger.debug(@commute.setup_id)
+              logger.debug(@@commute.setup_id)
+              @@commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
+              @@commute.update(setup_id: @@commute.get_state)
+              logger.debug(@@commute.setup_id)
               reply = {type: 'text',text: "出発地点を登録しました。"}
  
             when 11..14 #初期設定or全部変更
-              @commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
+              @@commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
               reply = change_msg('通勤設定2')
             else #エラー
               reply = bad_msg('該当コマンドなし')
@@ -216,15 +215,14 @@ class LinebotController < ApplicationController
           
         when Line::Bot::Event::Postback
           user = User.find_by(id: event['source']['userId'])
-          commute = Commute.find_by(user_id: user.id)
-          logger.debug(commute.setup_id)
+          logger.debug(@@commute.setup_id)
           data = event['postback']['data']
           code = data.slice!(-1).to_i
           case code
           when 1 #通勤モード変更
-            commute.update(mode: data)
-            commute.update(setup_id: commute.get_state)
-            reply = change_msg('mode', commute: commute)
+            @@commute.update(mode: data)
+            @@commute.update(setup_id: @@commute.get_state)
+            reply = change_msg('mode')
             
           when 2 #寄り道機能のお気に入り登録
             if Favorite.where(user_id: user.id).count < 5
@@ -243,7 +241,7 @@ class LinebotController < ApplicationController
             reply = {type: 'text',text: "お気に入りを解除しました。"}
             
           when 4 #経路の制限の変更・設定完了
-            avoid = commute.avoid ? commute.avoid.split('|') : []
+            avoid = @@commute.avoid ? @@commute.avoid.split('|') : []
             case data
             when '完了'
               message = '完了'
@@ -255,26 +253,26 @@ class LinebotController < ApplicationController
               avoid = data.split(',')
               message = '変更'
             end
-            commute.update(avoid: avoid.join('|'), setup_id: commute.get_state)
-            reply = change_msg(message, data: data, commute: commute)
+            @@commute.update(avoid: avoid.join('|'), setup_id: @@commute.get_state)
+            reply = change_msg(message, data: data)
 
           when 5 #寄り道機能の検索位置を設定
-            commute.update(search_area: data.to_i)
+            @@commute.update(search_area: data.to_i)
             reply = {type: 'text',text: "検索エリアの設定が完了しました。"}
             
           when 6 #寄り道するお店を選択
-            if commute.search_area
+            if @@commute.search_area
               response =
-                case commute.search_area #寄り道地域設定済み
+                case @@commute.search_area #寄り道地域設定済み
                 when 1 #自宅付近
-                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.start_lat},#{commute.start_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{@@commute.start_lat},#{@@commute.start_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
                 when 2 #職場付近
-                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{@@commute.end_lat},#{@@commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
                 when 3 #中間地点付近（職場に最も近い中間地点）
-                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.via_place.last.via_lat},#{commute.via_place.last.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
+                  open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{@@commute.via_place.last.via_lat},#{@@commute.via_place.last.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
                 end
-            elsif commute.get_state.in?([1..8]) #寄り道地域は未設定だが、通勤場所は設定済み（職場付近で検索）
-              response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
+            elsif @@commute.get_state.in?([1..8]) #寄り道地域は未設定だが、通勤場所は設定済み（職場付近で検索）
+              response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{@@commute.end_lat},#{@@commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
             else
               return client.reply_message(event['replyToken'], bad_msg(data))
             end
