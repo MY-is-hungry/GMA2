@@ -181,7 +181,7 @@ class LinebotController < ApplicationController
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
             @commute = get_commute(event)
-            state = commute.get_state
+            state = @commute.get_state
             case state
             when 1..8 #中間地点登録
               count = ViaPlace.where(commute_id: @commute.id).count + 1
