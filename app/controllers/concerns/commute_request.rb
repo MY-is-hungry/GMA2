@@ -1,7 +1,7 @@
 module CommuteRequest
   extend ActiveSupport::Concern
   def commute_basic(msg)
-    set = Setup.find(commute.get_state)
+    set = Setup.find(@@commute.get_state)
     if set.id == 1
       {
         type: 'text',
@@ -163,7 +163,7 @@ module CommuteRequest
     if state == 1
       {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
     else
-      set = Setup.find(commute.setup_id)
+      set = Setup.find(@@commute.setup_id)
       {
         type: 'text',
         text: set.content,
