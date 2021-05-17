@@ -167,7 +167,7 @@ class LinebotController < ApplicationController
               if state == 14
                 reply = bad_msg(message)
               else
-                commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil, setup_id: 14, basic_setup_status: false)
+                commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil, setup_id: 14, first_setup: false)
                 commute.via_place.destroy_all
                 reply = change_msg(message, state: state)
               end
@@ -299,7 +299,7 @@ class LinebotController < ApplicationController
           
         when Line::Bot::Event::Follow
           User.create(id: event['source']['userId'])
-          Commute.create(user_id: event['source']['userId'], setup_id: 14, basic_setup_status: false)
+          Commute.create(user_id: event['source']['userId'], setup_id: 14, first_setup: false)
           client.reply_message(event['replyToken'], change_msg("follow"))
         when Line::Bot::Event::Unfollow
           User.find_by(id: event['source']['userId']).destroy

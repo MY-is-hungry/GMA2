@@ -403,13 +403,13 @@ module CommuteRequest
     when '完了'
       now = avoid_now(commute.avoid)
       if commute.mode
-        if commute.basic_setup_status
+        if commute.first_setup
           {
             type: 'text',
             text: "#{now}"
           }
         else
-          commute.update(basic_setup_status: true)
+          commute.update(first_setup: true)
           set = Setup.find(commute.setup_id)
           [
             {
