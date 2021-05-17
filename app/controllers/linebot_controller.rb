@@ -22,6 +22,8 @@ class LinebotController < ApplicationController
         head :bad_request
       end
       
+      @@commute = ''
+      
       #Webhookイベントオブジェクト
       events = client.parse_events_from(body)
 
