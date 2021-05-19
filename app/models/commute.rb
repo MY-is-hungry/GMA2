@@ -1,5 +1,5 @@
 class Commute < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, dependent: :destroy
   has_many :via_place, dependent: :destroy
   belongs_to :setup
   validates :user_id, presence: true, uniqueness: true
