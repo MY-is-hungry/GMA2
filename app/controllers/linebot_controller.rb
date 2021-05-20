@@ -173,7 +173,7 @@ class LinebotController < ApplicationController
                 commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil, setup_id: 14, first_setup: false)
                 commute.via_place.destroy_all
                 logger.debug(message)
-                reply = change_msg(message, state: commute.get_state)
+                reply = change_msg(message, state: state)
               end
               
             when 'テスト'
