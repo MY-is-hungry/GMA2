@@ -132,7 +132,8 @@ class LinebotController < ApplicationController
               else
                 return client.reply_message(event['replyToken'], bad_msg(message))
               end
-              reply = get_commute_time(response, state)
+              commute_time = get_commute_time(response, state)
+              reply = change_msg(message, data: commute_time, state: state)
 
             when '寄り道地域'
               state = commute.get_state

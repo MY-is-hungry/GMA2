@@ -4,13 +4,13 @@ module CommuteRequest
     set = Setup.find(commute.get_state)
     if set.id == 1
       {
-        type: 'text',
-        text: set.content
+        "type": 'text',
+        "text": set.content
       }
     else
       {
-        type: 'text',
-        text: set.content,
+        "type": 'text',
+        "text": set.content,
         "quickReply": {
           "items": [
             {
@@ -108,16 +108,16 @@ module CommuteRequest
   def entry_location(msg, commute)
     set = Setup.find(commute.setup_id)
     if commute.avoid && commute.mode
-      {type: 'text',text: "到着地点を登録しました。"}
+      {"type": 'text',"text": "到着地点を登録しました。"}
     else
       [
         {
-          type: 'text',
-          text: "到着地点を登録しました。"
+          "type": 'text',
+          "text": "到着地点を登録しました。"
         },
         {
-          type: 'text',
-          text: set.content,
+          "type": 'text',
+          "text": set.content,
           "quickReply": {
             "items": [
               {
@@ -161,17 +161,17 @@ module CommuteRequest
   
   def via_create(count, state)
     if state == 1
-      {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
+      {"type": 'text', "text": "#{count}つ目の中間地点を登録しました。"}
     else
       set = Setup.find(state)
       [
         {
-          type: 'text', 
+          "type": 'text', 
           text: "#{count}つ目の中間地点を登録しました。"
         },
         {
-          type: 'text',
-          text: set.content,
+          "type": 'text',
+          "text": set.content,
           "quickReply": {
             "items": [
               {
@@ -190,7 +190,7 @@ module CommuteRequest
   end
   
   def via_delete
-    {type: 'text',text: "中間地点の設定をリセットしました。"}
+    {"type": 'text',"text": "中間地点の設定をリセットしました。"}
   end
     
   def mode_menu(msg)
@@ -248,20 +248,51 @@ module CommuteRequest
     }
   end
   
+  def commute_time_msg(data, state)
+    case state
+    when 1
+      {"type": 'text', "text": "現在時刻での通勤時間は、#{data}です。"}
+    else
+      set = Setup.find(state)
+      [
+        {
+          "type": 'text',
+          "text": "通勤モードを設定しました。"
+        },
+        {
+          "type": 'text',
+          "text": set.content,
+          "quickReply": {
+            "items": [
+              {
+                "type": "action",
+                "action": {
+                  "type": "message",
+                  "label": set.label,
+                  "text": set.next_setup
+                }
+              }
+            ]
+          }
+        }
+      ]
+    end
+  end
+  
   def commute_mode(commute: '')
     set = Setup.find(commute.setup_id)
     logger.debug(commute.setup_id)
     if commute.avoid
-      {type: 'text', text: "通勤モードを設定しました。"}
+      {"type": 'text', "text": "通勤モードを設定しました。"}
     else
       [
         {
-          type: 'text',
-          text: "通勤モードを設定しました。"
+          "type": 'text',
+          "text": "通勤モードを設定しました。"
         },
         {
-          type: 'text',
-          text: set.content,
+          "type": 'text',
+          "text": set.content,
           "quickReply": {
             "items": [
               {
@@ -392,7 +423,7 @@ module CommuteRequest
         }
       }
     if commute.avoid
-      [{type: 'text', text: "選択済みの設定をリセットしました。"}, result]
+      [{"type": 'text', "text": "選択済みの設定をリセットしました。"}, result]
     else
       result
     end
@@ -403,36 +434,36 @@ module CommuteRequest
     when '変更'
       name = get_data_name(data)
       {
-        type: 'text',
-        text: "#{name}"
+        "type": 'text',
+        "text": "#{name}"
       }
     when '完了'
       now = avoid_now(commute.avoid)
       if commute.mode
         if commute.first_setup
           {
-            type: 'text',
-            text: "#{now}"
+            "type": 'text',
+            "text": "#{now}"
           }
         else
           commute.update(first_setup: true)
           set = Setup.find(commute.setup_id)
           [
             {
-              type: 'text',
-              text: "#{now}"
+              "type": 'text',
+              "text": "#{now}"
             },
             {
-              type: 'text',
-              text: "#{set.content}"
+              "type": 'text',
+              "text": "#{set.content}"
             }
           ]
         end
       else
         [
           {
-            type: 'text',
-            text: "#{now}",
+            "type": 'text',
+            "text": "#{now}",
             "quickReply": {
               "items": [
                 {

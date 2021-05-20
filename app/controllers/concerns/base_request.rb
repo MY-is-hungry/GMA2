@@ -32,7 +32,7 @@ module BaseRequest
       via_delete
 
     when '通勤時間'
-      
+      commute_time_msg(data, state)
       
     when '通勤モード'
       mode_menu(msg)
