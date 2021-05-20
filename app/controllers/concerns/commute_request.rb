@@ -164,22 +164,28 @@ module CommuteRequest
       {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
     else
       set = Setup.find(state)
-      {
-        type: 'text',
-        text: set.content,
-        "quickReply": {
-          "items": [
-            {
-              "type": "action",
-              "action": {
-                "type": "message",
-                "label": set.label,
-                "text": set.next_setup
+      [
+        {
+          type: 'text', 
+          text: "#{count}つ目の中間地点を登録しました。"
+        },
+        {
+          type: 'text',
+          text: set.content,
+          "quickReply": {
+            "items": [
+              {
+                "type": "action",
+                "action": {
+                  "type": "message",
+                  "label": set.label,
+                  "text": set.next_setup
+                }
               }
-            }
-          ]
+            ]
+          }
         }
-      }
+      ]
     end
   end
   
