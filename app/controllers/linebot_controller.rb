@@ -324,10 +324,10 @@ class LinebotController < ApplicationController
     
     def get_commute_time(response, state)
       data = JSON.parse(response.read, {symbolize_names: true})
-      if state.in?([1,2,3,4,5,6,7,8])
-        {type: "text",text: "#{data[:routes][0][:legs][0][:duration_in_traffic][:text]}"}
+      if state.in?([1,3,5,7])
+        {type: "text",text: data[:routes][0][:legs][0][:duration_in_traffic][:text]}
       else
-        {type: "text",text: "#{data[:routes][0][:legs][0][:duration][:text]}"}
+        {type: "text",text: data[:routes][0][:legs][0][:duration][:text]}
       end
     end
 end
