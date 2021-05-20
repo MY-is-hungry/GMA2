@@ -47,7 +47,7 @@ module BaseRequest
       change_avoid(msg, data, commute)
       
     #favorite_request.rb
-    when 'お気に入り','おきにいり','おきに'
+    when 'お気に入り'
       fav_list(data, count)
       
     #ここからsearch_request.rb
@@ -57,7 +57,7 @@ module BaseRequest
     when '寄り道する！'
       select_store_menu
     
-    when 'ラーメン','カフェ','コンビニ','ファミレス','焼き肉',
+    when 'ラーメン','カフェ','コンビニ','ファミレス','焼き肉'
       search_store(msg, data)
     
     #ここからbasic_request.rb
