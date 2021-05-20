@@ -460,7 +460,7 @@ module CommuteRequest
       else "有料道路、高速道路、フェリー"
       end
     now = "最短ルートに#{now}が含まれる場合、使用する設定に変更しました。" unless now == "全て通勤ルートには含まない設定に変更しました。"
-    return now
+    now
   end
   
   def get_data_name(data)
@@ -473,6 +473,6 @@ module CommuteRequest
       when "none" then "全て使用します。"
       end
     name = "#{name}を経路から除外しました。" unless data == "none"
-    return name
+    name
   end
 end
