@@ -7,6 +7,7 @@ module BaseRequest
   include BasicRequest
   
   def change_msg(msg, data: '', count: '', commute: '', state: '')
+    #msgの表記分け　日本語：メッセージアクションから　英語：ロケーション、ポストバックアクションから
     case msg
     when 'おはよう'
       weather_forcast(data)
@@ -56,7 +57,7 @@ module BaseRequest
     when '寄り道する！'
       select_store_menu
     
-    when 'ラーメン','ラーメン屋','らーめん','カフェ','喫茶店','コンビニ','ファミレス','焼肉','焼き肉','にく'
+    when 'ラーメン','カフェ','コンビニ','ファミレス','焼き肉',
       search_store(msg, data)
     
     #ここからbasic_request.rb
