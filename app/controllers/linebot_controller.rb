@@ -136,10 +136,12 @@ class LinebotController < ApplicationController
 
             when '寄り道地域'
               state = commute.get_state
+              logger.debug(state)
               reply = state.in?([1..8]) ? change_msg(message, state: state) : bad_msg(message)
             
             when '寄り道する！'
               state = commute.get_state
+              logger.debug(state)
               reply = state.in?([1..8]) ? change_msg(message) : bad_msg(message)
               
             when 'お気に入り'
