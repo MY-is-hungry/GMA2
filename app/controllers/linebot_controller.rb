@@ -56,7 +56,7 @@ class LinebotController < ApplicationController
               commute.via_place.destroy_all
 
             when '通勤モード'
-              reply = commute.get_state.in?([1..8]) ? change_msg(message) : bad_msg(message)
+              reply = commute.get_state.in?([1,2,3,4,5,6,7,8]) ? change_msg(message) : bad_msg(message)
 
             when '出発地点変更', '到着地点変更'
               reply = change_msg(message, state: commute.get_state)
@@ -68,7 +68,7 @@ class LinebotController < ApplicationController
 
             when '中間地点登録'
               state = commute.get_state
-              reply = state.in?([1..8]) ? change_msg(message) : bad_msg(message)
+              reply = state.in?([1,2,3,4,5,6,7,8]) ? change_msg(message) : bad_msg(message)
 
             when '中間地点削除'
               reply =
@@ -82,7 +82,7 @@ class LinebotController < ApplicationController
             when '経路の制限'
               commute.get_state
               commute.update(avoid: nil)
-              reply = commute.get_state.in?([1..8]) ? change_msg(message, commute: commute) : bad_msg(message)
+              reply = commute.get_state.in?([1,2,3,4,5,6,7,8]) ? change_msg(message, commute: commute) : bad_msg(message)
               
             when '通勤時間'
               state = commute.get_state
@@ -137,7 +137,7 @@ class LinebotController < ApplicationController
             when '寄り道地域'
               state = commute.get_state
               logger.debug(state)
-              reply = state.in?([1..8]) ? change_msg(message, state: state) : bad_msg(message)
+              reply = state.in?([1,2,3,4,5,6,7,8]) ? change_msg(message, state: state) : bad_msg(message)
             
             when '寄り道する！'
               state = commute.get_state
@@ -275,7 +275,7 @@ class LinebotController < ApplicationController
                 when 3 #中間地点付近（職場に最も近い中間地点）
                   open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.via_place.last.via_lat},#{commute.via_place.last.via_lng}&radius=1500&language=ja&key=" + ENV['G_KEY'])
                 end
-            elsif commute.get_state.in?([1..8]) #寄り道地域は未設定だが、通勤場所は設定済み（職場付近で検索）
+            elsif commute.get_state.in?([1,2,3,4,5,6,7,8]) #寄り道地域は未設定だが、通勤場所は設定済み（職場付近で検索）
               response = open(URI.encode ENV['G_SEARCH_URL'] + "query=#{data}&location=#{commute.end_lat},#{commute.end_lng}&radius=800&language=ja&key=" + ENV['G_KEY'])
             else
               return client.reply_message(event['replyToken'], bad_msg(data))
@@ -323,7 +323,7 @@ class LinebotController < ApplicationController
     
     def get_commute_time(response, state)
       data = JSON.parse(response.read, {symbolize_names: true})
-      if state.in?([1..4])
+      if state.in?([1,2,3,4,5,6,7,8])
         {type: "text",text: "#{data[:routes][0][:legs][0][:duration_in_traffic][:text]}"}
       else
         {type: "text",text: "#{data[:routes][0][:legs][0][:duration][:text]}"}

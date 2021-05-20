@@ -46,13 +46,13 @@ module CommuteRequest
             "到着地点"
           end
       when '出発地点変更'
-        if state.in?([1..4])
+        if state.in?([1,2,3,4])
           point, reset = "出発", "出発地点と中間地点"
         else
           point, reset = "出発", "出発地点"
         end
       when '到着地点変更'
-        if state.in?([1..4])
+        if state.in?([1,2,3,4])
           point, reset = "到着", "到着地点と中間地点"
         else
           point, reset = "到着", "到着地点"
