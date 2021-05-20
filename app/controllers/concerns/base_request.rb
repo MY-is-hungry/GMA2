@@ -65,6 +65,7 @@ module BaseRequest
       help_list
       
     when 'リセット'
+      logger.debug(state)
       reset_setting(state)
       
     when 'follow'
