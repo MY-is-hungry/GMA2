@@ -257,18 +257,18 @@ module CommuteRequest
       [
         {
           "type": 'text',
-          "text": "通勤モードを設定しました。"
+          "text": "現在時刻での通勤時間は、#{data}です。"
         },
         {
           "type": 'text',
-          "text": set.content,
+          "text": "基本設定を進めることで、通勤時間の精度が上がります。",
           "quickReply": {
             "items": [
               {
                 "type": "action",
                 "action": {
                   "type": "message",
-                  "label": set.label,
+                  "label": "基本設定をする",
                   "text": set.next_setup
                 }
               }

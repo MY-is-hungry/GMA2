@@ -99,33 +99,33 @@ class LinebotController < ApplicationController
                   w = w + "via:#{l[:lat]},#{l[:lng]}|"
                 end
                 case state
-                when 0
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                  &waypoints=#{w}&avoid=#{commute.avoid}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 when 1
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                  &waypoints=#{w}&avoid=#{commute.avoid}&language=ja&key=" + ENV['G_KEY'])
+                  &waypoints=#{w}&avoid=#{commute.avoid}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 when 2
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
-                  &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                  &waypoints=#{w}&avoid=#{commute.avoid}&language=ja&key=" + ENV['G_KEY'])
                 when 3
+                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
+                  &waypoints=#{w}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
+                when 4
                   response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
                   &waypoints=#{w}&language=ja&key=" + ENV['G_KEY'])
                 end
                 
-              when 4 #経路の制限、通勤モードが設定済み
+              when 5 #経路の制限、通勤モードが設定済み
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
                 &avoid=#{commute.avoid}&departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
 
-              when 5 #経路の制限が設定済み
+              when 6 #経路の制限が設定済み
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
                 &avoid=#{commute.avoid}&language=ja&key=" + ENV['G_KEY'])
 
-              when 6 #通勤モードが設定済み
+              when 7 #通勤モードが設定済み
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
                 &departure_time=#{time}&traffic_model=#{commute.mode}&language=ja&key=" + ENV['G_KEY'])
                 
-              when 7 #通勤設定のみ
+              when 8 #通勤設定のみ
                 response = open(ENV['G_DIRECTION_URL'] + "origin=#{commute.start_lat},#{commute.start_lng}&destination=#{commute.end_lat},#{commute.end_lng}
                 &language=ja&key=" + ENV['G_KEY'])
                 
@@ -172,7 +172,6 @@ class LinebotController < ApplicationController
               else
                 commute.update(start_lat: nil,start_lng: nil,end_lat: nil,end_lng: nil, avoid: nil, mode: nil, setup_id: 14, first_setup: false)
                 commute.via_place.destroy_all
-                logger.debug(message)
                 reply = change_msg(message, state: state)
               end
               

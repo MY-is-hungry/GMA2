@@ -31,7 +31,6 @@ module BasicRequest
   end
   
   def reset_setting(state)
-    logger.debug(state)
     reset =
       case state
       when 1..4
