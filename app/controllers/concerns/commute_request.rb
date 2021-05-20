@@ -159,7 +159,7 @@ module CommuteRequest
     ]
   end
   
-  def via_create(count)
+  def via_create(count, state)
     if state == 1
       {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
     else

@@ -188,7 +188,7 @@ class LinebotController < ApplicationController
             when 1..8 #中間地点登録
               count = ViaPlace.where(commute_id: commute.id).count + 1
               ViaPlace.create(commute_id: commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
-              reply = change_msg('via_place', count: count)
+              reply = change_msg('via_place', count: count, state: state)
               client.reply_message(event['replyToken'], reply)
               
             when 9 #到着地変更

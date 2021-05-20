@@ -25,7 +25,7 @@ module BaseRequest
       via_location
       
     when 'via_place'
-      via_create(state)
+      via_create(count, state)
       
     when '中間地点削除'
       via_delete
