@@ -4,7 +4,7 @@ module BasicRequest
     [
       {
         "type": 'text',"text":
-        <<~TEXT
+        <<~HELP.chomp
           「基本設定」
           基本的な機能を使うために必要な設定です。
           
@@ -19,7 +19,7 @@ module BasicRequest
           
           「お気に入りの店」
           お気に入りに登録したお店の一覧を表示します。（最大５件まで）
-        TEXT
+        HELP
       },
       {
         "type": 'text',
