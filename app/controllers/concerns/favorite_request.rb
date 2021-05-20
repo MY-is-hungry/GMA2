@@ -219,7 +219,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "君に決めた！",
+                      "label": "ここにする！",
                       "uri": "#{data[1][:url]}"
                     }
                   }
@@ -367,7 +367,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "君に決めた！",
+                      "label": "ここにする！",
                       "uri": "#{data[1][:url]}"
                     }
                   }
@@ -436,7 +436,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "すき！",
+                      "label": "ここにする！",
                       "uri": "#{data[2][:url]}"
                     }
                   }
@@ -584,7 +584,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "君に決めた！",
+                      "label": "ここにする！",
                       "uri": "#{data[1][:url]}"
                     }
                   }
@@ -653,7 +653,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "すき！",
+                      "label": "ここにする！",
                       "uri": "#{data[2][:url]}"
                     }
                   }
@@ -721,7 +721,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "寄っちゃう！",
+                      "label": "ここにする！",
                       "uri": "#{data[3][:url]}"
                     }
                   }
@@ -869,7 +869,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "君に決めた！",
+                      "label": "ここにする！",
                       "uri": "#{data[1][:url]}"
                     }
                   }
@@ -938,7 +938,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "すき！",
+                      "label": "ここにする！",
                       "uri": "#{data[2][:url]}"
                     }
                   }
@@ -1006,7 +1006,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "寄っちゃう！",
+                      "label": "ここにする！",
                       "uri": "#{data[3][:url]}"
                     }
                   }
@@ -1074,7 +1074,7 @@ module FavoriteRequest
                     "type": "button",
                     "action": {
                       "type": "uri",
-                      "label": "いくぅ！",
+                      "label": "ここにする！",
                       "uri": "#{data[4][:url]}"
                     }
                   }

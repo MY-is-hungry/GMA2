@@ -204,7 +204,7 @@ module SearchRequest
                 "label": "検討中",
                 "data": "検討中6"
               }
-            },
+            }
           ]
         }
       }
