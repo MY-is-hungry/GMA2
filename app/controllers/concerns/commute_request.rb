@@ -163,7 +163,7 @@ module CommuteRequest
     if state == 1
       {type: 'text', text: "#{count}つ目の中間地点を登録しました。"}
     else
-      set = Setup.find(commute.setup_id)
+      set = Setup.find(state)
       {
         type: 'text',
         text: set.content,
