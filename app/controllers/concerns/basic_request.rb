@@ -5,6 +5,8 @@ module BasicRequest
       {
         "type": 'text',"text":
         <<~HELP.chomp
+          【ヘルプ】
+          
           「基本設定」
           基本的な機能を使うために必要な設定です。
           
