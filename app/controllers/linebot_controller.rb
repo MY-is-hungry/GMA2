@@ -142,7 +142,7 @@ class LinebotController < ApplicationController
             when '寄り道する！'
               state = commute.get_state
               logger.debug(state)
-              reply = state.in?([1..8]) ? change_msg(message) : bad_msg(message)
+              reply = state.in?([1,2,3,4,5,6,7,8]) ? change_msg(message) : bad_msg(message)
               
             when 'お気に入り'
               fav_id = Favorite.where(user_id: commute.user_id).pluck(:place_id)
