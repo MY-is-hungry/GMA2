@@ -31,11 +31,10 @@ module BasicRequest
   end
   
   def reset_setting(state)
-    case state
-    when 0
+    text = <<~TEXT
       {
-        type: 'text',
-        text: "基本設定と中間地点をリセットしました。",
+        "type": 'text',
+        "text": "#{name}",
         "quickReply": {
           "items": [
             {
@@ -49,10 +48,15 @@ module BasicRequest
           ]
         }
       }
+    TEXT
+    case state
+    when 1..4
+      name = "基本設定と中間地点をリセットしました。"
+      text
     else
       {
-        type: 'text',
-        text: "基本設定をリセットしました。",
+        "type": 'text',
+        "text": "基本設定をリセットしました。",
         "quickReply": {
           "items": [
             {
