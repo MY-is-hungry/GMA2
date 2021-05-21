@@ -12,19 +12,18 @@ module WeatherRequest
         time = d[:dt_txt].slice(-8, 2).to_i + 9
         break if time > 24
         time -= 24 if time == 24
-        temp = d[:main][:temp].round(1)
-        weather_id = d[:weather][0][:id]
-        weather = get_weather(weather_id)
+        temp = d[:main][:temp].round(1) #温度
+        weather = get_weather(d[:weather][0][:id]) #天気idをもとにメソッドから天気を取得
         weather_data[t][n] = "\n\n#{time}時 天気:#{weather}   温度:#{temp}℃"
         logger.debug(weather_data)
       end
       weather_data[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
       t += 1
     end
-    if weather_data[1][0][:text].size == 0
-      result = {type: "text", text: weather_data[0].join}
-    else
+    if weather_data[1][0]
       result = [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
+    else
+      result = {type: "text", text: weather_data[0].join}
     end
     return result
   end
