@@ -208,7 +208,8 @@ class LinebotController < ApplicationController
               reply = {type: 'text',text: "出発地点を登録しました。"}
  
             when 11..14 #初期設定or全部変更
-              commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'])
+              address = event.message['address'].scan(/\d{3}-\d{4}/)
+              commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
               reply = change_msg('通勤設定2')
             else #エラー
               reply = bad_msg('該当コマンドなし')
