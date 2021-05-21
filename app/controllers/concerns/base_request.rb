@@ -10,7 +10,7 @@ module BaseRequest
     #msgの表記分け　日本語：メッセージアクションから　英語：ロケーション、ポストバックアクションから
     case msg
     when 'おはよう'
-      weather_forcast(data)
+      weather_forcast(data, commute)
       
     #ここからcommute_request.rb
     when '基本設定'

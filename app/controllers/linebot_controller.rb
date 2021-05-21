@@ -47,7 +47,7 @@ class LinebotController < ApplicationController
                 data[0] = JSON.parse(start_response.read, {symbolize_names: true})
                 data[1] = JSON.parse(end_response.read, {symbolize_names: true})
               end
-              reply = change_msg(message, data: data)
+              reply = change_msg(message, data: data, commute: commute)
               
             when '基本設定'
               reply = change_msg(message, commute: commute)

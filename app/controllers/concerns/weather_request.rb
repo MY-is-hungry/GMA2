@@ -1,10 +1,9 @@
 module WeatherRequest
   extend ActiveSupport::Concern
   
-  def weather_forcast(data)
+  def weather_forcast(data, commute)
     city_name = []
     weather_data = [[],[]]
-    logger.debug(weather_data.count)
     t = 0
     data.each_with_index { |d, n| city_name[n] = d[:city][:name] }
     logger.debug(data)
@@ -22,11 +21,10 @@ module WeatherRequest
       weather_data[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
       t += 1
     end
-    logger.debug(weather_data.count)
-    if weather_data.count == 2
-      result = [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
-    else
+    if weather_data[1][:text].size == 0
       result = {type: "text", text: weather_data[0].join}
+    else
+      result = [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
     end
     return result
   end
