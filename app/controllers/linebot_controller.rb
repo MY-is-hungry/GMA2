@@ -34,6 +34,7 @@ class LinebotController < ApplicationController
             message = event.message['text']
             case message
             when 'おはよう'
+              logger.debug(message)
               break reply = bad_msg(message) if commute.get_state.in?([9,10,11,12,13,14])
               data = Array.new
               if commute.start_address == commute.end_address
@@ -181,6 +182,7 @@ class LinebotController < ApplicationController
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end
+            logger.debug(reply)
             client.reply_message(event['replyToken'], reply)
             
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
