@@ -21,6 +21,7 @@ module WeatherRequest
       weather_data[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
       t += 1
     end
+    logger.debug(weather_data.count)
     if weather_data.count == 2
       result = [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
     else
