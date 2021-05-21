@@ -18,7 +18,7 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'line-bot-api'
 
-#Dos攻撃対策
+#Dos攻撃対策 config/initializers/rack_attack.rb
 gem 'rack-attack'
 
 group :development, :test do
