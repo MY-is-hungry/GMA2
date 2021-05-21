@@ -4,6 +4,7 @@ module WeatherRequest
   def weather_forcast(data)
     city_name = []
     weather_data = [[],[]]
+    logger.debug(weather_data.count)
     t = 0
     data.each_with_index { |d, n| city_name[n] = d[:city][:name] }
     logger.debug(data)
