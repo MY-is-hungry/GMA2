@@ -35,10 +35,7 @@ class LinebotController < ApplicationController
             case message
             when 'おはよう'
               logger.debug(message)
-              if commute.get_state.in?([9,10,11,12,13,14])
-                reply = bad_msg(message)
-                break reply
-              end
+              return client.reply_message(event['replyToken'], bad_msg(message)) if commute.get_state.in?([9,10,11,12,13,14])
               data = Array.new
               if commute.start_address == commute.end_address
                 start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
