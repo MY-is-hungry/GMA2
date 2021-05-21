@@ -1,7 +1,7 @@
 class LinebotController < ApplicationController
     require 'line/bot'  # gem 'line-bot-api'
     require "json" #jsonモジュールを利用
-    require "open-uri" #Webサイトにアクセスできるようにする。
+    require "open-uri" #Webサイトをアクセス可能にする
     require "date" #TimeZone
     include BaseRequest
     include BadRequest
@@ -22,7 +22,7 @@ class LinebotController < ApplicationController
         head :bad_request
       end
       
-      #Webhookイベントオブジェクト
+      #Webhookイベントオブジェクトをeventsに代入
       events = client.parse_events_from(body)
 
       events.each { |event|
@@ -34,6 +34,7 @@ class LinebotController < ApplicationController
             message = event.message['text']
             case message
             when 'おはよう'
+              break reply = bad_msg(message) if commute.get_state.in?([9,10,11,12,13,14])
               data = Array.new
               if commute.start_address == commute.end_address
                 start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
