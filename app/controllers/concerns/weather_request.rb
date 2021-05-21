@@ -21,7 +21,7 @@ module WeatherRequest
       weather_data[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
       t += 1
     end
-    if weather_data[1][:text].size == 0
+    if weather_data[1][0][:text].size == 0
       result = {type: "text", text: weather_data[0].join}
     else
       result = [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
