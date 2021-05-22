@@ -36,18 +36,18 @@ class LinebotController < ApplicationController
             when 'おはよう'
               logger.debug(message)
               return client.reply_message(event['replyToken'], bad_msg(message)) if commute.get_state.in?([9,10,11,12,13,14])
-              data = Array.new
+              weather_data = Array.new
               if commute.start_address == commute.end_address
                 start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
-                data[0] = JSON.parse(start_response.read, {symbolize_names: true})
+                weather_data[0] = JSON.parse(start_response.read, {symbolize_names: true})
               else
                 start_response = open(ENV['W_URL'] + "?zip=#{commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
                 end_response = open(ENV['W_URL'] + "?zip=#{commute.end_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
                 #JSONデータをハッシュ化
-                data[0] = JSON.parse(start_response.read, {symbolize_names: true})
-                data[1] = JSON.parse(end_response.read, {symbolize_names: true})
+                weather_data[0] = JSON.parse(start_response.read, {symbolize_names: true})
+                weather_data[1] = JSON.parse(end_response.read, {symbolize_names: true})
               end
-              reply = change_msg(message, data: data, commute: commute)
+              reply = change_msg(message, data: weather_data, commute: commute)
               
             when '基本設定'
               reply = change_msg(message, commute: commute)

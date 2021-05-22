@@ -1,51 +1,28 @@
 module WeatherRequest
   extend ActiveSupport::Concern
   
-  def weather_forcast(data, commute)
+  def weather_forcast(weather_data, commute)
     city_name = []
-    weather_data = []
-    # t = 0
-    data.each_with_index { |d, n| city_name[n] = d[:city][:name] }
-    # while data[t]
-    #   data[t][:list].each_with_index do |d, n|
-    #     time = d[:dt_txt].slice(-8, 2).to_i + 9
-    #     break if time > 24
-    #     time -= 24 if time == 24
-    #     temp = d[:main][:temp].round(1) #温度
-    #     weather = get_weather(d[:weather][0][:id]) #天気idをもとにメソッドから天気を取得
-    #     weather_data[t][n] = "\n\n#{time}時 天気:#{weather}   温度:#{temp}℃"
-    #     logger.debug(weather_data)
-    #   end
-    #   weather_data[t].unshift("今日の#{city_name[t]}の天気をお知らせします。")
-    #   t += 1
-    # end
-    data.each_with_index do |d, n|
-      weather_data[n] = []
+    result = []
+    weather_data.each_with_index do |d, n|
+      city_name[n] = d[:city][:name]
+      result[n] = []
       d[:list].each do |l|
         time = l[:dt_txt].slice(-8, 2).to_i + 9
         break if time > 24
         time -= 24 if time == 24
         temp = l[:main][:temp].round(1) #温度
         weather = get_weather(l[:weather][0][:id]) #天気idをもとにメソッドから天気を取得
-        weather_data[n].push("\n\n#{time}時 天気:#{weather}   温度:#{temp}℃")
-        logger.debug(weather_data)
+        result[n].push("\n\n#{time}時 天気:#{weather}   温度:#{temp}℃")
+        logger.debug(result)
       end
-      weather_data[n].unshift("今日の#{city_name[n]}の天気をお知らせします。")
-      logger.debug(weather_data)
+      result[n].unshift("今日の#{city_name[n]}の天気をお知らせします。")
     end
-    
-    result =
-      if weather_data.count == 2
-        [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
-      else
-        {type: "text", text: weather_data[0].join}
-      end
-    # if weather_data[1][0]
-    #   result = [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
-    # else
-    #   result = {type: "text", text: weather_data[0].join}
-    # end
-    result
+    if result.count == 2
+      [{type: "text", text: result[0].join}, {type: "text", text: result[1].join}]
+    else
+      {type: "text", text: result[0].join}
+    end
   end
   
   def get_weather(weather_id)
