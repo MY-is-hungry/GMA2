@@ -36,9 +36,9 @@ module WeatherRequest
     
     result =
       if weather_data.count == 2
-        [{type: "text", text: weather_data[0]}, {type: "text", text: weather_data[1]}]
+        [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
       else
-        {type: "text", text: weather_data[0]}
+        {type: "text", text: weather_data[0].join}
       end
     # if weather_data[1][0]
     #   result = [{type: "text", text: weather_data[0].join}, {type: "text", text: weather_data[1].join}]
