@@ -2,6 +2,7 @@ module WeatherRequest
   extend ActiveSupport::Concern
   
   def weather_forcast(weather_data, commute)
+    logger.debug(commute)
     city_name = []
     result = []
     weather_data.each_with_index do |d, n|
@@ -14,7 +15,6 @@ module WeatherRequest
         temp = l[:main][:temp].round(1) #温度
         weather = get_weather(l[:weather][0][:id]) #天気idをもとにメソッドから天気を取得
         result[n].push("\n\n#{time}時 天気:#{weather}   温度:#{temp}℃")
-        logger.debug(result)
       end
       result[n].unshift("今日の#{city_name[n]}の天気をお知らせします。")
     end
