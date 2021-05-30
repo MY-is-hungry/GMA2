@@ -11,7 +11,7 @@ module WeatherRequest
       city_name[n] = w[:city][:name]
       result[n] = []
       w[:list].each do |l|
-        logger.debug(l[:dt_txt])
+        logger.debug(l[:dt_txt].class)
         time = l[:dt_txt].slice(-8, 2).to_i + 9
         break if time > 24
         time -= 24 if time == 24
