@@ -70,6 +70,18 @@ module BadRequest
         }
       ]
       
+    when 'favorite_registration'
+      [
+        {
+          type: 'text',
+          text: "登録に失敗しました。\nお気に入りは最大5件までです。"
+        },
+        {
+          type: 'text',
+          text: "お気に入りの店舗を減らしてからもう一度お試しください。"
+        }
+      ]
+      
     when '該当コマンドなし'
       {type: 'text', text: "そのコマンドは存在しません。"}
     end

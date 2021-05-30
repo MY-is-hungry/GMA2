@@ -1,6 +1,6 @@
 module CommuteRequest
   extend ActiveSupport::Concern
-  def commute_basic(msg, commute: '')
+  def commute_basic(msg, commute)
     set = Setup.find(commute.get_state)
     if set.id == 1
       {
@@ -27,7 +27,7 @@ module CommuteRequest
     end
   end
   
-  def commute_place(msg, state: '')
+  def commute_place(msg, state)
     case state
     when 1..8
       point, reset = ""
@@ -84,7 +84,7 @@ module CommuteRequest
         case msg
         when '出発地点変更','通勤設定'
           "出発地点"
-        when '到着地点変更','通勤設定2'
+        when '到着地点変更','first_location'
           "到着地点"
         end
       {
@@ -279,7 +279,7 @@ module CommuteRequest
     end
   end
   
-  def commute_mode(commute: '')
+  def commute_mode(commute)
     set = Setup.find(commute.setup_id)
     logger.debug(commute.setup_id)
     if commute.avoid
@@ -429,15 +429,15 @@ module CommuteRequest
     end
   end
   
-  def change_avoid(msg, data, commute)
+  def set_avoid(msg, data, commute)
     case msg
-    when '変更'
+    when 'changed'
       name = get_data_name(data)
       {
         "type": 'text',
         "text": "#{name}"
       }
-    when '完了'
+    when 'completed'
       now = avoid_now(commute.avoid)
       if commute.mode
         if commute.first_setup

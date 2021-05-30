@@ -6,21 +6,21 @@ module BaseRequest
   include SearchRequest
   include BasicRequest
   
-  def change_msg(msg, data: '', count: '', commute: '', state: '')
-    #msgの表記分け　日本語：メッセージアクションから　英語：ロケーション、ポストバックアクションから
+  #msgの表記分け　日本語：メッセージアクションから　英語：ロケーション、ポストバックアクションから（ラーメンなどの検索は除く）
+  def change_msg(msg, data: '', count: '', state: '')
     case msg
     when 'おはよう'
       weather_forcast(data, @commute)
       
     #ここからcommute_request.rb
     when '基本設定'
-      commute_basic(msg, commute: commute)
+      commute_basic(msg, @commute)
       
-    when '通勤設定','出発地点変更','到着地点変更', '通勤設定2'
-      commute_place(msg, state: state)
+    when '通勤設定','出発地点変更','到着地点変更', 'first_location'
+      commute_place(msg, state)
       
     when 'end_location'
-      entry_location(msg, commute)
+      entry_location(msg, @commute)
       
     when '中間地点登録'
       via_location
@@ -38,13 +38,13 @@ module BaseRequest
       mode_menu(msg)
       
     when 'mode'
-      commute_mode(commute: commute)
+      commute_mode(@commute)
       
     when '経路の制限'
-      avoid_menu(msg, commute)
+      avoid_menu(msg, @commute)
       
-    when '変更', '完了'
-      change_avoid(msg, data, commute)
+    when 'changed', 'completed'
+      set_avoid(msg, data, @commute)
       
     #favorite_request.rb
     when 'お気に入り'
@@ -65,7 +65,6 @@ module BaseRequest
       help_list
       
     when 'リセット'
-      logger.debug(state)
       reset_setting(state)
       
     when 'follow'
