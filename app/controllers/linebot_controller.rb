@@ -36,7 +36,7 @@ class LinebotController < ApplicationController
             when 'おはよう'
               logger.debug(message)
               return client.reply_message(event['replyToken'], bad_msg(message)) if @commute.get_state.in?([9,10,11,12,13,14])
-              weather_data = Array.new
+              weather_data = []
               if @commute.start_address == @commute.end_address
                 start_response = open(ENV['W_URL'] + "?zip=#{@commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
                 weather_data[0] = JSON.parse(start_response.read, {symbolize_names: true})
@@ -90,7 +90,7 @@ class LinebotController < ApplicationController
               when 1..4 #中間地点が設定済み
                 w = ""
                 via = ViaPlace.where(commute_id: @commute.id).order(:order)
-                location = Array.new
+                location = []
                 via.each_with_index do |v, n|
                   location[n] = {lat: v.via_lat, lng: v.via_lng}
                 end
@@ -147,15 +147,15 @@ class LinebotController < ApplicationController
             when 'お気に入り'
               fav_id = Favorite.where(user_id: @commute.user_id).pluck(:place_id)
               return client.reply_message(event['replyToken'], bad_msg(message)) unless fav_id.first
-              data = Array.new
+              box = []
               fav_id.each_with_index do |f,n|
-                data[n] = Hash.new
+                box[n] = {}
                 response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url,place_id&language=ja&key=" + ENV['G_KEY'])
-                a = JSON.parse(response.read, {symbolize_names: true})
-                a[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{a[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
-                data[n] = {photo: photo, name: a[:result][:name], address: a[:result][:formatted_address], url: a[:result][:url], place_id: a[:result][:place_id]}
+                store_info = JSON.parse(response.read, {symbolize_names: true})
+                store_info[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{store_info[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
+                box[n] = {photo: photo, name: store_info[:result][:name], address: store_info[:result][:formatted_address], url: store_info[:result][:url], place_id: store_info[:result][:place_id]}
               end
-              reply = change_msg(message, data: data, count: data.count)
+              reply = change_msg(message, data: box, count: box.count)
 
             when 'ヘルプ'
               reply = change_msg(message)
@@ -269,9 +269,9 @@ class LinebotController < ApplicationController
             end
             store_info = JSON.parse(response.read, {symbolize_names: true})
             #配列にハッシュ化した店舗データを入れる（最大５件）
-            box = Array.new
+            box = []
             5.times do |n|
-              box[n] = Hash.new
+              box[n] = {}
               #写真、評価、クチコミが無い場合には、初期値を設定しておく
               store_info[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{store_info[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
               store_info[:results][n].has_key?(:rating) ? rating = store_info[:results][n][:rating] : rating = "未評価"
@@ -309,11 +309,11 @@ class LinebotController < ApplicationController
     end
     
     def get_commute_time(response, state)
-      data = JSON.parse(response.read, {symbolize_names: true})
+      route_info = JSON.parse(response.read, {symbolize_names: true})
       if state.in?([1,3,5,7])
-        data[:routes][0][:legs][0][:duration_in_traffic][:text]
+        route_info[:routes][0][:legs][0][:duration_in_traffic][:text]
       else
-        data[:routes][0][:legs][0][:duration][:text]
+        route_info[:routes][0][:legs][0][:duration][:text]
       end
     end
 end
