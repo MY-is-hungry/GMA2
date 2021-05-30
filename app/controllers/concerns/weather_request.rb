@@ -18,6 +18,7 @@ module WeatherRequest
         weather = get_weather(l[:weather][0][:id]) #天気idをもとにメソッドから天気を取得
         result[n].push("\n\n#{time}時 天気:雨  温度:#{temp}℃")
         rain = true if weather.in?(['雷雨', '激しい雨', '雨', 'にわか雨'])
+        logger.debug(rain)
       end
       result[n].unshift("今日の#{city_name[n]}の天気をお知らせします。")
     end
