@@ -16,8 +16,8 @@ module WeatherRequest
         time -= 24 if time == 24
         temp = l[:main][:temp].round(1) #温度
         weather = get_weather(l[:weather][0][:id]) #天気idをもとにメソッドから天気を取得
-        result[n].push("\n\n#{time}時 天気:雨  温度:#{temp}℃")
-        rain = true if weather.in?(['雷雨', '激しい雨', '雨', 'にわか雨'])
+        result[n].push("\n\n#{time}時 天気:#{weather}  温度:#{temp}℃")
+        rain = true if weather.in?(['雷雨', '激しい雨', '雨', 'にわか雨', '晴れ'])
         logger.debug(weather)
         logger.debug(rain)
       end
