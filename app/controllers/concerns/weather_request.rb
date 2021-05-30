@@ -70,6 +70,13 @@ module WeatherRequest
         return "今日は雨が降ります。\n時間にゆとりを持ちましょう。"
       end
     else
+      if today_weather[0][:"6"] == '雪' || t[:"9"] == '雪' || today_weather[0][:"15"] == '雪' || today_weather[0][:"18"] == '雪'
+        return "今日は雪が降ります。\n道路が凍結している可能性があるので、時間に大きなゆとりを持ちましょう。"
+      end
+      if today_weather[0][:"6"].in?['雷雨', '激しい雨', '雨', 'にわか雨'] || today_weather[0][:"9"].in?['雷雨', '激しい雨', '雨', 'にわか雨'] ||
+        today_weather[0][:"15"].in?['雷雨', '激しい雨', '雨', 'にわか雨'] || today_weather[0][:"18"].in?['雷雨', '激しい雨', '雨', 'にわか雨']
+        return "今日は雨が降ります。\n時間にゆとりを持ちましょう。"
+      end
     end
   end
 end
