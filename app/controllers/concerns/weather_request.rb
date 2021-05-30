@@ -16,12 +16,12 @@ module WeatherRequest
         time -= 24 if time == 24
         temp = l[:main][:temp].round(1) #温度
         weather = get_weather(l[:weather][0][:id]) #天気idをもとにメソッドから天気を取得
-        result[n].push("\n\n#{time}時 天気:#{weather}  温度:#{temp}℃")
+        result[n].push("\n\n#{time}時 天気:雨  温度:#{temp}℃")
         rain = true if weather.in?['雷雨', '激しい雨', '雨', 'にわか雨']
       end
       result[n].unshift("今日の#{city_name[n]}の天気をお知らせします。")
     end
-    message = "今日は雨が降ります。\n時間にゆとりを持ちましょう。" if rain
+    message = "おはようございます！\n今日は雨が降ります。\n時間にゆとりを持ちましょう。" if rain
     if result.count == 2
       [{type: "text", text: message}, {type: "text", text: result[0].join}, {type: "text", text: result[1].join}]
     else
