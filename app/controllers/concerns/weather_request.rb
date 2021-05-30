@@ -15,7 +15,7 @@ module WeatherRequest
         time -= 24 if time == 24
         temp = l[:main][:temp].round(1) #温度
         weather = get_weather(l[:weather][0][:id]) #天気idをもとにメソッドから天気を取得
-        result[n].push("\n\n#{time}時 天気:#{weather}  温度:#{temp}℃")
+        result[n].push("\n\n#{time}時 天気:雨  温度:#{temp}℃")
         today_weather[n] = {"#{time}": weather}
       end
       result[n].unshift("今日の#{city_name[n]}の天気をお知らせします。")
