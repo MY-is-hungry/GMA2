@@ -65,7 +65,7 @@ module CommuteRequest
         },
         {
           "type": "text", 
-          "text": "#{point}地点の位置情報を教えてください！",
+          "text": "通勤経路の#{point}地点を教えてください！",
           "quickReply": {
             "items": [
               {
@@ -89,7 +89,7 @@ module CommuteRequest
         end
       {
         "type": "text",
-        "text": "#{point}の位置情報を教えてください！",
+        "text": "通勤経路の#{point}を教えてください！",
         "quickReply": {
           "items": [
             {

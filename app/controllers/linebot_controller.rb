@@ -126,14 +126,10 @@ class LinebotController < ApplicationController
                 reply = change_msg(message, state: state)
               end
               
-            when 'テスト'
-              
             else
               return client.reply_message(event['replyToken'], {type: 'text', text: 'そのコマンドは存在しません。'})
             end
-            logger.debug(reply)
-            client.reply_message(event['replyToken'], reply)
-            
+
           when Line::Bot::Event::MessageType::Location #位置情報が来た場合
             state = @commute.get_state
             case state
@@ -161,8 +157,9 @@ class LinebotController < ApplicationController
             else #エラー
               reply = bad_msg('該当コマンドなし')
             end
-            client.reply_message(event['replyToken'], reply)
           end
+          logger.debug(reply)
+          client.reply_message(event['replyToken'], reply)
           
         when Line::Bot::Event::Postback
           user = User.find_by(id: event['source']['userId'])
