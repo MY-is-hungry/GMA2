@@ -7,10 +7,10 @@ module BaseRequest
   include BasicRequest
   
   #msgの表記分け　日本語：メッセージアクションから　英語：ロケーション、ポストバックアクションから（ラーメンなどの検索は除く）
-  def change_msg(msg, data: '', count: '', state: '')
+  def change_msg(msg, data: '', count: '', state: '', commute_time: '')
     case msg
     when 'おはよう'
-      weather_forcast(data, @commute)
+      weather_forcast(data, @commute, commute_time)
       
     #ここからcommute_request.rb
     when '基本設定'

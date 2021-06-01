@@ -1,7 +1,7 @@
 module WeatherRequest
   extend ActiveSupport::Concern
   
-  def weather_forcast(weather_data, commute)
+  def weather_forcast(weather_data, commute, commute_time)
     logger.debug(commute)
     city_name = []
     result = []
@@ -11,7 +11,6 @@ module WeatherRequest
       city_name[n] = w[:city][:name]
       result[n] = []
       w[:list].each do |l|
-        logger.debug(l[:dt_txt].class)
         time = l[:dt_txt].slice(-8, 2).to_i + 9
         break if time > 24
         time -= 24 if time == 24
@@ -24,9 +23,9 @@ module WeatherRequest
     end
     message = "おはようございます！\n今日は雨が降ります。\n時間にゆとりを持ちましょう。" if rain
     if result.count == 2
-      [{type: "text", text: message}, {type: "text", text: result[0].join}, {type: "text", text: result[1].join}]
+      [{type: "text", text: message}, {type: "text", text: result[0].join}, {type: "text", text: result[1].join}, {type: "text", text: "現在時刻での予想通勤時間は、#{commute_time}です。"}]
     else
-      [{type: "text", text: message}, {type: "text", text: result[0].join}]
+      [{type: "text", text: message}, {type: "text", text: result[0].join}, {type: "text", text: "現在時刻での予想通勤時間は、#{commute_time}です。"}]
     end
   end
   

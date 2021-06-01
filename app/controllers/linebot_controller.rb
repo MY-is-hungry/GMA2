@@ -34,8 +34,9 @@ class LinebotController < ApplicationController
             message = event.message['text']
             case message
             when 'おはよう'
-              logger.debug(message)
-              return client.reply_message(event['replyToken'], bad_msg(message)) if @commute.get_state.in?([9,10,11,12,13,14])
+              state = @commute.get_state
+              return client.reply_message(event['replyToken'], bad_msg(message)) if state.in?([9,10,11,12,13,14])
+              commute_time = get_commute_time(state)
               weather_data = []
               if @commute.start_address == @commute.end_address
                 start_response = open(ENV['W_URL'] + "?zip=#{@commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
@@ -47,7 +48,7 @@ class LinebotController < ApplicationController
                 weather_data[0] = JSON.parse(start_response.read, {symbolize_names: true})
                 weather_data[1] = JSON.parse(end_response.read, {symbolize_names: true})
               end
-              reply = change_msg(message, data: weather_data)
+              reply = change_msg(message, data: weather_data, commute_time: commute_time)
               
             when '基本設定'
               reply = change_msg(message)
@@ -85,53 +86,8 @@ class LinebotController < ApplicationController
               
             when '通勤時間'
               state = @commute.get_state
-              time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
-              case state
-              when 1..4 #中間地点が設定済み
-                w = ""
-                via = ViaPlace.where(commute_id: @commute.id).order(:order)
-                location = []
-                via.each_with_index do |v, n|
-                  location[n] = {lat: v.via_lat, lng: v.via_lng}
-                end
-                location.each do |l|
-                  w = w + "via:#{l[:lat]},#{l[:lng]}|"
-                end
-                case state
-                when 1
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-                  &waypoints=#{w}&avoid=#{@commute.avoid}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
-                when 2
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-                  &waypoints=#{w}&avoid=#{@commute.avoid}&language=ja&key=" + ENV['G_KEY'])
-                when 3
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-                  &waypoints=#{w}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
-                when 4
-                  response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-                  &waypoints=#{w}&language=ja&key=" + ENV['G_KEY'])
-                end
-                
-              when 5 #経路の制限、通勤モードが設定済み
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-                &avoid=#{@commute.avoid}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
-
-              when 6 #経路の制限が設定済み
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-                &avoid=#{@commute.avoid}&language=ja&key=" + ENV['G_KEY'])
-
-              when 7 #通勤モードが設定済み
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-                &departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
-                
-              when 8 #通勤設定のみ
-                response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-                &language=ja&key=" + ENV['G_KEY'])
-                
-              else
-                return client.reply_message(event['replyToken'], bad_msg(message))
-              end
-              commute_time = get_commute_time(response, state)
+              return client.reply_message(event['replyToken'], bad_msg(message)) if state.in?([9,10,11,12,13,14])
+              commute_time = get_commute_time(state)
               reply = change_msg(message, data: commute_time, state: state)
 
             when '寄り道地域'
@@ -308,7 +264,52 @@ class LinebotController < ApplicationController
       }
     end
     
-    def get_commute_time(response, state)
+    def get_commute_time(state)
+      time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
+      case state
+      when 1..4 #中間地点が設定済み
+        w = ""
+        via = ViaPlace.where(commute_id: @commute.id).order(:order)
+        location = []
+        via.each_with_index do |v, n|
+          location[n] = {lat: v.via_lat, lng: v.via_lng}
+        end
+        location.each do |l|
+          w = w + "via:#{l[:lat]},#{l[:lng]}|"
+        end
+        case state
+        when 1
+          response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
+          &waypoints=#{w}&avoid=#{@commute.avoid}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
+        when 2
+          response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
+          &waypoints=#{w}&avoid=#{@commute.avoid}&language=ja&key=" + ENV['G_KEY'])
+        when 3
+          response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
+          &waypoints=#{w}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
+        when 4
+          response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
+          &waypoints=#{w}&language=ja&key=" + ENV['G_KEY'])
+        end
+        
+      when 5 #経路の制限、通勤モードが設定済み
+        response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
+        &avoid=#{@commute.avoid}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
+
+      when 6 #経路の制限が設定済み
+        response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
+        &avoid=#{@commute.avoid}&language=ja&key=" + ENV['G_KEY'])
+
+      when 7 #通勤モードが設定済み
+        response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
+        &departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
+        
+      when 8 #通勤設定のみ
+        response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
+        &language=ja&key=" + ENV['G_KEY'])
+        
+      end
+      
       route_info = JSON.parse(response.read, {symbolize_names: true})
       if state.in?([1,3,5,7])
         route_info[:routes][0][:legs][0][:duration_in_traffic][:text]
