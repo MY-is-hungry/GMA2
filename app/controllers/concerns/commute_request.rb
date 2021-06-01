@@ -143,7 +143,7 @@ module CommuteRequest
       },
       {
         "type": "text",
-        "text": "後で中間地点を追加する場合は、登録順に通るよう通勤時間を計算します。",
+        "text": "後でさらに追加する場合は、登録順に通るよう通勤時間を計算します。",
         "quickReply": {
           "items": [
             {
