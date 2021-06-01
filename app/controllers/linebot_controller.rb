@@ -136,9 +136,8 @@ class LinebotController < ApplicationController
             when 1..8 #中間地点登録
               count = ViaPlace.where(commute_id: @commute.id).count + 1
               ViaPlace.create(commute_id: @commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
-              state = @commute.get_state
-              @commute.update(setup_id: state)
-              reply = change_msg('via_place', count: count, state: state)
+              @commute.update(setup_id: @commute.get_state)
+              reply = change_msg('via_place', count: count)
 
             when 9 #到着地変更
               address = event.message['address'].scan(/\d{3}-\d{4}/)
