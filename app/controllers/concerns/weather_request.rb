@@ -23,9 +23,9 @@ module WeatherRequest
     end
     message = "おはようございます！\n今日は雨が降ります。\n時間にゆとりを持ちましょう。" if rain
     if result.count == 2
-      [{type: "text", text: message}, {type: "text", text: result[0].join}, {type: "text", text: result[1].join}, {type: "text", text: "現在時刻での予想通勤時間は、\n#{commute_time}です。"}]
+      [{type: "text", text: message}, {type: "text", text: result[0].join}, {type: "text", text: result[1].join}, {type: "text", text: "現在時刻での予想通勤時間は、#{commute_time}です。"}]
     else
-      [{type: "text", text: message}, {type: "text", text: result[0].join}, {type: "text", text: "現在時刻での予想通勤時間は、\n#{commute_time}です。"}]
+      [{type: "text", text: message}, {type: "text", text: result[0].join}, {type: "text", text: "現在時刻での予想通勤時間は、#{commute_time}です。"}]
     end
   end
   
