@@ -160,10 +160,11 @@ module CommuteRequest
   end
   
   def via_create(count, commute)
+    state = commute.get_state
     if state == 1
       {"type": 'text', "text": "#{count}つ目の中間地点を登録しました。"}
     else
-      set = Setup.find(commute.get_state)
+      set = Setup.find(state)
       [
         {
           "type": 'text', 
