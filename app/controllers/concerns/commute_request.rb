@@ -436,7 +436,7 @@ module CommuteRequest
       name = get_data_name(data)
       {
         "type": 'text',
-        "text": "#{name}"
+        "text": name
       }
     when 'completed'
       now = avoid_now(commute.avoid)
@@ -444,7 +444,7 @@ module CommuteRequest
         if commute.first_setup
           {
             "type": 'text',
-            "text": "#{now}"
+            "text": now
           }
         else
           commute.update(first_setup: true)
@@ -452,11 +452,11 @@ module CommuteRequest
           [
             {
               "type": 'text',
-              "text": "#{now}"
+              "text": now
             },
             {
               "type": 'text',
-              "text": "#{set.content}"
+              "text": set.content
             }
           ]
         end
@@ -464,7 +464,7 @@ module CommuteRequest
         [
           {
             "type": 'text',
-            "text": "#{now}",
+            "text": now,
             "quickReply": {
               "items": [
                 {

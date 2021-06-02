@@ -98,7 +98,6 @@ class LinebotController < ApplicationController
             
             when '寄り道する！'
               state = @commute.get_state
-              logger.debug(state)
               reply = state.in?([1,2,3,4,5,6,7,8]) ? change_msg(message) : bad_msg(message)
               
             when 'お気に入り'
@@ -137,9 +136,7 @@ class LinebotController < ApplicationController
             when 1..8 #中間地点登録
               count = ViaPlace.where(commute_id: @commute.id).count + 1
               ViaPlace.create(commute_id: @commute.id, via_lat: event.message['latitude'], via_lng: event.message['longitude'], order: count)
-              logger.debug(@commute.setup_id)
               @commute.update(setup_id: @commute.get_state)
-              logger.debug(@commute.setup_id)
               reply = change_msg('via_place', count: count)
 
             when 9 #到着地変更
@@ -167,7 +164,6 @@ class LinebotController < ApplicationController
           
         when Line::Bot::Event::Postback
           user = User.find_by(id: event['source']['userId'])
-          logger.debug(@commute.setup_id)
           data = event['postback']['data']
           code = data.slice!(-1).to_i
           case code
