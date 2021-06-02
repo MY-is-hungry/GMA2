@@ -18,15 +18,15 @@ Setup.create(
     },
     #id: 4
     {
-      content: "残りの基本設定は1つです。",
+      content: "残りの基本設定は2つです。",
       label: "次の設定へ",
-      next_setup: "中間地点登録"
+      next_setup: "通勤モード"
     },
     #id: 5
     {
-      content: "残りの基本設定は2つです。",
+      content: "残りの基本設定は1つです。",
       label: "次の設定へ",
-      next_setup: "経路の制限"
+      next_setup: "中間地点登録"
     },
     #id: 6
     {
