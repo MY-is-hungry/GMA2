@@ -75,6 +75,7 @@ class LinebotController < ApplicationController
               reply =
                 if @commute.via_place.first
                   ViaPlace.where(commute_id: @commute.id).destroy_all
+                  @commute.update(setup_id: @commute.get_state)
                   change_msg(message)
                 else
                   bad_msg(message)
