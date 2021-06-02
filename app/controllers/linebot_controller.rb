@@ -2,7 +2,7 @@ class LinebotController < ApplicationController
     require 'line/bot'  # gem 'line-bot-api'
     require "json" #jsonモジュールを利用
     require "open-uri" #Webサイトをアクセス可能にする
-    require "date" #TimeZone
+    require "date"
     include BaseRequest
     include BadRequest
     
@@ -35,7 +35,7 @@ class LinebotController < ApplicationController
             case message
             when 'おはよう'
               state = @commute.get_state
-              return client.reply_message(event['replyToken'], bad_msg(message)) if state.in?([9,10,11,12,13,14])
+              return client.reply_message(event['replyToken'], bad_msg(message)) if state.in?([9,10,11,12,13,14]) #通勤経路が未設定の場合は、処理しない
               commute_time = get_commute_time(state)
               weather_data = []
               if @commute.start_address == @commute.end_address
@@ -102,7 +102,7 @@ class LinebotController < ApplicationController
               
             when 'お気に入り'
               fav_id = Favorite.where(user_id: @commute.user_id).pluck(:place_id)
-              return client.reply_message(event['replyToken'], bad_msg(message)) unless fav_id.first
+              return client.reply_message(event['replyToken'], bad_msg(message)) unless fav_id.first #お気に入りがない場合は、処理しない
               box = []
               fav_id.each_with_index do |f,n|
                 box[n] = {}
@@ -140,7 +140,7 @@ class LinebotController < ApplicationController
               reply = change_msg('via_place', count: count)
 
             when 9 #到着地変更
-              address = event.message['address'].scan(/\d{3}-\d{4}/)
+              address = event.message['address'].scan(/\d{3}-\d{4}/) #郵便番号を取得
               @commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'], end_address: address[0])
               @commute.update(setup_id: @commute.get_state)
               reply = change_msg('end_location')
@@ -162,7 +162,7 @@ class LinebotController < ApplicationController
           logger.debug(reply)
           client.reply_message(event['replyToken'], reply)
           
-        when Line::Bot::Event::Postback
+        when Line::Bot::Event::Postback #ポストパックアクション
           user = User.find_by(id: event['source']['userId'])
           data = event['postback']['data']
           code = data.slice!(-1).to_i
@@ -226,10 +226,10 @@ class LinebotController < ApplicationController
             5.times do |n|
               box[n] = {}
               #写真、評価、クチコミが無い場合には、初期値を設定しておく
-              store_info[:results][n].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{store_info[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
+              store_info[:results][n].has_key?(:photos) ?
+                photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{store_info[:results][n][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
               store_info[:results][n].has_key?(:rating) ? rating = store_info[:results][n][:rating] : rating = "未評価"
               store_info[:results][n].has_key?(:user_ratings_total) ? review = store_info[:results][n][:user_ratings_total] : review = "0"
-              #経路用のGoogleMapURLをエンコード
               url = URI.encode ENV['G_STORE_URL'] + "&query=#{store_info[:results][n][:name]}&query_place_id=#{store_info[:results][n][:place_id]}"
               box[n] = {photo: photo, name: store_info[:results][n][:name], rating: rating,
                 review: review, address: store_info[:results][n][:formatted_address], url: url, place_id: store_info[:results][n][:place_id]
@@ -239,11 +239,11 @@ class LinebotController < ApplicationController
           end
           client.reply_message(event['replyToken'], reply)
           
-        when Line::Bot::Event::Follow
+        when Line::Bot::Event::Follow #友達追加
           User.create(id: event['source']['userId'])
           Commute.create(user_id: event['source']['userId'], setup_id: 14, first_setup: false)
           client.reply_message(event['replyToken'], change_msg("follow"))
-        when Line::Bot::Event::Unfollow
+        when Line::Bot::Event::Unfollow #ブロック
           User.find_by(id: event['source']['userId']).destroy
         else
           client.reply_message(event['replyToken'], bad_msg('該当コマンドなし'))
