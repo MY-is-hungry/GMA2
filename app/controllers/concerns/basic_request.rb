@@ -76,7 +76,7 @@ module BasicRequest
       },
       {
         "type": "text", "text":
-        <<~HELLO
+        <<~HELLO.chomp
           このアプリは、車専用の通勤補助アプリです。
           毎朝ワンタップで、今日の天気、温度、通勤時間まで予測してくれます！
           
