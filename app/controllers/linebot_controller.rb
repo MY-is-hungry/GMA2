@@ -108,7 +108,8 @@ class LinebotController < ApplicationController
                 box[n] = {}
                 response = open(URI.encode ENV['G_DETAIL_URL'] + "&place_id=#{f}&fields=name,formatted_address,photo,url,place_id&language=ja&key=" + ENV['G_KEY'])
                 store_info = JSON.parse(response.read, {symbolize_names: true})
-                store_info[:result].has_key?(:photos) ? photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{store_info[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
+                store_info[:result].has_key?(:photos) ?
+                  photo = ENV['G_PHOTO_URL'] + "maxwidth=2000&photoreference=#{store_info[:result][:photos][0][:photo_reference]}&key=" + ENV['G_KEY'] : photo = "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png"
                 box[n] = {photo: photo, name: store_info[:result][:name], address: store_info[:result][:formatted_address], url: store_info[:result][:url], place_id: store_info[:result][:place_id]}
               end
               reply = change_msg(message, data: box, count: box.count)
@@ -155,7 +156,7 @@ class LinebotController < ApplicationController
               address = event.message['address'].scan(/\d{3}-\d{4}/)
               @commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
               reply = change_msg('first_location')
-            else #エラー
+            else
               reply = bad_msg('該当コマンドなし')
             end
           end
@@ -265,28 +266,28 @@ class LinebotController < ApplicationController
       time = Time.parse(Time.now.to_s).to_i #現在時刻をAPIで使用するため、UNIX時間に変換
       case state
       when 1..4 #中間地点が設定済み
-        w = ""
+        waypoints = ""
         via = ViaPlace.where(commute_id: @commute.id).order(:order)
         location = []
         via.each_with_index do |v, n|
           location[n] = {lat: v.via_lat, lng: v.via_lng}
         end
         location.each do |l|
-          w = w + "via:#{l[:lat]},#{l[:lng]}|"
+          waypoints = waypoints + "via:#{l[:lat]},#{l[:lng]}|"
         end
         case state
         when 1
           response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-          &waypoints=#{w}&avoid=#{@commute.avoid}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
+          &waypoints=#{waypoints}&avoid=#{@commute.avoid}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
         when 2
           response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-          &waypoints=#{w}&avoid=#{@commute.avoid}&language=ja&key=" + ENV['G_KEY'])
+          &waypoints=#{waypoints}&avoid=#{@commute.avoid}&language=ja&key=" + ENV['G_KEY'])
         when 3
           response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-          &waypoints=#{w}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
+          &waypoints=#{waypoints}&departure_time=#{time}&traffic_model=#{@commute.mode}&language=ja&key=" + ENV['G_KEY'])
         when 4
           response = open(ENV['G_DIRECTION_URL'] + "origin=#{@commute.start_lat},#{@commute.start_lng}&destination=#{@commute.end_lat},#{@commute.end_lng}
-          &waypoints=#{w}&language=ja&key=" + ENV['G_KEY'])
+          &waypoints=#{waypoints}&language=ja&key=" + ENV['G_KEY'])
         end
         
       when 5 #経路の制限、通勤モードが設定済み

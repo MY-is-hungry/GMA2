@@ -57,21 +57,34 @@ module BasicRequest
   end
   
   def follow_msg
-    {
-      "type": "text",
-      "text": "$よろしく$",
-        "emojis": [
-          {
-            "index": 0,
-            "productId": "5ac1bfd5040ab15980c9b435",
-            "emojiId": "001"
-          },
-          {
-            "index": 5,
-            "productId": "5ac1bfd5040ab15980c9b435",
-            "emojiId": "002"
-          }
-        ]
-    }
+    [
+      {
+        "type": "text",
+        "text": "$よろしくお願いします$",
+          "emojis": [
+            {
+              "index": 0,
+              "productId": "5ac1bfd5040ab15980c9b435",
+              "emojiId": "001"
+            },
+            {
+              "index": 11,
+              "productId": "5ac1bfd5040ab15980c9b435",
+              "emojiId": "002"
+            }
+          ]
+      },
+      {
+        "type": "text", "text":
+        <<~HELLO
+          このアプリは、車専用の通勤補助アプリです。
+          毎朝ワンタップで、今日の天気、温度、通勤時間まで予測してくれます！
+          
+          他にも、仕事帰りに寄り道するお店も検索できちゃいます♪
+          
+          まずは、メニューの「基本設定」から情報の入力を始めましょう！
+        HELLO
+      }
+    ]
   end
 end

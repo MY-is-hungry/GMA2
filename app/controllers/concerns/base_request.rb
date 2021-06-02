@@ -16,7 +16,7 @@ module BaseRequest
     when '基本設定'
       commute_basic(msg, @commute)
       
-    when '通勤設定','出発地点変更','到着地点変更', 'first_location'
+    when '通勤設定','出発地点変更','到着地点変更','first_location'
       commute_place(msg, state)
       
     when 'end_location'
