@@ -1,24 +1,5 @@
-# README
+# GMA :sunny:
+毎日の通勤をサポートし、チョット良い日常にする通勤補助アプリです。<br>
+LINEからワンタップでその日の天気、予想される通勤時間を教えてくれます。
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## 作成した目的
