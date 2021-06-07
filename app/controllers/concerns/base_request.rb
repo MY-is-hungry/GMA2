@@ -9,7 +9,7 @@ module BaseRequest
   #msgの表記分け　日本語：メッセージアクションから　英語：ロケーション、ポストバックアクションから（ラーメンなどの検索は除く）
   def change_msg(msg, data: '', count: '', state: '', commute_time: '')
     case msg
-    when 'おはよう'
+    when '今日の天気'
       weather_forcast(data, @commute, commute_time)
       
     #ここからcommute_request.rb
@@ -51,7 +51,7 @@ module BaseRequest
       fav_list(data, count)
       
     #ここからsearch_request.rb
-    when '寄り道地域'
+    when '寄り道エリア'
       search_area_msg(msg, data)
     
     when '寄り道する！'

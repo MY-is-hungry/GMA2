@@ -14,7 +14,7 @@ module SearchRequest
             "contents": [
               {
                 "type": "text",
-                "text": "寄り道する地域を選んでください。",
+                "text": "寄り道するエリアを選んでください。",
                 "size": "lg",
                 "wrap": true,
                 "weight": "bold"

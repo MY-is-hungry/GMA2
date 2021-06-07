@@ -258,7 +258,7 @@ module CommuteRequest
       [
         {
           "type": 'text',
-          "text": "現在時刻での通勤時間は、#{data}です。"
+          "text": "現在時刻での予想通勤時間は、#{data}です。"
         },
         {
           "type": 'text',

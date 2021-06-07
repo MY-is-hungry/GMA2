@@ -33,7 +33,7 @@ class LinebotController < ApplicationController
           when Line::Bot::Event::MessageType::Text #テキストメッセージが来た場合
             message = event.message['text']
             case message
-            when 'おはよう'
+            when '今日の天気'
               state = @commute.get_state
               return client.reply_message(event['replyToken'], bad_msg(message)) if state.in?([9,10,11,12,13,14]) #通勤経路が未設定の場合は、処理しない
               commute_time = get_commute_time(state)
@@ -91,7 +91,7 @@ class LinebotController < ApplicationController
               commute_time = get_commute_time(state)
               reply = change_msg(message, data: commute_time, state: state)
 
-            when '寄り道地域'
+            when '寄り道エリア'
               state = @commute.get_state
               logger.debug(state)
               reply = state.in?([1,2,3,4,5,6,7,8]) ? change_msg(message, state: state) : bad_msg(message)
