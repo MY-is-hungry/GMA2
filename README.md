@@ -54,3 +54,5 @@ QRコード<br>
 
 ### デザイン
 [canva][canva]
+<br>
+<img height=250 width=250 alt="GMAロゴ" src="https://user-images.githubusercontent.com/63504907/120992904-0239fb00-c7be-11eb-8751-b188fa44804d.png">
