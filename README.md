@@ -38,6 +38,8 @@ LINEのMessaging APIを使ったアプリなので、主要機能はリッチメ
 ## :busts_in_silhouette: 友達追加QRコード
 QRコード<br>
 <br>
+<br>
+
 ## :computer: 開発環境・使用技術
 - Ruby 2.6.3
 - Rails 5.2.6
@@ -53,6 +55,12 @@ QRコード<br>
 <br>
 
 ### デザイン
-[canva][canva]
+**・**[canva][canva]<br>
 <br>
+ロゴ（左） リッチメニュー（右）<br>
 <img height=250 width=250 alt="GMAロゴ" src="https://user-images.githubusercontent.com/63504907/120992904-0239fb00-c7be-11eb-8751-b188fa44804d.png">
+<img height=235 width=350 alt="リッチメニュー" src="https://user-images.githubusercontent.com/63504907/120993648-b63b8600-c7be-11eb-9f1d-4618575014b9.png">
+<br>
+
+## :wrench: データベース設計
+ER図
