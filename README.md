@@ -1,24 +1,13 @@
-# README
+# :sunny: GMA
+毎日の通勤をサポートするアプリです。<br>
+ワンタップでその日の天気、予想される通勤時間を教えてくれます。<br>
+外食して帰りたい日には、寄り道機能で周辺のお店を探すことができます。<br>
+<br>
+<br>
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## :dart: 作成した目的
+忙しい朝に、必要な情報をなるべく簡単に得たい！、という思いから作成しました。<br>
+<br>
+<br>
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## :video_game: 機能一覧
