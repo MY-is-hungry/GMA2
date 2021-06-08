@@ -69,9 +69,7 @@ QRコード<br>
 ### デザイン
 **・**[canva][canva]<br>
 <br>
-ロゴ（左） リッチメニュー（右）<br>
-<img width=250 height=250 alt="GMAロゴ" src="https://user-images.githubusercontent.com/63504907/120992904-0239fb00-c7be-11eb-8751-b188fa44804d.png">
-<img width=350 height=235 alt="リッチメニュー" src="https://user-images.githubusercontent.com/63504907/120993648-b63b8600-c7be-11eb-9f1d-4618575014b9.png">
+<img width=600 height=250 alt="デザイン作品" src="https://user-images.githubusercontent.com/63504907/121160305-efd7c400-c886-11eb-9d4f-fb973c5e767d.png">
 <br>
 <br>
 
