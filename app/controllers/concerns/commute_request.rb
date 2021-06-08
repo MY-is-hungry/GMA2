@@ -206,7 +206,7 @@ module CommuteRequest
           "contents": [
             {
               "type": "text",
-              "text": "通勤モードを選択してください。",
+              "text": "通勤時間の算出方法を選択してください。",
               "weight": "bold",
               "size": "xl",
               "wrap": true
