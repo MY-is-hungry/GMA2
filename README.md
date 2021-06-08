@@ -18,6 +18,9 @@
 ## :video_game: 機能一覧
 LINEのMessaging APIを使ったアプリなので、主要機能はリッチメニューを使うことで簡単に操作できるようにしています。
 - **天気予報、通勤時間の取得**<br>
+  <br>
+  ![今日の天気gif](https://user-images.githubusercontent.com/63504907/121129431-e68b2f00-c867-11eb-84a2-25d6335e6077.jpeg)<br>
+  <br>
   このアプリのメイン機能です。<br>
   天気予報は、[Open Weather Map(オープンウェザーマップ)][weather]のAPI、<br>
   通勤時間は、Google Maps Platformの[Directions API][direction]から取得しています。<br>
