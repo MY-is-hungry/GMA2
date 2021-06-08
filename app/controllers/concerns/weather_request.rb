@@ -2,7 +2,6 @@ module WeatherRequest
   extend ActiveSupport::Concern
   
   def weather_forcast(weather_data, commute, commute_time)
-    logger.debug(commute)
     city_name = []
     result = []
     message = "おはようございます！"

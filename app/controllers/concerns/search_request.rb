@@ -169,16 +169,16 @@ module SearchRequest
               "type": "action",
               "action": {
                 "type": "postback",
-                "label": "カフェ",
-                "data": "カフェ6"
+                "label": "焼き肉",
+                "data": "焼き肉6"
               }
             },
             {
               "type": "action",
               "action": {
                 "type": "postback",
-                "label": "焼き肉",
-                "data": "焼き肉6"
+                "label": "カフェ",
+                "data": "カフェ6"
               }
             },
             {
@@ -211,7 +211,7 @@ module SearchRequest
     ]
   end
   
-  def search_store(msg, data)
+  def search_store(msg, data) #お店の検索
     {
       "type": "flex",
       "altText": "#{msg}に寄り道",

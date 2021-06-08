@@ -1,8 +1,8 @@
 module BadRequest
   extend ActiveSupport::Concern
   def bad_msg(msg)
-    logger.debug(msg)
     case msg
+    #出発地点と到着地点がないとできない処理かつ、その設定がされていない場合
     when 'おはよう','中間地点登録','通勤時間','ラーメン','カフェ','コンビニ','ファミレス','焼肉',
       '寄り道地域','通勤モード','経路の制限','寄り道する！'
       [

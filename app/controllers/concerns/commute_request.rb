@@ -194,7 +194,7 @@ module CommuteRequest
     {"type": 'text',"text": "中間地点の設定をリセットしました。"}
   end
     
-  def mode_menu(msg)
+  def mode_menu(msg) #通勤モード設定メニュー
     {
       "type": "flex",
       "altText": "#{msg}の設定",
@@ -282,7 +282,6 @@ module CommuteRequest
   
   def commute_mode(commute)
     set = Setup.find(commute.setup_id)
-    logger.debug(commute.setup_id)
     if commute.avoid
       {"type": 'text', "text": "通勤モードを設定しました。"}
     else
@@ -311,7 +310,7 @@ module CommuteRequest
     end
   end
   
-  def avoid_menu(msg, commute)
+  def avoid_menu(msg, commute) #経路の制限設定メニュー
     result =
       {
         "type": "flex",

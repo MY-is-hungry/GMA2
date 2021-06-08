@@ -3,6 +3,7 @@ class Commute < ApplicationRecord
   has_many :via_place, dependent: :destroy
   belongs_to :setup
   validates :user_id, presence: true, uniqueness: true
+  validates :setup_id, presence: true
 
   def get_state
     if start_lat && end_lat && via_place.first && avoid && mode #全ての設定済み

@@ -93,7 +93,6 @@ class LinebotController < ApplicationController
 
             when '寄り道エリア'
               state = @commute.get_state
-              logger.debug(state)
               reply = state.in?([1,2,3,4,5,6,7,8]) ? change_msg(message, state: state) : bad_msg(message)
             
             when '寄り道する！'
@@ -160,7 +159,6 @@ class LinebotController < ApplicationController
               reply = bad_msg('該当コマンドなし')
             end
           end
-          logger.debug(reply)
           client.reply_message(event['replyToken'], reply)
           
         when Line::Bot::Event::Postback #ポストパックアクション
