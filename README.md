@@ -19,11 +19,11 @@
 LINEのMessaging APIを使ったアプリなので、主要機能はリッチメニューを使うことで簡単に操作できるようにしています。
 - **天気予報、通勤時間の取得**<br>
   <br>
-  ![今日の天気gif](https://user-images.githubusercontent.com/63504907/121129431-e68b2f00-c867-11eb-84a2-25d6335e6077.jpeg)<br>
+  ![今日の天気紹介](https://user-images.githubusercontent.com/63504907/121140233-91094f00-c874-11eb-8726-1f0b0d287e36.jpg)<br>
   <br>
   このアプリのメイン機能です。<br>
-  天気予報は、[Open Weather Map(オープンウェザーマップ)][weather]のAPI、<br>
-  通勤時間は、Google Maps Platformの[Directions API][direction]から取得しています。<br>
+  ワンタップで今日の天気予報（自宅付近と職場付近）と、予想される通勤時間が返ってきます。<br>
+  あらかじめ基本設定をしておく必要があります。<br>
   <br>
 - **寄り道機能**<br>
   寄り道するお店のジャンルを選択することで、お店の候補を出してくれます。<br>
