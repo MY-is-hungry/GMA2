@@ -27,7 +27,7 @@ LINEのMessaging APIを使ったアプリなので、主要機能はリッチメ
   <br>
 - **寄り道機能**<br>
   <br>
-  <img height=500 width=450 alt="寄り道機能" src="https://user-images.githubusercontent.com/63504907/121152268-03cbf780-c880-11eb-8470-70b9a04e2fe8.jpeg"><br>
+  <img width=450 height=500 alt="寄り道機能" src="https://user-images.githubusercontent.com/63504907/121152268-03cbf780-c880-11eb-8470-70b9a04e2fe8.jpeg"><br>
   <br>
   寄り道するお店のジャンルを選択することで、お店の候補を出してくれます。（写真はラーメンを選択）<br>
   お店へのルート案内も可能です。<br>
@@ -37,7 +37,9 @@ LINEのMessaging APIを使ったアプリなので、主要機能はリッチメ
   お気に入り一覧から、お店へのルート案内が可能です。<br>
   <br>
 - **各種設定**<br>
-  リッチメニュー、クイックリプライ、ボタンメッセージなどを使うことで、より直感的に設定ができるようにしています。<br>
+  LINEならではのリッチメニュー、クイックリプライ、ボタンメッセージなどの機能を使うことで、より直感的に設定ができるようにしています。<br>
+  <br>
+  <img width=550 height=350 alt="LINE機能説明" src="https://user-images.githubusercontent.com/63504907/121156253-81453700-c883-11eb-9247-4c10b532f649.jpg">
   <br>
   <br>
 
@@ -64,8 +66,8 @@ QRコード<br>
 **・**[canva][canva]<br>
 <br>
 ロゴ（左） リッチメニュー（右）<br>
-<img height=250 width=250 alt="GMAロゴ" src="https://user-images.githubusercontent.com/63504907/120992904-0239fb00-c7be-11eb-8751-b188fa44804d.png">
-<img height=235 width=350 alt="リッチメニュー" src="https://user-images.githubusercontent.com/63504907/120993648-b63b8600-c7be-11eb-9f1d-4618575014b9.png">
+<img width=250 height=250 alt="GMAロゴ" src="https://user-images.githubusercontent.com/63504907/120992904-0239fb00-c7be-11eb-8751-b188fa44804d.png">
+<img width=350 height=235 alt="リッチメニュー" src="https://user-images.githubusercontent.com/63504907/120993648-b63b8600-c7be-11eb-9f1d-4618575014b9.png">
 <br>
 
 ## :wrench: データベース設計
