@@ -140,18 +140,21 @@ class LinebotController < ApplicationController
               reply = change_msg('via_place', count: count)
 
             when 9 #到着地変更
+              logger.debug(event)
               address = event.message['address'].scan(/\d{3}-\d{4}/) #郵便番号を取得
               @commute.update(end_lat: event.message['latitude'], end_lng: event.message['longitude'], end_address: address[0])
               @commute.update(setup_id: @commute.get_state)
               reply = change_msg('end_location')
               
             when 10 #出発地のみ変更
+              logger.debug(event)
               address = event.message['address'].scan(/\d{3}-\d{4}/)
               @commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
               @commute.update(setup_id: @commute.get_state)
               reply = {type: 'text',text: "出発地点を登録しました。"}
  
             when 11..14 #初期設定or全部変更
+              logger.debug(event)
               address = event.message['address'].scan(/\d{3}-\d{4}/)
               @commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
               reply = change_msg('first_location')
