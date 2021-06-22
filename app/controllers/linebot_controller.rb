@@ -38,7 +38,7 @@ class LinebotController < ApplicationController
               return client.reply_message(event['replyToken'], bad_msg(message)) if state.in?([9,10,11,12,13,14]) #通勤経路が未設定の場合は、処理しない
               commute_time = get_commute_time(state)
               weather_data = []
-              if @commute.start_city == @commute.city
+              if @commute.start_city == @commute.end_city
                 start_response = open(ENV['W_URL'] + "?zip=#{@commute.start_address},jp&units=metric&lang=ja&cnt=6&APPID=" + ENV['W_KEY'])
                 weather_data[0] = JSON.parse(start_response.read, {symbolize_names: true})
               else
