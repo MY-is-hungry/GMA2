@@ -2,12 +2,10 @@ module WeatherRequest
   extend ActiveSupport::Concern
   
   def weather_forcast(weather_data, commute, commute_time)
-    # city_name = []
     result = []
     message = "おはようございます！"
     rain = false
     weather_data.each_with_index do |w, n|
-      # city_name[n] = w[:city][:name]
       result[n] = []
       w[:list].each do |l|
         time = l[:dt_txt].slice(-8, 2).to_i + 9
@@ -18,10 +16,6 @@ module WeatherRequest
         result[n].push("\n\n#{time}時 天気:#{weather}  温度:#{temp}℃")
         rain = true if weather.in?(['雷雨', '激しい雨', '雨', 'にわか雨'])
       end
-      # result[n].unshift("今日の#{city_name[n]}の天気をお知らせします。")
-      logger.debug(n)
-      logger.debug(commute.start_city)
-      logger.debug(commute.start_city)
       if n == 0
         result[n].unshift("今日の#{commute.start_city}の天気をお知らせします。")
       else
