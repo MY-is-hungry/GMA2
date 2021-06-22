@@ -19,6 +19,9 @@ module WeatherRequest
         rain = true if weather.in?(['雷雨', '激しい雨', '雨', 'にわか雨'])
       end
       # result[n].unshift("今日の#{city_name[n]}の天気をお知らせします。")
+      logger.debug(n)
+      logger.debug(commute.start_city)
+      logger.debug(commute.start_city)
       if n == 0
         result[n].unshift("今日の#{commute.start_city}の天気をお知らせします。")
       else
