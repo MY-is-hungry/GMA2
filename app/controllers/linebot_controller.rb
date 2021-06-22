@@ -155,7 +155,7 @@ class LinebotController < ApplicationController
  
             when 11..14 #初期設定or全部変更
               logger.debug(event)
-              city = event.message['address'].scan(/(?<=\s)[\u4E00-\u9FFF]+[市,区]?/)
+              city = event.message['address'].scan(/(?<=\s)[\u4E00-\u9FFF]+?[市,区]/)
               logger.debug(city)
               address = event.message['address'].scan(/\d{3}-\d{4}/)
               @commute.update(start_lat: event.message['latitude'], start_lng: event.message['longitude'], start_address: address[0])
