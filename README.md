@@ -22,7 +22,7 @@ LINEのMessaging APIを使ったアプリなので、主要機能はリッチメ
 
 - **天気予報、通勤時間の取得**<br>
   <br>
-  ![今日の天気](https://user-images.githubusercontent.com/63504907/121140233-91094f00-c874-11eb-8726-1f0b0d287e36.jpg)<br>
+  ![今日の天気解説](https://user-images.githubusercontent.com/63504907/124288639-64530980-db8c-11eb-9c8b-9c76621f45c0.png)<br>
   <br>
   このアプリのメイン機能です。<br>
   ワンタップで今日の天気予報（自宅付近と職場付近）と、予想される通勤時間が返ってきます。<br>
