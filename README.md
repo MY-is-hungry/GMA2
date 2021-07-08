@@ -50,7 +50,8 @@ LINEのMessaging APIを使ったアプリなので、主要機能はリッチメ
   <br>
 
 ## :busts_in_silhouette: 友達追加QRコード
-QRコード<br>
+![QR](https://user-images.githubusercontent.com/63504907/124856235-1bb0ab80-dfe5-11eb-9047-e7dcaca94fdb.png)
+<br>
 <br>
 <br>
 
@@ -75,7 +76,7 @@ QRコード<br>
 <br>
 
 ## 最後に
-最後まで読んでいただきありがとうございました。<br>
+最後まで読んでいただきありがとうございました！<br>
 現在、**Docker**や**React.js**など新たな技術を学びながら**語学を勉強できる日記**を共同開発しています。<br>
 未完成ではありますが、ぜひご覧ください。<br>
 https://github.com/local3/diary
