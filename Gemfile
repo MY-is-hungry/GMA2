@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.2.3'
+gem 'rails', '~> 6.0.4', '>= 6.0.4.1'
 
 gem 'puma', '~> 3.0'
 
@@ -18,12 +18,16 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'line-bot-api'
 
-#Dos攻撃対策 config/initializers/rack_attack.rb
+#Dos攻撃対策 /config/initializers/rack_attack.rb
 gem 'rack-attack'
+
+gem "sqlite3", "~> 1.4"
+
+# 環境変数
+gem 'dotenv-rails'
 
 group :development, :test do
   gem 'byebug', platform: :mri
-  gem 'sqlite3', '1.3.13'
 end
 
 group :development do
