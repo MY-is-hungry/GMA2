@@ -74,9 +74,3 @@ LINEのMessaging APIを使ったアプリなので、主要機能はリッチメ
 <img width=600 height=250 alt="デザイン作品" src="https://user-images.githubusercontent.com/63504907/121160305-efd7c400-c886-11eb-9d4f-fb973c5e767d.png">
 <br>
 <br>
-
-## 最後に
-最後まで読んでいただきありがとうございました！<br>
-現在、**Docker**や**React.js**など新たな技術を学びながら**語学を勉強できる日記**を共同開発しています。<br>
-未完成ではありますが、ぜひご覧ください。<br>
-https://github.com/local3/diary
